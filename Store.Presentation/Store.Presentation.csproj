@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Common\**" />
+    <Compile Remove="Controllers\Base\**" />
+    <Compile Remove="Filters\**" />
+    <Content Remove="Common\**" />
+    <Content Remove="Controllers\Base\**" />
+    <Content Remove="Filters\**" />
+    <EmbeddedResource Remove="Common\**" />
+    <EmbeddedResource Remove="Controllers\Base\**" />
+    <EmbeddedResource Remove="Filters\**" />
+    <None Remove="Common\**" />
+    <None Remove="Controllers\Base\**" />
+    <None Remove="Filters\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IdentityServer4" Version="4.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.3.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.3.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Store.BuisnessLogicLayer\Store.BuisnessLogic.csproj" />
+  </ItemGroup>
+
+
+</Project>
