@@ -1,4 +1,5 @@
-﻿using Store.BuisnessLogicLayer.Models.Authors;
+﻿using Store.BuisnessLogic.Models.Filters.ResponseFilters;
+using Store.BuisnessLogicLayer.Models.Authors;
 using Store.BuisnessLogicLayer.Models.Filters;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,6 @@ namespace Store.BuisnessLogicLayer.Services.Interfaces
         Task CreateAsync(AuthorModel authorModel);
         Task RemoveAsync(Guid id);
         Task EditAsync(AuthorModel authorModel);
-        Task<List<AuthorModel>> FilterAsync(AuthorRequestFilterModel filterModel);
+        Task<AuthorResponseFilterModel> FilterAsync(AuthorRequestFilterModel filterModel);
     }
 }

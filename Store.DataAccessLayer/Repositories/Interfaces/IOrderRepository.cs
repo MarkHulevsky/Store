@@ -1,4 +1,5 @@
-﻿using Store.DataAccessLayer.Entities;
+﻿using Store.DataAccess.Filters.ResponseFulters;
+using Store.DataAccessLayer.Entities;
 using Store.DataAccessLayer.Filters;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,6 @@ namespace Store.DataAccessLayer.Repositories.Interfaces
     {
         Task AddToPaymentAsync(Guid paymentId, Guid orderId);
         Task<List<Order>> GetUserOrdersAsync(Guid userId);
-        Task<List<Order>> FilterAsync(OrderRequestFilter filter);
+        Task<OrderResponseFilter> FilterAsync(OrderRequestFilter filter);
     }
 }

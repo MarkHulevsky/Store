@@ -6,7 +6,7 @@ using Store.BuisnessLogicLayer.Models.Filters;
 using Store.BuisnessLogicLayer.Models.Users;
 using Store.BuisnessLogicLayer.Services.Interfaces;
 using Store.Presentation.Models.AccountModels;
-using System.Linq;
+using System;
 using System.Threading.Tasks;
 
 namespace Store.Presentation.Controllers
@@ -14,6 +14,8 @@ namespace Store.Presentation.Controllers
     [Route("api/[controller]/[action]")]
     public class UserController : Controller
     {
+        private readonly Mapper<EditProfileViewModel, UserModel> _userModelMapper = 
+            new Mapper<EditProfileViewModel, UserModel>();
         private readonly IUserService _userService;
 
         public UserController(IUserService userService)
@@ -25,7 +27,8 @@ namespace Store.Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProfile()
         {
-            return Ok(await _userService.GetCurrentAsync(HttpContext.User));
+            var userModel = await _userService.GetCurrentAsync(HttpContext.User);
+            return Ok(userModel);
         }
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -36,34 +39,28 @@ namespace Store.Presentation.Controllers
         }
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpGet]
-        public IActionResult GetFiltred([FromBody]UserRequestFilterModel filter)
+        [HttpPost]
+        public IActionResult GetFiltred([FromBody] UserRequestFilterModel filter)
         {
-            return Ok(_userService.Filter(filter));
+            var usersResponse = _userService.Filter(filter);
+            return Ok(usersResponse);
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> EditProfile([FromBody] EditProfileViewModel model)
         {
-            var userModel = new UserModel();
-            if (ModelState.IsValid)
-            {
-                var userModelMapper = new Mapper<EditProfileViewModel, UserModel>();
-                userModel = userModelMapper.Map(new UserModel(), model);
-                await _userService.EditAsync(userModel);
-                return Ok(userModel);
-            }
-
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-            foreach (var error in errors)
-            {
-                userModel.Errors.Add(error.ErrorMessage);
-            }
-
-            return Ok(userModel);
+            var userModel = _userModelMapper.Map(new UserModel(), model);
+            var result = await _userService.EditAsync(userModel);
+            return Ok(result);
         }
 
+        [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpDelete]
+        public async Task Delete(string userId)
+        {
+            await _userService.RemoveAsync(Guid.Parse(userId));
+        }
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]

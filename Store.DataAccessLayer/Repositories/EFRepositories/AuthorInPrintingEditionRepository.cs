@@ -19,7 +19,7 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
         {
             var ent = await _dbContext.AuthorInPrintingEditions
                 .FirstOrDefaultAsync(ap => ap.AuthorId == model.AuthorId 
-                && ap.PrintingEditionId == ap.PrintingEditionId);
+                && ap.PrintingEditionId == model.PrintingEditionId);
             if (ent == null)
             {
                 model.CreationDate = DateTime.UtcNow;

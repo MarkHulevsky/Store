@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Store.BuisnessLogic.Helpers;
+using Store.BuisnessLogic.Models.Token;
 using Store.BuisnessLogicLayer.Helpers;
 using Store.BuisnessLogicLayer.Models.Users;
 using Store.BuisnessLogicLayer.Services.Interfaces;
+using Store.DataAccessLayer.Entities;
 using Store.Presentation.Helpers.Interfaces;
 using Store.Presentation.Models.AccountModels;
 using System.Linq;
@@ -22,32 +24,44 @@ namespace Store.Presentation.Controllers
             _jwtHelper = jwtHelper;
         }
 
-        
-        [HttpPost]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordViewModel model)
+        private void SetCookieTokenResponse(string accessToken, string refreshToken)
         {
-            var userModel = new UserModel();
-            if (ModelState.IsValid)
+            Response.Cookies.Append("accessToken", accessToken);
+            Response.Cookies.Append("refreshToken", refreshToken);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword([FromBody]ForgotPasswordViewModel model)
+        {
+            var userModel = await _accountService.FindByEmailAsync(model.Email);
+            if (userModel != null)
             {
                 var token = await _accountService.GetForgotPasswordTokenAsync(model.Email);
                 string newPassword = PasswordGenerator.GeneratePassword();
 
-                var result = await _accountService.ResetPasswordAsync(model.Email, token, newPassword);                
-                if (result.Errors.Count != 0)
+                var result = await _accountService.ResetPasswordAsync(model.Email, token, newPassword);  
+                
+                if (result.Errors.Count > 0)
                 {
-                    return BadRequest(result.Errors);
+                    userModel.Errors = result.Errors;
+                    return Ok(userModel);
                 }
 
                 return Ok();
             }
-
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-            foreach (var error in errors)
-            {
-                userModel.Errors.Add(error.ErrorMessage);
-            }
-
+            userModel = new UserModel();
+            userModel.Errors.Add("No user with such email");
             return Ok(userModel);
+        }
+
+        [HttpPost]
+        public IActionResult RefreshToken([FromBody]JwtTokenModel refreshTokenModel)
+        {
+            var jwtToken = new JwtTokenModel();
+            var principal = _jwtHelper.GetPrincipalFromExpiredToken(refreshTokenModel.AccessToken);
+            jwtToken.AccessToken = _jwtHelper.GenerateJwtTokenWithClaims(principal.Claims);
+            jwtToken.RefreshToken = _jwtHelper.GenerateRefreshToken();
+            return new ObjectResult(jwtToken);
         }
 
         [HttpPost]
@@ -87,38 +101,32 @@ namespace Store.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> SignIn([FromBody] LoginViewModel model)
         {
-            var userModel = new UserModel();
-            if (ModelState.IsValid)
+            var userModel = new UserModel
             {
-                var userModelMapper = new Mapper<LoginViewModel, UserModel>();
-                userModel = userModelMapper.Map(new UserModel(), model);
+                Email = model.Email,
+                Password = model.Password
+            };
+            var succeed = await _accountService.LoginAsync(userModel);
 
-                var succeed = await _accountService.LoginAsync(userModel);
-                if (succeed)
-                {
-                    var token = new
-                    {
-                        access_token = await _jwtHelper.GetTokenAsync(userModel)
-                    };
-                    return Json(token);
-                }
-                userModel.Errors.Add("Invalid password or email");
-            }
-
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-            foreach (var error in errors)
+            if (!succeed)
             {
-                userModel.Errors.Add(error.ErrorMessage);
+                return Unauthorized(userModel);
             }
-
+            userModel = await _accountService.FindByEmailAsync(userModel.Email);
+            userModel.Roles = await _accountService.GetRolesAsync(userModel.Email);
+            var jwtTokenModel = new JwtTokenModel
+            {
+                AccessToken = await _jwtHelper.GetTokenAsync(userModel),
+                RefreshToken = _jwtHelper.GenerateRefreshToken()
+            };
+            SetCookieTokenResponse(jwtTokenModel.AccessToken, jwtTokenModel.RefreshToken);
             return Ok(userModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignOut()
+        public async Task SignOut()
         {
             await _accountService.LogoutAsync();
-            return Ok(User == null);
         }
     }
 }

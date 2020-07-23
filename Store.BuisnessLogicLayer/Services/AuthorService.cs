@@ -1,12 +1,18 @@
 ﻿using Store.BuisnessLogic.Helpers;
+using Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers;
+using Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers;
+using Store.BuisnessLogic.Models.Filters.ResponseFilters;
 using Store.BuisnessLogicLayer.Models.Authors;
 using Store.BuisnessLogicLayer.Models.Filters;
+using Store.BuisnessLogicLayer.Models.PrintingEditions;
 using Store.BuisnessLogicLayer.Services.Interfaces;
+using Store.DataAccess.Filters.ResponseFulters;
 using Store.DataAccessLayer.Entities;
 using Store.DataAccessLayer.Filters;
 using Store.DataAccessLayer.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Store.BuisnessLogicLayer.Services
@@ -16,9 +22,6 @@ namespace Store.BuisnessLogicLayer.Services
         private readonly IAuthorRepository _authorRepository;
         private readonly Mapper<Author, AuthorModel> _authorModelMapper = new Mapper<Author, AuthorModel>();
         private readonly Mapper<AuthorModel, Author> _authorMapper = new Mapper<AuthorModel, Author>();
-        private readonly Mapper<PagingModel, Paging> _pagingMapper = new Mapper<PagingModel, Paging>();
-        private readonly Mapper<AuthorRequestFilterModel, AuthorRequestFilter> _filterMapper
-            = new Mapper<AuthorRequestFilterModel, AuthorRequestFilter>();
 
         public AuthorService(IAuthorRepository authorRepository)
         {
@@ -60,20 +63,12 @@ namespace Store.BuisnessLogicLayer.Services
             await _authorRepository.UpdateAsync(author);
         }
 
-        public async Task<List<AuthorModel>> FilterAsync(AuthorRequestFilterModel filterModel)
+        public async Task<AuthorResponseFilterModel> FilterAsync(AuthorRequestFilterModel filterModel)
         {
-            var paging = _pagingMapper.Map(new Paging(), filterModel.Paging);
-
-            var filter = _filterMapper.Map(new AuthorRequestFilter(), filterModel);
-
-            var authors = await _authorRepository.FilterAsync(filter);
-            var authorModels = new List<AuthorModel>();
-
-            foreach (var author in authors)
-            {
-                authorModels.Add(_authorModelMapper.Map(new AuthorModel(), author));
-            }
-            return authorModels;
+            var filter = AuthorRequestFilterMapper.Map(filterModel);
+            var authorResponse = await _authorRepository.FilterAsync(filter);
+            var authorResponseModel = AuthorResponseFilterMapper.Map(authorResponse);
+            return authorResponseModel;
         }
     }
 }

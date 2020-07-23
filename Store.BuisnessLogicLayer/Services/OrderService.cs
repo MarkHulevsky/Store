@@ -1,11 +1,15 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Store.BuisnessLogic.Helpers;
+using Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers;
+using Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers;
+using Store.BuisnessLogic.Models.Filters.ResponseFilters;
 using Store.BuisnessLogic.Models.Orders;
 using Store.BuisnessLogicLayer.Models.Base;
 using Store.BuisnessLogicLayer.Models.Filters;
 using Store.BuisnessLogicLayer.Models.Orders;
 using Store.BuisnessLogicLayer.Models.Payments;
 using Store.BuisnessLogicLayer.Services.Interfaces;
+using Store.DataAccess.Filters.ResponseFulters;
 using Store.DataAccessLayer.Entities;
 using Store.DataAccessLayer.Filters;
 using Store.DataAccessLayer.Repositories.Interfaces;
@@ -23,13 +27,12 @@ namespace Store.BuisnessLogicLayer.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IConfiguration _configuration;
 
-        private readonly Mapper<PagingModel, Paging> _pagingMapper = new Mapper<PagingModel, Paging>();
         private readonly Mapper<Order, OrderModel> _orderModelMapper = new Mapper<Order, OrderModel>();
         private readonly Mapper<OrderModel, Order> _orderMapper = new Mapper<OrderModel, Order>();
-        private readonly Mapper<OrderItem, OrderItemModel> _orderItemModelMapper = new Mapper<OrderItem ,OrderItemModel>();
-        private readonly Mapper<OrderItemModel, OrderItem> _orderItemMapper = new Mapper<OrderItemModel, OrderItem>();
-        private readonly Mapper<OrderRequestFilterModel, OrderRequestFilter> _filterMapper =
-            new Mapper<OrderRequestFilterModel, OrderRequestFilter>();
+        private readonly Mapper<OrderResponseFilter, OrderResponseFilterModel> _responseMapper = 
+            new Mapper<OrderResponseFilter, OrderResponseFilterModel>();
+        private readonly Mapper<OrderItemModel, OrderItem> _orderItemMapper = 
+            new Mapper<OrderItemModel, OrderItem>();
 
         public OrderService(IPaymentRepository paymentRepository, 
             IOrderItemRepository orderItemRepository, IOrderRepository orderRepository,
@@ -88,28 +91,12 @@ namespace Store.BuisnessLogicLayer.Services
             }
         }
 
-        public async Task<List<OrderModel>> FilterAsync(OrderRequestFilterModel filterModel)
+        public async Task<OrderResponseFilterModel> FilterAsync(OrderRequestFilterModel filterModel)
         {
-            var orderStatuses = new List<OrderStatus>();
-            foreach (var statusModel in filterModel.OrderStatuses)
-            {
-                orderStatuses.Add((OrderStatus)statusModel);
-
-            }
-            var paging = _pagingMapper.Map(new Paging(), filterModel.Paging);
-
-            var filter = _filterMapper.Map(new OrderRequestFilter(), filterModel);
-            filter.Paging = paging;
-            var orders = await _orderRepository.FilterAsync(filter);
-            var orderModels = new List<OrderModel>();
-            foreach (var order in orders)
-            {
-                var orderItemsModel = GetOrderItemModels(order.OrderItems);
-                var orderModel = _orderModelMapper.Map(new OrderModel(), order);
-                orderModel.OrderItems = orderItemsModel;
-                orderModels.Add(orderModel);
-            }
-            return orderModels;
+            var filter = OrderRequestFilterMapper.Map(filterModel);
+            var orderResponse = await _orderRepository.FilterAsync(filter);
+            var orderResponseModel = OrderResponseFilterMapper.Map(orderResponse);
+            return orderResponseModel;
         }
 
         public async Task<List<OrderModel>> GetAllAsync()
@@ -156,17 +143,6 @@ namespace Store.BuisnessLogicLayer.Services
         public async Task RemoveAsync(Guid id)
         {
             await _orderRepository.RemoveAsync(id);
-        }
-
-        private List<OrderItemModel> GetOrderItemModels(IEnumerable<OrderItem> orderItems)
-        {
-            var orderItemModels = new List<OrderItemModel>();
-            foreach (var orderItem in orderItems)
-            {
-                var orderItemModel = _orderItemModelMapper.Map(new OrderItemModel(), orderItem);
-                orderItemModels.Add(orderItemModel);
-            }
-            return orderItemModels;
         }
     }
 }

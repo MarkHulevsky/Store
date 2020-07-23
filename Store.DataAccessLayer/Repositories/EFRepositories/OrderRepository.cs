@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Store.DataAccess.Filters.ResponseFulters;
 using Store.DataAccessLayer.AppContext;
 using Store.DataAccessLayer.Entities;
 using Store.DataAccessLayer.Filters;
@@ -43,20 +44,24 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
             return entity;
         }
 
-        public async Task<List<Order>> FilterAsync(OrderRequestFilter filter)
+        public async Task<OrderResponseFilter> FilterAsync(OrderRequestFilter filter)
         {
             var query = _dbContext.Orders.Where(o => !o.IsRemoved).AsQueryable();
-
             var uQuery = new List<Order>().AsQueryable();
             foreach (var order in query)
             {
                 uQuery = uQuery.Concat(query.Where(o => o.Status == order.Status));
             }
             query = uQuery;
-
             query = query.OrderBy(filter.PropName, $"{filter.SortType}");
-            return await query.Skip(filter.Paging.Number * filter.Paging.ItemsCount)
+            var orders = await query.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
                 .Take(filter.Paging.ItemsCount).ToListAsync();
+            var result = new OrderResponseFilter
+            {
+                Orders = orders,
+                TotalCount = _dbContext.Orders.Where(o => !o.IsRemoved).Count()
+            };
+            return result;
         }
 
         public async Task<List<Order>> GetUserOrdersAsync(Guid userId)

@@ -1,4 +1,5 @@
-﻿using Store.BuisnessLogicLayer.Models.Base;
+﻿using Store.BuisnessLogic.Models.Filters.ResponseFilters;
+using Store.BuisnessLogicLayer.Models.Base;
 using Store.BuisnessLogicLayer.Models.Filters;
 using Store.BuisnessLogicLayer.Models.Users;
 using System;
@@ -10,11 +11,11 @@ namespace Store.BuisnessLogicLayer.Services.Interfaces
 {
     public interface IUserService
     {
-        List<UserModel> Filter(UserRequestFilterModel filterModel);
+        UserResponseFilterModel Filter(UserRequestFilterModel filterModel);
         Task<UserModel> GetCurrentAsync(ClaimsPrincipal user);
         Task<BaseModel> EditAsync(UserModel userModel);
         Task ChangeStatusAsync(UserModel userModel);
-        Task RemoveAsync(UserModel userModel);
+        Task RemoveAsync(Guid userId);
         Task<List<UserModel>> GetAllAsync();
     }
 }

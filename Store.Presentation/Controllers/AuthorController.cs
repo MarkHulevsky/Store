@@ -20,31 +20,32 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAuthors()
+        public async Task<IActionResult> GetAll()
         {
             return Ok(await _authorService.GetAll());
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetFiltredAuthors([FromBody]AuthorRequestFilterModel filterModel)
+        [HttpPost]
+        public async Task<IActionResult> GetFiltred([FromBody]AuthorRequestFilterModel filterModel)
         {
-             return Ok(await _authorService.FilterAsync(filterModel));
+            var authorsResponse = await _authorService.FilterAsync(filterModel);
+             return Ok(authorsResponse);
         }
 
         [HttpPost]
-        public async Task AddAuthor([FromBody]AuthorModel authorModel)
+        public async Task Add([FromBody]AuthorModel authorModel)
         {
             await _authorService.CreateAsync(authorModel);
         }
 
         [HttpPut]
-        public async Task EditAuthor([FromBody]AuthorModel authorModel)
+        public async Task Edit([FromBody]AuthorModel authorModel)
         {
             await _authorService.EditAsync(authorModel);
         }
 
         [HttpDelete]
-        public async Task DeleteAuthor([FromBody]string id)
+        public async Task Delete(string id)
         {
             await _authorService.RemoveAsync(Guid.Parse(id));
         }

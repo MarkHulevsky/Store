@@ -8,7 +8,7 @@ namespace Store.BuisnessLogicLayer.Models.Filters
     {
         public string PropName { get; set; }
         public string SearchString { get; set; }
-        public IEnumerable<UserStatus> Statuses { get; set; }
+        public IEnumerable<bool> Statuses { get; set; }
         public UserRequestFilterModel()
         {
             Paging = new PagingModel

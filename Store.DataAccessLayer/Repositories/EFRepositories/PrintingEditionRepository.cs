@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Store.DataAccess.Filters.ResponseFulters;
 using Store.DataAccessLayer.AppContext;
 using Store.DataAccessLayer.Entities;
 using Store.DataAccessLayer.Filters;
@@ -17,20 +18,27 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
         {
         }
 
-        public List<PrintingEdition> Filter(PrintingEditionsRequestFilter filter)
+        public PrintingEditionResponseFilter Filter(PrintingEditionsRequestFilter filter)
         {
             var query = _dbContext.PrintingEditions.Include(pe => pe.AuthorInPrintingEditions)
                 .ThenInclude(aInPe => aInPe.Author)
-                .Where(pe => !pe.IsRemoved && EF.Functions.Like(pe.Title, $"%{filter.SearchFilter}%"));
-
-            query = query.Where(pe => pe.Currency == filter.Currency);
+                .Where(pe => !pe.IsRemoved && EF.Functions.Like(pe.Title, $"%{filter.SearchString}%"));
 
             var uQuery = new List<PrintingEdition>().AsQueryable();
 
-            foreach(var type in filter.Types)
+            foreach (var curency in filter.Currencies)
+            {
+                uQuery = uQuery.Concat(query.Where(pe => pe.Currency == curency));
+            }
+
+            query = uQuery;
+            uQuery = new List<PrintingEdition>().AsQueryable();
+
+            foreach (var type in filter.Types)
             {
                 uQuery = uQuery.Concat(query.Where(pe => pe.Type == type));
             }
+
             query = uQuery;
 
             if (filter.MaxPrice > filter.MinPrice && filter.MaxPrice != filter.MinPrice)
@@ -38,17 +46,16 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
                 query = query.Where(pe => pe.Price <= filter.MaxPrice && pe.Price >= filter.MinPrice);
             }
 
-            if (filter.SortType.ToString() == "Ascending")
-            {
-                query.OrderBy(pe => pe.Price);
-            }
-            if (filter.SortType.ToString() == "Descending")
-            {
-                query.OrderByDescending(pe => pe.Price);
-            }
+            query = query.OrderBy("Price", $"{filter.SortType}");
 
-             return query.Skip(filter.Paging.Number * filter.Paging.ItemsCount)
+            var printingEditions = query.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
                 .Take(filter.Paging.ItemsCount).ToList();
+            var result = new PrintingEditionResponseFilter
+            {
+                PrintingEditions = printingEditions,
+                TotalCount = _dbContext.PrintingEditions.Where(pe => !pe.IsRemoved).Count()
+            };
+            return result;
         }
 
         public override async Task<PrintingEdition> UpdateAsync(PrintingEdition model)
@@ -71,11 +78,16 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
 
         public async Task<List<Author>> GetAuthorsAsync(PrintingEdition printingEdition)
         {
-            var pe = await _dbContext.PrintingEditions.Include(pe => pe.AuthorInPrintingEditions)
-                .ThenInclude(ae => ae.Author)
-                .FirstOrDefaultAsync(pe => pe.Id == printingEdition.Id);
+            var authorInPrintingEditions = await _dbContext.AuthorInPrintingEditions
+                .Where(aInPe => aInPe.PrintingEditionId == printingEdition.Id).ToListAsync();
+            var authors = new List<Author>();
+            foreach (var aInPe in authorInPrintingEditions)
+            {
+                var author = await _dbContext.Authors.FirstOrDefaultAsync(a => a.Id == aInPe.AuthorId);
+                authors.Add(author);
+            }
 
-            return pe.AuthorInPrintingEditions.Select(ap => ap.Author).ToList();
+            return authors;
         }
     }
 }

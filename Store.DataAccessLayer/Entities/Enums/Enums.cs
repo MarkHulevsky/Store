@@ -29,8 +29,8 @@
         }
         public enum SortType
         {
-            Ascending = 1,
-            Descending
+            Ascending = 0,
+            Descending = 1
         }
         
     }

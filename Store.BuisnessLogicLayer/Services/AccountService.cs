@@ -55,14 +55,14 @@ namespace Store.BuisnessLogicLayer.Services
             return string.Empty;
         }
 
-        public async Task<string> GetRoleNameAsync(string email)
+        public async Task<List<string>> GetRolesAsync(string email)
         {
             var user = await _userRepository.FindByEmailAsync(email);
             if (user != null)
             {
-                return await _userRepository.GetRoleNameAsync(user);
+                return await _userRepository.GetRolesAsync(user);
             }
-            return string.Empty;
+            return new List<string>();
         }
 
         public async Task<UserModel> FindByEmailAsync(string email)

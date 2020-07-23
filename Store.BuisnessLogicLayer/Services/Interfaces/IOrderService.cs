@@ -1,4 +1,5 @@
-﻿using Store.BuisnessLogic.Models.Orders;
+﻿using Store.BuisnessLogic.Models.Filters.ResponseFilters;
+using Store.BuisnessLogic.Models.Orders;
 using Store.BuisnessLogicLayer.Models.Base;
 using Store.BuisnessLogicLayer.Models.Filters;
 using Store.BuisnessLogicLayer.Models.Orders;
@@ -16,6 +17,6 @@ namespace Store.BuisnessLogicLayer.Services.Interfaces
         Task<List<OrderModel>> GetUserOrdersAsync(Guid userId);
         Task<BaseModel> CreateAsync(CartModel cartModel);
         Task RemoveAsync(Guid id);
-        Task<List<OrderModel>> FilterAsync(OrderRequestFilterModel filter);
+        Task<OrderResponseFilterModel> FilterAsync(OrderRequestFilterModel filter);
     }
 }

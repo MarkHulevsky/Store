@@ -13,7 +13,7 @@ namespace Store.DataAccessLayer.Entities
         public string LastName { get; set; }
         public bool IsRemoved { get; set; }
         public DateTime CreationDate { get; set; }
-        public UserStatus Status { get; set; }
+        public bool IsActive { get; set; } = true;
         [NotMapped]
         public string Password { get; set; }
         [NotMapped]

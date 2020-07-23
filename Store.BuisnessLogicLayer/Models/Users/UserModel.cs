@@ -1,4 +1,6 @@
 ﻿using Store.BuisnessLogicLayer.Models.Base;
+using Store.BuisnessLogicLayer.Models.Orders;
+using System.Collections.Generic;
 using static Store.BuisnessLogicLayer.Models.Enums.Enums;
 
 namespace Store.BuisnessLogicLayer.Models.Users
@@ -10,6 +12,8 @@ namespace Store.BuisnessLogicLayer.Models.Users
         public string LastName { get; set; }
         public bool EmailConfirmed { get; set; }
         public string Password { get; set; }
-        public UserStatus Status { get; set; }
+        public List<string> Roles { get; set; } = new List<string>();
+        public bool IsActive { get; set; } = true;
+        public List<OrderModel> Orders { get; set; } = new List<OrderModel>();
     }
 }

@@ -24,29 +24,32 @@ namespace Store.Presentation.Controllers
             return Ok(await _printingEditionService.GetAllAsync());
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> GetFiltred([FromBody] PrintingEditionsRequestFilterModel filter)
         {
-            return Ok(await _printingEditionService.FilterAsync(filter));
+            var peResponse = await _printingEditionService.FilterAsync(filter);
+            return Ok(peResponse);
         }
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
-        public async Task AddPrintingEdition([FromBody] PrintingEditionModel pe)
+        public async Task Add([FromBody] PrintingEditionModel peModel)
         {
-            await _printingEditionService.CreateAsync(pe);
+            var pe = await _printingEditionService.CreateAsync(peModel);
+            peModel.Id = pe.Id;
+            await _printingEditionService.AddToAuthorAsync(peModel, peModel.Authors);
         }
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete]
-        public async Task DeletePrintingEdition([FromBody] string id)
+        public async Task Delete(string id)
         {
             await _printingEditionService.RemoveAsync(Guid.Parse(id));
         }
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPut]
-        public async Task EditPrintingEdition([FromBody] PrintingEditionModel pe)
+        public async Task Edit([FromBody] PrintingEditionModel pe)
         {
             await _printingEditionService.EditAsync(pe);
         }

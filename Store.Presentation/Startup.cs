@@ -104,12 +104,13 @@ namespace Store.Presentation
                 options.User.RequireUniqueEmail = true;
             });
 
-            services.AddCors(opt =>
+            services.AddCors(options =>
             {
-                opt.AddPolicy("Store", builder =>
-                builder.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
+                options.AddDefaultPolicy(builder =>
+                    builder.SetIsOriginAllowed(_ => true)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
             });
 
             services.AddControllers();
@@ -138,7 +139,7 @@ namespace Store.Presentation
                 option.SwaggerEndpoint(swaggerSection["UIEndpoint"], swaggerSection["Description"]);
             });
 
-            app.UseCors("Store");
+            app.UseCors();
 
             app.UseHttpsRedirection();
 

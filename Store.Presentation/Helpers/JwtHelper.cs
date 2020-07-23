@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Store.BuisnessLogicLayer.Models.Users;
 using Store.BuisnessLogicLayer.Services.Interfaces;
@@ -7,11 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 namespace Store.Presentation.Helpers
 {
-    public class JwtHelper: IJwtHelper
+    public class JwtHelper : IJwtHelper
     {
         private readonly IAccountService _accountService;
         private readonly IConfiguration _configuration;
@@ -20,16 +22,55 @@ namespace Store.Presentation.Helpers
             _accountService = accountService;
             _configuration = configuration;
         }
+
+        public string GenerateRefreshToken()
+        {
+            string refreshToken = string.Empty;
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                refreshToken = Convert.ToBase64String(randomNumber);
+            }
+            return refreshToken;
+        }
+
+        public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        {
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                    _configuration.GetSection("JwtSettings")["Key"])),
+                ValidateLifetime = false,
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            IdentityModelEventSource.ShowPII = true;
+            SecurityToken securityToken;
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
+            if (jwtSecurityToken == null || 
+                !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new SecurityTokenException("Invalid token");
+            }
+
+            return principal;
+        }
+
         public async Task<string> GetTokenAsync(UserModel userModel)
         {
             var user = await _accountService.FindByEmailAsync(userModel.Email);
-            var roleName = await _accountService.GetRoleNameAsync(user.Email);
+            var roles = await _accountService.GetRolesAsync(user.Email);
             
             var accessClaims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, roleName),
+                new Claim(ClaimTypes.Role, roles[0]),
                 new Claim(ClaimTypes.Name, user.Email),
             };
 
@@ -49,6 +90,22 @@ namespace Store.Presentation.Helpers
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(accessToken);
+        }
+
+        public string GenerateJwtTokenWithClaims(IEnumerable<Claim> claims)
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("JwtSettings")["Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var expires = DateTime.Now
+                .Add(TimeSpan.FromMinutes(int.Parse(_configuration.GetSection("JwtSettings")["Lifetime"])));
+            var jwt = new JwtSecurityToken(
+                _configuration.GetSection("JwtSettings")["Issuer"],
+                _configuration.GetSection("JwtSettings")["Issuer"],
+                claims: claims,
+                expires: expires,
+                signingCredentials: creds
+            );
+            return new JwtSecurityTokenHandler().WriteToken(jwt);
         }
     }
 }

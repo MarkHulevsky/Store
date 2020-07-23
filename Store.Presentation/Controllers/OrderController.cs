@@ -29,7 +29,8 @@ namespace Store.Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> GetFiltred([FromBody]OrderRequestFilterModel filter)
         {
-            return Ok(await _orderService.FilterAsync(filter));
+            var ordersResponse = await _orderService.FilterAsync(filter);
+            return Ok(ordersResponse);
         }
 
         [HttpPost]

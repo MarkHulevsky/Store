@@ -3,6 +3,6 @@
     public class Paging
     {
         public int ItemsCount { get; set; }
-        public int Number { get; set; }
+        public int CurrentPage { get; set; }
     }
 }

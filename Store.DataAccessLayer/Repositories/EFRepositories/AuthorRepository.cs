@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Store.DataAccessLayer.Filters;
+using Store.DataAccess.Filters.ResponseFulters;
+using System;
 
 namespace Store.DataAccessLayer.Repositories.EFRepositories
 {
@@ -16,13 +18,26 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
         {
         }
 
-        public async Task<List<Author>> FilterAsync(AuthorRequestFilter filter)
+        public async Task<AuthorResponseFilter> FilterAsync(AuthorRequestFilter filter)
         {
             var query = _dbContext.Authors.Where(a => !a.IsRemoved)
                 .OrderBy(filter.PropName, filter.SortType.ToString());
 
-            return await query.Skip(filter.Paging.ItemsCount * filter.Paging.Number)
+            var authors = await query.Skip(filter.Paging.ItemsCount * filter.Paging.CurrentPage)
                 .Take(filter.Paging.ItemsCount).ToListAsync();
+
+            foreach (var author in authors)
+            {
+                author.PrintingEditions = await GetPrintingEditionsAsync(author);
+            }
+
+            var result = new AuthorResponseFilter
+            {
+                Authors = authors,
+                TotalCount = _dbContext.Authors.Where(a => !a.IsRemoved).Count()
+            };
+
+            return result;
         }
 
         public override async Task<Author> UpdateAsync(Author author)
@@ -41,7 +56,15 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
 
         public async Task<List<PrintingEdition>> GetPrintingEditionsAsync(Author author)
         {
-            return await _dbContext.AuthorInPrintingEditions.Select(ap => ap.PrintingEdition).ToListAsync();
+            var authorInPrintingEditions = await _dbContext.AuthorInPrintingEditions
+                .Where(aInPe => aInPe.AuthorId == author.Id).ToListAsync();
+            var printingEditions = new List<PrintingEdition>();
+            foreach (var aInPe in authorInPrintingEditions)
+            {
+                var pe = _dbContext.PrintingEditions.FirstOrDefault(pe => pe.Id == aInPe.PrintingEditionId);
+                printingEditions.Add(pe);
+            }
+            return printingEditions;
         }
     }
 }

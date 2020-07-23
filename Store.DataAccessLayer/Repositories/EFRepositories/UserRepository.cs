@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Store.DataAccess.Filters;
 using Store.DataAccessLayer.AppContext;
 using Store.DataAccessLayer.Entities;
 using Store.DataAccessLayer.Filters;
@@ -24,22 +25,30 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
             _signInManager = signInManager;
         }
 
-        public List<User> Filter(UserRequestFilter filter)
+        public UserResponseFilter Filter(UserRequestFilter filter)
         {
             var query = _dbContext.Users
-                .Where(u => !u.IsRemoved && EF.Functions.Like(u.LastName + u.FirstName, $"%{filter.SearchFilter}%"));
+                .Where(u => !u.IsRemoved && EF.Functions.Like(u.LastName + u.FirstName, $"%{filter.SearchString}%"));
 
             var uQuery = new List<User>().AsQueryable();
             foreach (var status in filter.Statuses)
             {
-                uQuery = uQuery.Concat(query.Where(u => u.Status == status));
+                uQuery = uQuery.Concat(query.Where(u => u.IsActive == status));
             }
             query = uQuery;
             
             query = query.OrderBy($"{filter.PropName}", $"{filter.SortType}");
 
-            return query.Skip(filter.Paging.Number * filter.Paging.ItemsCount)
+            var users = query.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
                 .Take(filter.Paging.ItemsCount).ToList();
+
+            var result = new UserResponseFilter
+            {
+                Users = users,
+                TotalCount = _dbContext.Users.Where(u => !u.IsRemoved).Count()
+            };
+
+            return result;
         }
 
         public async Task<IdentityResult> ResetPasswordAsync(string email, string token, string newPassword)
@@ -63,20 +72,24 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
             return string.Empty;
         }
 
-        public new async Task<IdentityResult> UpdateAsync(User user)
+        public new async Task<IdentityResult> UpdateAsync(User editedUser)
         {
-            var ent = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == editedUser.Id);
+            user.FirstName = editedUser.FirstName;
+            user.LastName= editedUser.LastName;
+            user.Email = editedUser.Email;
+            user.Password = editedUser.Password;
             return await _userManager.UpdateAsync(user);
         }
 
-        public async Task<string> GetRoleNameAsync(User user)
+        public async Task<List<string>> GetRolesAsync(User user)
         {
-            var roles = await _userManager.GetRolesAsync(user);
+            var roles = await _userManager.GetRolesAsync(user) as List<string>;
             if (roles.Count > 0)
             {
-                return roles[0];
+                return roles;
             }
-            return string.Empty;
+            return new List<string>();
         }
 
         public async Task<User> FindByEmailAsync(string email)
