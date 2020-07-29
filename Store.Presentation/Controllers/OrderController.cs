@@ -15,9 +15,11 @@ namespace Store.Presentation.Controllers
     public class OrderController : Controller
     {
         private readonly IOrderService _orderService;
-        public OrderController(IOrderService orderService)
+        private readonly IUserService _userService;
+        public OrderController(IOrderService orderService, IUserService userService)
         {
             _orderService = orderService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -36,7 +38,10 @@ namespace Store.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody]CartModel cartModel)
         {
-            return Ok(await _orderService.CreateAsync(cartModel));
+            var currentUser = await _userService.GetCurrentAsync(HttpContext.User);
+            cartModel.UserId = currentUser.Id;
+            var orderModel = await _orderService.CreateAsync(cartModel);
+            return Ok(orderModel);
         }
 
         [HttpPost]

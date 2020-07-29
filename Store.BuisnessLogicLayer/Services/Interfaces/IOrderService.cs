@@ -15,7 +15,7 @@ namespace Store.BuisnessLogicLayer.Services.Interfaces
         void PayOrder(PaymentModel paymentModel);
         Task<List<OrderModel>> GetAllAsync();
         Task<List<OrderModel>> GetUserOrdersAsync(Guid userId);
-        Task<BaseModel> CreateAsync(CartModel cartModel);
+        Task<OrderModel> CreateAsync(CartModel cartModel);
         Task RemoveAsync(Guid id);
         Task<OrderResponseFilterModel> FilterAsync(OrderRequestFilterModel filter);
     }

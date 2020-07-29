@@ -18,5 +18,6 @@ namespace Store.BuisnessLogicLayer.Services.Interfaces
         Task<List<PrintingEditionModel>> GetAllAsync();
         Task<List<AuthorModel>> GetAuthorsAsync(PrintingEdition pe);
         Task AddToAuthorAsync(PrintingEditionModel printingEditionModel, IEnumerable<AuthorModel> authorModels);
+        Task<PrintingEditionModel> GetByIdAsync(string id);
     }
 }

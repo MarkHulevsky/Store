@@ -4,7 +4,6 @@ using Store.BuisnessLogic.Models.Token;
 using Store.BuisnessLogicLayer.Helpers;
 using Store.BuisnessLogicLayer.Models.Users;
 using Store.BuisnessLogicLayer.Services.Interfaces;
-using Store.DataAccessLayer.Entities;
 using Store.Presentation.Helpers.Interfaces;
 using Store.Presentation.Models.AccountModels;
 using System.Linq;

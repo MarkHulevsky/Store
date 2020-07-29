@@ -24,6 +24,13 @@ namespace Store.Presentation.Controllers
             return Ok(await _printingEditionService.GetAllAsync());
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetById(string id)
+        {
+            var pe = await _printingEditionService.GetByIdAsync(id);
+            return Ok(pe);
+        }
+
         [HttpPost]
         public async Task<IActionResult> GetFiltred([FromBody] PrintingEditionsRequestFilterModel filter)
         {

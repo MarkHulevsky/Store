@@ -1,5 +1,4 @@
-﻿using Store.BuisnessLogic.Models.Payments;
-using Store.BuisnessLogicLayer.Models.Base;
+﻿using Store.BuisnessLogicLayer.Models.Base;
 using System;
 
 namespace Store.BuisnessLogicLayer.Models.Payments
@@ -8,8 +7,8 @@ namespace Store.BuisnessLogicLayer.Models.Payments
     {
         public Guid OrderId { get; set; }
         public string UserEmail { get; set; }
-        public long Amount { get; set; }
-        public string Currency { get; set; }
-        public CardModel Card { get; set; }
+        public int Amount { get; set; }
+        public string TokenId { get; set; }
+        public string CurrencyString { get; set; }
     }
 }

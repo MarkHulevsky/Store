@@ -4,19 +4,16 @@ using Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers;
 using Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers;
 using Store.BuisnessLogic.Models.Filters.ResponseFilters;
 using Store.BuisnessLogic.Models.Orders;
-using Store.BuisnessLogicLayer.Models.Base;
 using Store.BuisnessLogicLayer.Models.Filters;
 using Store.BuisnessLogicLayer.Models.Orders;
 using Store.BuisnessLogicLayer.Models.Payments;
 using Store.BuisnessLogicLayer.Services.Interfaces;
 using Store.DataAccess.Filters.ResponseFulters;
 using Store.DataAccessLayer.Entities;
-using Store.DataAccessLayer.Filters;
 using Store.DataAccessLayer.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static Store.DataAccessLayer.Entities.Enums.Enums;
 
 namespace Store.BuisnessLogicLayer.Services
 {
@@ -47,26 +44,13 @@ namespace Store.BuisnessLogicLayer.Services
         public void PayOrder(PaymentModel paymentModel)
         {
             Stripe.StripeConfiguration.ApiKey = _configuration.GetSection("Stripe")["SecretKey"];
-            var tokenService = new Stripe.TokenService();
-            var cardOptions = new Stripe.TokenCreateOptions
-            {
-                Card = new Stripe.CreditCardOptions
-                {
-                    Number = paymentModel.Card.CardNumber,
-                    ExpYear = paymentModel.Card.ExpYear,
-                    ExpMonth = paymentModel.Card.ExpMonth,
-                    Cvc = paymentModel.Card.CVC
-                }
-            };
-            var token = tokenService.Create(cardOptions);
-
             var customerService = new Stripe.CustomerService();
             var chargeService = new Stripe.ChargeService();
 
             var customerOptions = new Stripe.CustomerCreateOptions
             {
                 Email = paymentModel.UserEmail,
-                Source = token.Id
+                Source = paymentModel.TokenId
             };
 
             var customer = customerService.Create(customerOptions);
@@ -74,7 +58,7 @@ namespace Store.BuisnessLogicLayer.Services
             var chargeOptions = new Stripe.ChargeCreateOptions
             {
                 Amount = paymentModel.Amount,
-                Currency = paymentModel.Currency,
+                Currency = paymentModel.CurrencyString,
                 Customer = customer.Id
             };
 
@@ -124,12 +108,13 @@ namespace Store.BuisnessLogicLayer.Services
             return orderModels;
         }
 
-        public async Task<BaseModel> CreateAsync(CartModel cartModel)
+        public async Task<OrderModel> CreateAsync(CartModel cartModel)
         {
-            var order = _orderMapper.Map(new Order(), cartModel.Order);
+            var order = new Order();
             order.UserId = cartModel.UserId;
             var orderItems = new List<OrderItem>();
             order = await _orderRepository.CreateAsync(order);
+            cartModel.Order.Id = order.Id;
             foreach (var orderItemModel in cartModel.Order.OrderItems)
             {
                 var orderItem = _orderItemMapper.Map(new OrderItem(), orderItemModel);

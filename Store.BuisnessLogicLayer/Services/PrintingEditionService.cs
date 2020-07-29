@@ -13,12 +13,12 @@ using System.Threading.Tasks;
 
 namespace Store.BuisnessLogicLayer.Services
 {
-    public class PrintingEditionService: IPrintingEditionService
+    public class PrintingEditionService : IPrintingEditionService
     {
         IPrintingEditionRepository _printingEditionRepository;
         IAuthorRepository _authorRepository;
         IAuthorInPrintingEditionRepository _authorInPrintingEditionRepository;
-        
+
         private readonly Mapper<Author, AuthorModel> _authorModelMapper = new Mapper<Author, AuthorModel>();
         private readonly Mapper<AuthorModel, Author> _authorMapper = new Mapper<AuthorModel, Author>();
         private readonly Mapper<PrintingEditionModel, PrintingEdition> _printingEditionMapper =
@@ -30,7 +30,7 @@ namespace Store.BuisnessLogicLayer.Services
             IAuthorRepository authorRepository, IAuthorInPrintingEditionRepository authorInPrintingEditionRepository)
         {
             _printingEditionRepository = printingEditionRepository;
-            _authorRepository= authorRepository;
+            _authorRepository = authorRepository;
             _authorInPrintingEditionRepository = authorInPrintingEditionRepository;
         }
 
@@ -44,6 +44,14 @@ namespace Store.BuisnessLogicLayer.Services
                 authorModels.Add(authorModel);
             }
             return authorModels;
+        }
+
+        public async Task<PrintingEditionModel> GetByIdAsync(string id)
+        {
+            var pe = await _printingEditionRepository.GetAsync(Guid.Parse(id));
+            var peModel = _printingEditionModelMapper.Map(new PrintingEditionModel(), pe);
+            peModel.Authors = await GetAuthorsAsync(pe);
+            return peModel;
         }
 
         public async Task<List<PrintingEditionModel>> GetAllAsync()
@@ -103,8 +111,11 @@ namespace Store.BuisnessLogicLayer.Services
             var authors = new List<Author>();
             foreach (var authorModel in authorModels)
             {
-                var author = _authorMapper.Map(new Author(), authorModel);
-                authors.Add(author);
+                if (authorModel != null)
+                {
+                    var author = _authorMapper.Map(new Author(), authorModel);
+                    authors.Add(author);
+                }
             }
 
             foreach (var author in authors)

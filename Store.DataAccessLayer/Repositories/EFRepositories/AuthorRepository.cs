@@ -61,8 +61,12 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
             var printingEditions = new List<PrintingEdition>();
             foreach (var aInPe in authorInPrintingEditions)
             {
-                var pe = _dbContext.PrintingEditions.FirstOrDefault(pe => pe.Id == aInPe.PrintingEditionId);
-                printingEditions.Add(pe);
+                var pe = _dbContext.PrintingEditions.FirstOrDefault(pe => pe.Id == aInPe.PrintingEditionId 
+                && !pe.IsRemoved);
+                if (pe != null)
+                {
+                    printingEditions.Add(pe);
+                }
             }
             return printingEditions;
         }

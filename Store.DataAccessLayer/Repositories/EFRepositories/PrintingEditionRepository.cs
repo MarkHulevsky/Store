@@ -53,7 +53,7 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
             var result = new PrintingEditionResponseFilter
             {
                 PrintingEditions = printingEditions,
-                TotalCount = _dbContext.PrintingEditions.Where(pe => !pe.IsRemoved).Count()
+                TotalCount = _dbContext.PrintingEditions.Where(pe => !pe.IsRemoved).Count(),
             };
             return result;
         }
@@ -83,8 +83,12 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
             var authors = new List<Author>();
             foreach (var aInPe in authorInPrintingEditions)
             {
-                var author = await _dbContext.Authors.FirstOrDefaultAsync(a => a.Id == aInPe.AuthorId);
-                authors.Add(author);
+                var author = await _dbContext.Authors.FirstOrDefaultAsync(a => a.Id == aInPe.AuthorId
+                && !a.IsRemoved);
+                if (author != null)
+                { 
+                    authors.Add(author);
+                }
             }
 
             return authors;

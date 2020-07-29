@@ -119,3 +119,326 @@ Error Number:547,State:0,Class:16
    at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
    at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
    at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 1 
+ System.NullReferenceException: Object reference not set to an instance of an object.
+   at Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers.AuthorResponseFilterMapper.Map(AuthorResponseFilter responseFilter) in C:\source\Store-Development\Store.BuisnessLogicLayer\Helpers\Mappers\ResponseFilterMappers\AuthorResponseFilterMapper.cs:line 22
+   at Store.BuisnessLogicLayer.Services.AuthorService.FilterAsync(AuthorRequestFilterModel filterModel) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\AuthorService.cs:line 66
+   at Store.Presentation.Controllers.AuthorController.GetFiltred(AuthorRequestFilterModel filterModel) in C:\source\Store-Development\Store.Presentation\Controllers\AuthorController.cs:line 31
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 1 
+ System.NullReferenceException: Object reference not set to an instance of an object.
+   at Store.BuisnessLogic.Helpers.Mapper`2.Map(TDestination destination, TSource source) in C:\source\Store-Development\Store.BuisnessLogicLayer\Helpers\Mappers\Mapper.cs:line 11
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.GetAuthorsAsync(PrintingEdition pe) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 43
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.FilterAsync(PrintingEditionsRequestFilterModel filterModel) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 93
+   at Store.Presentation.Controllers.PrintingEditionController.GetFiltred(PrintingEditionsRequestFilterModel filter) in C:\source\Store-Development\Store.Presentation\Controllers\PrintingEditionController.cs:line 30
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 2 
+ System.NullReferenceException: Object reference not set to an instance of an object.
+   at Store.BuisnessLogic.Helpers.Mapper`2.Map(TDestination destination, TSource source) in C:\source\Store-Development\Store.BuisnessLogicLayer\Helpers\Mappers\Mapper.cs:line 11
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.GetAuthorsAsync(PrintingEdition pe) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 43
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.FilterAsync(PrintingEditionsRequestFilterModel filterModel) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 93
+   at Store.Presentation.Controllers.PrintingEditionController.GetFiltred(PrintingEditionsRequestFilterModel filter) in C:\source\Store-Development\Store.Presentation\Controllers\PrintingEditionController.cs:line 30
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 3 
+ System.NullReferenceException: Object reference not set to an instance of an object.
+   at Store.BuisnessLogic.Helpers.Mapper`2.Map(TDestination destination, TSource source) in C:\source\Store-Development\Store.BuisnessLogicLayer\Helpers\Mappers\Mapper.cs:line 11
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.GetAuthorsAsync(PrintingEdition pe) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 43
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.FilterAsync(PrintingEditionsRequestFilterModel filterModel) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 93
+   at Store.Presentation.Controllers.PrintingEditionController.GetFiltred(PrintingEditionsRequestFilterModel filter) in C:\source\Store-Development\Store.Presentation\Controllers\PrintingEditionController.cs:line 30
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 4 
+ System.NullReferenceException: Object reference not set to an instance of an object.
+   at Store.BuisnessLogic.Helpers.Mapper`2.Map(TDestination destination, TSource source) in C:\source\Store-Development\Store.BuisnessLogicLayer\Helpers\Mappers\Mapper.cs:line 11
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.GetAuthorsAsync(PrintingEdition pe) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 43
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.FilterAsync(PrintingEditionsRequestFilterModel filterModel) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 93
+   at Store.Presentation.Controllers.PrintingEditionController.GetFiltred(PrintingEditionsRequestFilterModel filter) in C:\source\Store-Development\Store.Presentation\Controllers\PrintingEditionController.cs:line 30
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 1 
+ System.NullReferenceException: Object reference not set to an instance of an object.
+   at Store.BuisnessLogic.Helpers.Mapper`2.Map(TDestination destination, TSource source) in C:\source\Store-Development\Store.BuisnessLogicLayer\Helpers\Mappers\Mapper.cs:line 11
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.GetAuthorsAsync(PrintingEdition pe) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 43
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.FilterAsync(PrintingEditionsRequestFilterModel filterModel) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 93
+   at Store.Presentation.Controllers.PrintingEditionController.GetFiltred(PrintingEditionsRequestFilterModel filter) in C:\source\Store-Development\Store.Presentation\Controllers\PrintingEditionController.cs:line 30
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 1 
+ System.NullReferenceException: Object reference not set to an instance of an object.
+   at Store.BuisnessLogic.Helpers.Mapper`2.Map(TDestination destination, TSource source) in C:\source\Store-Development\Store.BuisnessLogicLayer\Helpers\Mappers\Mapper.cs:line 11
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.AddToAuthorAsync(PrintingEditionModel printingEditionModel, IEnumerable`1 authorModels) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 106
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.EditAsync(PrintingEditionModel peModel) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 79
+   at Store.Presentation.Controllers.PrintingEditionController.Edit(PrintingEditionModel pe) in C:\source\Store-Development\Store.Presentation\Controllers\PrintingEditionController.cs:line 54
+   at lambda_method(Closure , Object )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutorAwaitable.Awaiter.GetResult()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.AwaitableResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 1 
+ System.NullReferenceException: Object reference not set to an instance of an object.
+   at Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers.PrintingEditionRequestFilterMapper.Map(PrintingEditionsRequestFilterModel filterModel) in C:\source\Store-Development\Store.BuisnessLogicLayer\Helpers\Mappers\RequestFilterMappers\PrintingEditionRequestFilterMapper.cs:line 13
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.FilterAsync(PrintingEditionsRequestFilterModel filterModel) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 87
+   at Store.Presentation.Controllers.PrintingEditionController.GetFiltred(PrintingEditionsRequestFilterModel filter) in C:\source\Store-Development\Store.Presentation\Controllers\PrintingEditionController.cs:line 30
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 1 
+ System.NullReferenceException: Object reference not set to an instance of an object.
+   at Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers.PrintingEditionRequestFilterMapper.Map(PrintingEditionsRequestFilterModel filterModel) in C:\source\Store-Development\Store.BuisnessLogicLayer\Helpers\Mappers\RequestFilterMappers\PrintingEditionRequestFilterMapper.cs:line 13
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.FilterAsync(PrintingEditionsRequestFilterModel filterModel) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 87
+   at Store.Presentation.Controllers.PrintingEditionController.GetFiltred(PrintingEditionsRequestFilterModel filter) in C:\source\Store-Development\Store.Presentation\Controllers\PrintingEditionController.cs:line 30
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 1 
+ System.NullReferenceException: Object reference not set to an instance of an object.
+   at Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers.PrintingEditionRequestFilterMapper.Map(PrintingEditionsRequestFilterModel filterModel) in C:\source\Store-Development\Store.BuisnessLogicLayer\Helpers\Mappers\RequestFilterMappers\PrintingEditionRequestFilterMapper.cs:line 13
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.FilterAsync(PrintingEditionsRequestFilterModel filterModel) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 87
+   at Store.Presentation.Controllers.PrintingEditionController.GetFiltred(PrintingEditionsRequestFilterModel filter) in C:\source\Store-Development\Store.Presentation\Controllers\PrintingEditionController.cs:line 30
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 1 
+ System.ArgumentNullException: Value cannot be null. (Parameter 'input')
+   at System.Guid.Parse(String input)
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.GetByIdAsync(String id) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 51
+   at Store.Presentation.Controllers.PrintingEditionController.GetById(String id) in C:\source\Store-Development\Store.Presentation\Controllers\PrintingEditionController.cs:line 30
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 2 
+ System.ArgumentNullException: Value cannot be null. (Parameter 'input')
+   at System.Guid.Parse(String input)
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.GetByIdAsync(String id) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 51
+   at Store.Presentation.Controllers.PrintingEditionController.GetById(String id) in C:\source\Store-Development\Store.Presentation\Controllers\PrintingEditionController.cs:line 30
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 3 
+ System.ArgumentNullException: Value cannot be null. (Parameter 'input')
+   at System.Guid.Parse(String input)
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.GetByIdAsync(String id) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 51
+   at Store.Presentation.Controllers.PrintingEditionController.GetById(String id) in C:\source\Store-Development\Store.Presentation\Controllers\PrintingEditionController.cs:line 30
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 4 
+ System.ArgumentNullException: Value cannot be null. (Parameter 'input')
+   at System.Guid.Parse(String input)
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.GetByIdAsync(String id) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 51
+   at Store.Presentation.Controllers.PrintingEditionController.GetById(String id) in C:\source\Store-Development\Store.Presentation\Controllers\PrintingEditionController.cs:line 30
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 5 
+ System.ArgumentNullException: Value cannot be null. (Parameter 'input')
+   at System.Guid.Parse(String input)
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.GetByIdAsync(String id) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 51
+   at Store.Presentation.Controllers.PrintingEditionController.GetById(String id) in C:\source\Store-Development\Store.Presentation\Controllers\PrintingEditionController.cs:line 30
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 6 
+ System.ArgumentNullException: Value cannot be null. (Parameter 'input')
+   at System.Guid.Parse(String input)
+   at Store.BuisnessLogicLayer.Services.PrintingEditionService.GetByIdAsync(String id) in C:\source\Store-Development\Store.BuisnessLogicLayer\Services\PrintingEditionService.cs:line 51
+   at Store.Presentation.Controllers.PrintingEditionController.GetById(String id) in C:\source\Store-Development\Store.Presentation\Controllers\PrintingEditionController.cs:line 30
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 7 
+ System.Text.Json.JsonException: A possible object cycle was detected which is not supported. This can either be due to a cycle or if the object depth is larger than the maximum allowed depth of 32.
+   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_SerializerCycleDetected(Int32 maxDepth)
+   at System.Text.Json.JsonSerializer.Write(Utf8JsonWriter writer, Int32 originalWriterDepth, Int32 flushThreshold, JsonSerializerOptions options, WriteStack& state)
+   at System.Text.Json.JsonSerializer.WriteAsyncCore(Stream utf8Json, Object value, Type inputType, JsonSerializerOptions options, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonOutputFormatter.WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+   at Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonOutputFormatter.WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeResultAsync>g__Logged|21_0(ResourceInvoker invoker, IActionResult result)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeResultFilters>g__Awaited|27_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 8 
+ System.Text.Json.JsonException: A possible object cycle was detected which is not supported. This can either be due to a cycle or if the object depth is larger than the maximum allowed depth of 32.
+   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_SerializerCycleDetected(Int32 maxDepth)
+   at System.Text.Json.JsonSerializer.Write(Utf8JsonWriter writer, Int32 originalWriterDepth, Int32 flushThreshold, JsonSerializerOptions options, WriteStack& state)
+   at System.Text.Json.JsonSerializer.WriteAsyncCore(Stream utf8Json, Object value, Type inputType, JsonSerializerOptions options, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonOutputFormatter.WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+   at Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonOutputFormatter.WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeResultAsync>g__Logged|21_0(ResourceInvoker invoker, IActionResult result)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeResultFilters>g__Awaited|27_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 9 
+ System.Text.Json.JsonException: A possible object cycle was detected which is not supported. This can either be due to a cycle or if the object depth is larger than the maximum allowed depth of 32.
+   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_SerializerCycleDetected(Int32 maxDepth)
+   at System.Text.Json.JsonSerializer.Write(Utf8JsonWriter writer, Int32 originalWriterDepth, Int32 flushThreshold, JsonSerializerOptions options, WriteStack& state)
+   at System.Text.Json.JsonSerializer.WriteAsyncCore(Stream utf8Json, Object value, Type inputType, JsonSerializerOptions options, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonOutputFormatter.WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+   at Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonOutputFormatter.WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeResultAsync>g__Logged|21_0(ResourceInvoker invoker, IActionResult result)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeResultFilters>g__Awaited|27_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 10 
+ System.Text.Json.JsonException: A possible object cycle was detected which is not supported. This can either be due to a cycle or if the object depth is larger than the maximum allowed depth of 32.
+   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_SerializerCycleDetected(Int32 maxDepth)
+   at System.Text.Json.JsonSerializer.Write(Utf8JsonWriter writer, Int32 originalWriterDepth, Int32 flushThreshold, JsonSerializerOptions options, WriteStack& state)
+   at System.Text.Json.JsonSerializer.WriteAsyncCore(Stream utf8Json, Object value, Type inputType, JsonSerializerOptions options, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonOutputFormatter.WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+   at Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonOutputFormatter.WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeResultAsync>g__Logged|21_0(ResourceInvoker invoker, IActionResult result)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeResultFilters>g__Awaited|27_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23
+ Error 11 
+ System.Text.Json.JsonException: A possible object cycle was detected which is not supported. This can either be due to a cycle or if the object depth is larger than the maximum allowed depth of 32.
+   at System.Text.Json.ThrowHelper.ThrowInvalidOperationException_SerializerCycleDetected(Int32 maxDepth)
+   at System.Text.Json.JsonSerializer.Write(Utf8JsonWriter writer, Int32 originalWriterDepth, Int32 flushThreshold, JsonSerializerOptions options, WriteStack& state)
+   at System.Text.Json.JsonSerializer.WriteAsyncCore(Stream utf8Json, Object value, Type inputType, JsonSerializerOptions options, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonOutputFormatter.WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+   at Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonOutputFormatter.WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeResultAsync>g__Logged|21_0(ResourceInvoker invoker, IActionResult result)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeResultFilters>g__Awaited|27_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Store.Presentation.Middlewares.LoggerMiddleware.Invoke(HttpContext context) in C:\source\Store-Development\Store.Presentation\Middlewares\LoggerMiddleware.cs:line 23

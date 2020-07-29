@@ -4,15 +4,11 @@ using Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers;
 using Store.BuisnessLogic.Models.Filters.ResponseFilters;
 using Store.BuisnessLogicLayer.Models.Authors;
 using Store.BuisnessLogicLayer.Models.Filters;
-using Store.BuisnessLogicLayer.Models.PrintingEditions;
 using Store.BuisnessLogicLayer.Services.Interfaces;
-using Store.DataAccess.Filters.ResponseFulters;
 using Store.DataAccessLayer.Entities;
-using Store.DataAccessLayer.Filters;
 using Store.DataAccessLayer.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Store.BuisnessLogicLayer.Services
