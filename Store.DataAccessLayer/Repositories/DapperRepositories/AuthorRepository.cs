@@ -1,0 +1,75 @@
+﻿using Dapper;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Store.DataAccess.Filters.ResponseFulters;
+using Store.DataAccess.Repositories.Base;
+using Store.DataAccessLayer.Entities;
+using Store.DataAccessLayer.Filters;
+using Store.DataAccessLayer.Repositories.Interfaces;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Store.DataAccess.Repositories.DapperRepositories
+{
+    public class AuthorRepository : BaseDapperRepository<Author>, IAuthorRepository
+    {
+        public AuthorRepository(IConfiguration configuration) : base(configuration)
+        {
+        }
+
+        public async Task<AuthorResponseFilter> FilterAsync(AuthorRequestFilter filter)
+        {
+            var query = $"SELECT * FROM {TableName} WHERE IsRemoved != 1";
+            var queryableAuthors = _dbContext.Query<Author>(query).AsQueryable()
+                .OrderBy(filter.PropName, filter.SortType.ToString());
+            var authors = queryableAuthors.Skip(filter.Paging.ItemsCount * filter.Paging.CurrentPage)
+                .Take(filter.Paging.ItemsCount).ToList();
+            foreach (var author in authors)
+            {
+                author.PrintingEditions = await GetPrintingEditionsAsync(author);
+            }
+            query = $"SELECT COUNT(*) FROM {TableName} WHERE IsRemoved != 1";
+            var totalCount = _dbContext.Query<int>(query).FirstOrDefault();
+            var result = new AuthorResponseFilter
+            {
+                Authors = authors,
+                TotalCount = totalCount
+            };
+            return result;
+        }
+
+        public async Task<Author> FindAuthorByNameAsync(string name)
+        {
+            var query = $"SELECT * FROM {TableName} WHERE Name = '{name}'";
+            var author = await _dbContext.QueryFirstOrDefaultAsync<Author>(query);
+            return author;
+        }
+
+        public override async Task<Author> UpdateAsync(Author model)
+        {
+            var query = $"UPDATE {TableName} SET Name = '{model.Name}' WHERE Id = '{model.Id}'";
+            var author = await _dbContext.QueryFirstOrDefaultAsync<Author>(query);
+            return author;
+        }
+
+        public async Task<List<PrintingEdition>> GetPrintingEditionsAsync(Author author)
+        {
+            var query = $"SELECT * FROM AuthorInPrintingEditions WHERE AuthorId = '{author.Id}'";
+            var authorInPrintingEditions = await _dbContext.QueryAsync<AuthorInPrintingEdition>(query);
+            var printingEditions = new List<PrintingEdition>();
+            foreach (var aInPe in authorInPrintingEditions)
+            {
+                query = $"SELECT * FROM PrintingEditions WHERE Id = '{aInPe.PrintingEditionId}' and IsRemoved != 1";
+                var pe = await _dbContext.QueryFirstOrDefaultAsync<PrintingEdition>(query);
+                if (pe != null)
+                {
+                    printingEditions.Add(pe);
+                }
+            }
+            return printingEditions;
+        }
+    }
+}

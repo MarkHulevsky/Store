@@ -75,6 +75,7 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
         public new async Task<IdentityResult> UpdateAsync(User editedUser)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == editedUser.Id);
+            user.IsActive = editedUser.IsActive;
             user.FirstName = editedUser.FirstName;
             user.LastName= editedUser.LastName;
             user.Email = editedUser.Email;

@@ -19,6 +19,5 @@ namespace Store.DataAccessLayer.Repositories.Interfaces
         Task<List<string>> GetRolesAsync(User user);
         Task<SignInResult> SignInAsync(User user);
         Task SignOutAsync();
-
     }
 }

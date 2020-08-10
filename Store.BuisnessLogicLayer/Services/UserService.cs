@@ -7,9 +7,7 @@ using Store.BuisnessLogicLayer.Models.Base;
 using Store.BuisnessLogicLayer.Models.Filters;
 using Store.BuisnessLogicLayer.Models.Users;
 using Store.BuisnessLogicLayer.Services.Interfaces;
-using Store.DataAccess.Filters;
 using Store.DataAccessLayer.Entities;
-using Store.DataAccessLayer.Filters;
 using Store.DataAccessLayer.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -45,20 +43,6 @@ namespace Store.BuisnessLogicLayer.Services
             var userResponse = _userRepository.Filter(filter);
             var userResponseModel = UserResponseFilterMapper.Map(userResponse);
             return userResponseModel;
-        }
-
-        public async Task<List<UserModel>> GetAllAsync()
-        {
-            var users = await _userRepository.GetAllAsync();
-            var userModels = new List<UserModel>();
-
-            users.ForEach(u =>
-            {
-                var userModel = _userModelMapper.Map(new UserModel(), u);
-                userModels.Add(userModel);
-            });
-
-            return userModels;
         }
 
         public async Task ChangeStatusAsync(UserModel userModel)

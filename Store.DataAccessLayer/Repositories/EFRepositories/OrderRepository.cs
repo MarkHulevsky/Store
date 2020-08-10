@@ -44,18 +44,18 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
             return entity;
         }
 
-        public async Task<OrderResponseFilter> FilterAsync(OrderRequestFilter filter)
+        public OrderResponseFilter Filter(OrderRequestFilter filter)
         {
-            var query = _dbContext.Orders.Where(o => !o.IsRemoved).AsQueryable();
+            var query = _dbContext.Orders.Where(o => !o.IsRemoved);
             var uQuery = new List<Order>().AsQueryable();
-            foreach (var order in query)
+            foreach (var status in filter.OrderStatuses)
             {
-                uQuery = uQuery.Concat(query.Where(o => o.Status == order.Status));
+                uQuery = uQuery.Concat(query.Where(o => o.Status == status));
             }
             query = uQuery;
             query = query.OrderBy(filter.PropName, $"{filter.SortType}");
-            var orders = await query.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
-                .Take(filter.Paging.ItemsCount).ToListAsync();
+            var orders = query.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
+                .Take(filter.Paging.ItemsCount).ToList();
             var result = new OrderResponseFilter
             {
                 Orders = orders,
@@ -66,8 +66,14 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
 
         public async Task<List<Order>> GetUserOrdersAsync(Guid userId)
         {
-            return await _dbContext.Orders.Include(o => o.OrderItems)
-                .Where(o => o.UserId == userId && !o.IsRemoved).ToListAsync();
+            var orders = await _dbContext.Orders.Where(order => order.UserId == userId).ToListAsync();
+            return orders;
+        }
+
+        public List<OrderItem> GetOrderItems(Guid orderId)
+        {
+            var orderItems = _dbContext.OrderItems.Where(orderItem => orderItem.OrderId == orderId).ToList();
+            return orderItems;
         }
     }
 }

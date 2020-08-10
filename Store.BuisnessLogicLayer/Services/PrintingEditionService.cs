@@ -54,20 +54,6 @@ namespace Store.BuisnessLogicLayer.Services
             return peModel;
         }
 
-        public async Task<List<PrintingEditionModel>> GetAllAsync()
-        {
-            var printingEditions = await _printingEditionRepository.GetAllAsync();
-            var printingEditionModels = new List<PrintingEditionModel>();
-            foreach (var pe in printingEditions)
-            {
-                var authorModels = await GetAuthorsAsync(pe);
-                var peModel = _printingEditionModelMapper.Map(new PrintingEditionModel(), pe);
-                peModel.Authors = authorModels;
-                printingEditionModels.Add(peModel);
-            }
-            return printingEditionModels;
-        }
-
         public async Task<PrintingEdition> CreateAsync(PrintingEditionModel peModel)
         {
             var pe = _printingEditionMapper.Map(new PrintingEdition(), peModel);

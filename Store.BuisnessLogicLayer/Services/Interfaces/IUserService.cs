@@ -16,6 +16,5 @@ namespace Store.BuisnessLogicLayer.Services.Interfaces
         Task<BaseModel> EditAsync(UserModel userModel);
         Task ChangeStatusAsync(UserModel userModel);
         Task RemoveAsync(Guid userId);
-        Task<List<UserModel>> GetAllAsync();
     }
 }

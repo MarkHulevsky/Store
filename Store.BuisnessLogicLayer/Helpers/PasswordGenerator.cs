@@ -7,9 +7,7 @@ namespace Store.BuisnessLogicLayer.Helpers
     {
         private const string pattern = @"[a-z0-9A-Z]";
         private const int _passwordLength = 10;
-        static PasswordGenerator()
-        {
-        }
+
         public static string GeneratePassword()
         {
             var rand = new Random();

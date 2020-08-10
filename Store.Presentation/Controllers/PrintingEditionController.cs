@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using Store.BuisnessLogicLayer.Models.Filters;
 using Store.BuisnessLogicLayer.Models.PrintingEditions;
 using Store.BuisnessLogicLayer.Services.Interfaces;
+using Store.Presentation.Helpers.Interfaces;
 using System;
 using System.Threading.Tasks;
 
@@ -13,15 +16,14 @@ namespace Store.Presentation.Controllers
     public class PrintingEditionController : Controller
     {
         private readonly IPrintingEditionService _printingEditionService;
-        public PrintingEditionController(IPrintingEditionService printingEditionService)
+        private readonly IConfiguration _configuration;
+        private readonly IHttpHelper _http;
+        public PrintingEditionController(IPrintingEditionService printingEditionService, 
+            IConfiguration configuration, IHttpHelper http)
         {
             _printingEditionService = printingEditionService;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            return Ok(await _printingEditionService.GetAllAsync());
+            _configuration = configuration;
+            _http = http;
         }
 
         [HttpGet]
@@ -29,6 +31,17 @@ namespace Store.Presentation.Controllers
         {
             var pe = await _printingEditionService.GetByIdAsync(id);
             return Ok(pe);
+        }
+
+        [HttpGet("{currentCurrency}/{newCurrency}")]
+        public async Task<IActionResult> ConvertCurrency(string currentCurrency, string newCurrency)
+        {
+            var baseUrl = _configuration.GetSection("CurrencyOprion")["Url"];
+            var url = $@"{baseUrl}?base={currentCurrency}&symbols={newCurrency}";
+            var jsonResult = JObject.Parse(await _http.GetHttpContent(url));
+            var rate = jsonResult["rates"][newCurrency];
+            var result = (float)rate;
+            return Ok(result);
         }
 
         [HttpPost]
@@ -60,5 +73,7 @@ namespace Store.Presentation.Controllers
         {
             await _printingEditionService.EditAsync(pe);
         }
+
+        
     }
 }

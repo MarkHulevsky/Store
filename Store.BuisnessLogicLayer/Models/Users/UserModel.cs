@@ -1,7 +1,6 @@
 ﻿using Store.BuisnessLogicLayer.Models.Base;
 using Store.BuisnessLogicLayer.Models.Orders;
 using System.Collections.Generic;
-using static Store.BuisnessLogicLayer.Models.Enums.Enums;
 
 namespace Store.BuisnessLogicLayer.Models.Users
 {

@@ -23,12 +23,14 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetUserOrders()
         {
-            return Ok(await _orderService.GetAllAsync());
+            var currentUser = await _userService.GetCurrentAsync(HttpContext.User);
+            var orders = await _orderService.GetUserOrdersAsync(currentUser.Id);
+            return Ok(orders);
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> GetFiltred([FromBody]OrderRequestFilterModel filter)
         {
             var ordersResponse = await _orderService.FilterAsync(filter);

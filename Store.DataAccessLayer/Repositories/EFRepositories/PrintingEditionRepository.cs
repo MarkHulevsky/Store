@@ -20,19 +20,10 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
 
         public PrintingEditionResponseFilter Filter(PrintingEditionsRequestFilter filter)
         {
-            var query = _dbContext.PrintingEditions.Include(pe => pe.AuthorInPrintingEditions)
-                .ThenInclude(aInPe => aInPe.Author)
+            var query = _dbContext.PrintingEditions
                 .Where(pe => !pe.IsRemoved && EF.Functions.Like(pe.Title, $"%{filter.SearchString}%"));
 
             var uQuery = new List<PrintingEdition>().AsQueryable();
-
-            foreach (var curency in filter.Currencies)
-            {
-                uQuery = uQuery.Concat(query.Where(pe => pe.Currency == curency));
-            }
-
-            query = uQuery;
-            uQuery = new List<PrintingEdition>().AsQueryable();
 
             foreach (var type in filter.Types)
             {
@@ -69,11 +60,6 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
             entity = _dbContext.PrintingEditions.Update(entity).Entity;
             await _dbContext.SaveChangesAsync();
             return entity;
-        }
-
-        public async Task<PrintingEdition> FindByTitleAsync(string title)
-        {
-            return await _dbContext.PrintingEditions.FirstOrDefaultAsync(pe => pe.Title == title);
         }
 
         public async Task<List<Author>> GetAuthorsAsync(PrintingEdition printingEdition)

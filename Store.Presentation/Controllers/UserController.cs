@@ -32,13 +32,6 @@ namespace Store.Presentation.Controllers
         }
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpGet]
-        public async Task<IActionResult> GetUsers()
-        {
-            return Ok(await _userService.GetAllAsync());
-        }
-
-        [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         public IActionResult GetFiltred([FromBody] UserRequestFilterModel filter)
         {

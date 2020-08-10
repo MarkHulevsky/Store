@@ -11,6 +11,7 @@ namespace Store.DataAccessLayer.Repositories.Interfaces
     {
         Task AddToPaymentAsync(Guid paymentId, Guid orderId);
         Task<List<Order>> GetUserOrdersAsync(Guid userId);
-        Task<OrderResponseFilter> FilterAsync(OrderRequestFilter filter);
+        OrderResponseFilter Filter(OrderRequestFilter filter);
+        List<OrderItem> GetOrderItems(Guid orderId);
     }
 }

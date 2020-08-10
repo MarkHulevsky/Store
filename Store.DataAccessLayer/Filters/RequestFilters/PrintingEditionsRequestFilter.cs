@@ -10,7 +10,6 @@ namespace Store.DataAccessLayer.Filters
         public float MinPrice { get; set; }
         public float MaxPrice { get; set; }
         public string SearchString { get; set; }
-        public List<Currency> Currencies { get; set; } = new List<Currency>();
         public PrintingEditionsRequestFilter()
         {
             Paging = new Paging

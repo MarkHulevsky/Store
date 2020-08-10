@@ -6,6 +6,6 @@ namespace Store.DataAccess.Filters.ResponseFulters
 {
     public class OrderResponseFilter: BaseResponseFilter
     {
-        public IEnumerable<Order> Orders { get; set; } = new List<Order>();
+        public List<Order> Orders { get; set; } = new List<Order>();
     }
 }

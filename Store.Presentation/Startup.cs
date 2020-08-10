@@ -14,10 +14,10 @@ using Store.BuisnessLogicLayer.Common.Interfaces;
 using Store.BuisnessLogicLayer.Helpers;
 using Store.BuisnessLogicLayer.Services;
 using Store.BuisnessLogicLayer.Services.Interfaces;
+using Store.DataAccess.Repositories.DapperRepositories;
 using Store.DataAccessLayer.AppContext;
 using Store.DataAccessLayer.Entities;
 using Store.DataAccessLayer.Initialization;
-using Store.DataAccessLayer.Repositories.EFRepositories;
 using Store.DataAccessLayer.Repositories.Interfaces;
 using Store.Presentation.Helpers;
 using Store.Presentation.Helpers.Interfaces;
@@ -25,7 +25,6 @@ using Store.Presentation.Middlewares;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using IdentityServer4;
 
 namespace Store.Presentation
 {
@@ -56,6 +55,7 @@ namespace Store.Presentation
             services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<IPrintingEditionService, PrintingEditionService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IHttpHelper, HttpHelper>();
 
             services.AddDbContext<ApplicationContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));

@@ -15,10 +15,7 @@ namespace Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers
             filter.SearchString = filterModel.SearchString;
             filter.SortType = (SortType)filterModel.SortType;
             filter.Paging = _pagingMapper.Map(new Paging(), filterModel.Paging);
-            foreach(var currency in filterModel.Currencies)
-            {
-                filter.Currencies.Add((Currency)currency);
-            }
+
             foreach(var type in filterModel.Types)
             {
                 filter.Types.Add((PrintingEditionType)type);

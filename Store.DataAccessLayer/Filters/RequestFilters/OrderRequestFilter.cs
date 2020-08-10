@@ -7,7 +7,7 @@ namespace Store.DataAccessLayer.Filters
     public class OrderRequestFilter: BaseRequestFilter
     {
         public string PropName { get; set; }
-        public List<OrderStatus> OrderStatuses { get; set; }
+        public List<OrderStatus> OrderStatuses { get; set; } = new List<OrderStatus>();
 
         public OrderRequestFilter()
         {

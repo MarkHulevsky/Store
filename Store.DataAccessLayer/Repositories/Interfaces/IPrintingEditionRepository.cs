@@ -10,6 +10,5 @@ namespace Store.DataAccessLayer.Repositories.Interfaces
     {
         PrintingEditionResponseFilter Filter(PrintingEditionsRequestFilter filter);
         Task<List<Author>> GetAuthorsAsync(PrintingEdition printingEdition);
-        Task<PrintingEdition> FindByTitleAsync(string title);
     }
 }
