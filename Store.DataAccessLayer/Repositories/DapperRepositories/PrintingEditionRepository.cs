@@ -42,8 +42,8 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
             var printingEditions = queryblePrintingEditions.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
                 .Take(filter.Paging.ItemsCount).ToList();
-            query = $"SELECT COUNT(*) FROM {TableName}";
-            var totalCount = _dbContext.Query<int>(query).FirstOrDefault();
+            query = $"SELECT COUNT(*) FROM {TableName} WHERE IsRemoved = 0";
+            var totalCount = _dbContext.QueryFirstOrDefault<int>(query);
 
             var result = new PrintingEditionResponseFilter
             {

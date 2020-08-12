@@ -24,8 +24,8 @@
         public enum PrintingEditionType
         {
             Book = 1,
-            Newspapers = 2,
-            Magazines = 3
+            Newspaper = 2,
+            Magazine = 3
         }
         public enum SortType
         {

@@ -65,7 +65,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             var orders = querybaleOrders.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
                 .Take(filter.Paging.ItemsCount).ToList();
 
-            query = $"SELECT COUNT(*) FROM {TableName}";
+            query = $"SELECT COUNT(*) FROM {TableName} WHERE IsRemoved = 0";
             var totalCount = _dbContext.Query<int>(query).FirstOrDefault();
             var result = new OrderResponseFilter
             {

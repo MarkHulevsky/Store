@@ -122,7 +122,7 @@ namespace Store.Presentation
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, UserManager<User> userManager,
-            RoleManager<IdentityRole<Guid>> roleManager)
+            RoleManager<IdentityRole<Guid>> roleManager, ApplicationContext dbContext)
         {
             if (env.IsDevelopment())
             {
@@ -150,7 +150,7 @@ namespace Store.Presentation
 
             app.UseMiddleware<LoggerMiddleware>();
 
-            var dataBaseInitializer = new DataBaseInitializer(userManager, roleManager);
+            var dataBaseInitializer = new DataBaseInitializer(userManager, roleManager, dbContext);
 
             dataBaseInitializer.InitializeDb();
 
