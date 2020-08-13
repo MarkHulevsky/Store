@@ -26,20 +26,20 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetFiltred([FromBody]AuthorRequestFilterModel filterModel)
+        public async Task<IActionResult> GetFiltred([FromBody] AuthorRequestFilterModel filterModel)
         {
             var authorsResponse = await _authorService.FilterAsync(filterModel);
-             return Ok(authorsResponse);
+            return Ok(authorsResponse);
         }
 
         [HttpPost]
-        public async Task Add([FromBody]AuthorModel authorModel)
+        public async Task Add([FromBody] AuthorModel authorModel)
         {
             await _authorService.CreateAsync(authorModel);
         }
 
         [HttpPut]
-        public async Task Edit([FromBody]AuthorModel authorModel)
+        public async Task Edit([FromBody] AuthorModel authorModel)
         {
             await _authorService.EditAsync(authorModel);
         }

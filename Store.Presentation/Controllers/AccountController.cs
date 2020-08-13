@@ -2,10 +2,10 @@
 using Store.BuisnessLogic.Helpers;
 using Store.BuisnessLogic.Models.Token;
 using Store.BuisnessLogicLayer.Helpers;
+using Store.BuisnessLogicLayer.Models.Account;
 using Store.BuisnessLogicLayer.Models.Users;
 using Store.BuisnessLogicLayer.Services.Interfaces;
 using Store.Presentation.Helpers.Interfaces;
-using Store.Presentation.Models.AccountModels;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,7 +30,7 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ForgotPassword([FromBody]ForgotPasswordViewModel model)
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordModel model)
         {
             var userModel = await _accountService.FindByEmailAsync(model.Email);
             if (userModel != null)
@@ -38,8 +38,8 @@ namespace Store.Presentation.Controllers
                 var token = await _accountService.GetForgotPasswordTokenAsync(model.Email);
                 string newPassword = PasswordGenerator.GeneratePassword();
 
-                var result = await _accountService.ResetPasswordAsync(model.Email, token, newPassword);  
-                
+                var result = await _accountService.ResetPasswordAsync(model.Email, token, newPassword);
+
                 if (result.Errors.Count > 0)
                 {
                     userModel.Errors = result.Errors;
@@ -54,7 +54,7 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public IActionResult RefreshToken([FromBody]JwtTokenModel refreshTokenModel)
+        public IActionResult RefreshToken([FromBody] JwtTokenModel refreshTokenModel)
         {
             var jwtToken = new JwtTokenModel();
             var principal = _jwtHelper.GetPrincipalFromExpiredToken(refreshTokenModel.AccessToken);
@@ -64,12 +64,12 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignUp([FromBody] RegisterViewModel model)
+        public async Task<IActionResult> SignUp([FromBody] RegisterModel model)
         {
             var userModel = new UserModel();
             if (ModelState.IsValid)
-            { 
-                var userModelMapper = new Mapper<RegisterViewModel, UserModel>();
+            {
+                var userModelMapper = new Mapper<RegisterModel, UserModel>();
                 userModel = userModelMapper.Map(new UserModel(), model);
 
                 var result = await _accountService.RegisterAsync(userModel);
@@ -98,7 +98,7 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignIn([FromBody] LoginViewModel model)
+        public async Task<IActionResult> SignIn([FromBody] LoginModel model)
         {
             var userModel = new UserModel
             {

@@ -1,9 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace Store.Presentation.Models.AccountModels
+namespace Store.BuisnessLogicLayer.Models.Users
 {
-    public class RegisterViewModel
+    public class EditProfileModel
     {
+        public Guid Id { get; set; }
         [Required(ErrorMessage = "Email required")]
         [EmailAddress(ErrorMessage = "Required email address format")]
         public string Email { get; set; }

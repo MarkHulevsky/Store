@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Store.DataAccessLayer.Repositories.Interfaces
 {
-    public interface IOrderRepository: IRepository<Order>
+    public interface IOrderRepository : IRepository<Order>
     {
         Task AddToPaymentAsync(Guid paymentId, Guid orderId);
         Task<List<Order>> GetUserOrdersAsync(Guid userId);

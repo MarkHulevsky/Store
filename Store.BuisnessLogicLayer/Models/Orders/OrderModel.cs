@@ -6,7 +6,7 @@ using static Store.BuisnessLogicLayer.Models.Enums.Enums;
 
 namespace Store.BuisnessLogicLayer.Models.Orders
 {
-    public class OrderModel: BaseModel
+    public class OrderModel : BaseModel
     {
         public DateTime CreationDate { get; set; }
         public OrderStatus Status { get; set; }

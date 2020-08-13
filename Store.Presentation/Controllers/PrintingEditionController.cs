@@ -18,7 +18,7 @@ namespace Store.Presentation.Controllers
         private readonly IPrintingEditionService _printingEditionService;
         private readonly IConfiguration _configuration;
         private readonly IHttpHelper _http;
-        public PrintingEditionController(IPrintingEditionService printingEditionService, 
+        public PrintingEditionController(IPrintingEditionService printingEditionService,
             IConfiguration configuration, IHttpHelper http)
         {
             _printingEditionService = printingEditionService;
@@ -74,6 +74,6 @@ namespace Store.Presentation.Controllers
             await _printingEditionService.EditAsync(pe);
         }
 
-        
+
     }
 }

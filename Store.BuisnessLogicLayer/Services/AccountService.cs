@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Store.BuisnessLogicLayer.Services
 {
-    public class AccountService: IAccountService
+    public class AccountService : IAccountService
     {
         private const string userRoleName = "user";
         private readonly IUserRepository _userRepository;
@@ -68,11 +68,11 @@ namespace Store.BuisnessLogicLayer.Services
         public async Task<UserModel> FindByEmailAsync(string email)
         {
             var user = await _userRepository.FindByEmailAsync(email);
-            if (user != null)
+            if (user == null)
             {
-                return _userModelMapper.Map(new UserModel(), user);
+                return null;
             }
-            return null;
+            return _userModelMapper.Map(new UserModel(), user);
         }
 
         public async Task<IdentityResult> RegisterAsync(UserModel userModel)
@@ -97,25 +97,26 @@ namespace Store.BuisnessLogicLayer.Services
         public async Task ConfirmEmail(string userEmail)
         {
             var user = await _userRepository.FindByEmailAsync(userEmail);
-            if (user != null)
+            if (user == null)
             {
-                user.EmailConfirmed = true;
-                await _userRepository.UpdateAsync(user);
-                var userModel = _userModelMapper.Map(new UserModel(), user);
-                await LoginAsync(userModel);
+                return;
             }
+            user.EmailConfirmed = true;
+            await _userRepository.UpdateAsync(user);
+            var userModel = _userModelMapper.Map(new UserModel(), user);
+            await LoginAsync(userModel);
         }
 
         public async Task<bool> LoginAsync(UserModel userModel)
         {
-            var user = await  _userRepository.FindByEmailAsync(userModel.Email);
-            if (user != null)
+            var user = await _userRepository.FindByEmailAsync(userModel.Email);
+            if (user == null)
             {
-                user.Password = userModel.Password;
-                var result = await _userRepository.SignInAsync(user);
-                return result.Succeeded;
+                return false;
             }
-            return false;
+            user.Password = userModel.Password;
+            var result = await _userRepository.SignInAsync(user);
+            return result.Succeeded;
         }
 
         public async Task LogoutAsync()

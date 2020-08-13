@@ -1,14 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Store.DataAccess.Filters.ResponseFulters;
 using Store.DataAccessLayer.AppContext;
 using Store.DataAccessLayer.Entities;
+using Store.DataAccessLayer.Filters;
 using Store.DataAccessLayer.Repositories.Base;
 using Store.DataAccessLayer.Repositories.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Store.DataAccessLayer.Filters;
-using Store.DataAccess.Filters.ResponseFulters;
-using System;
 
 namespace Store.DataAccessLayer.Repositories.EFRepositories
 {
@@ -61,11 +60,11 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
             var printingEditions = new List<PrintingEdition>();
             foreach (var aInPe in authorInPrintingEditions)
             {
-                var pe = _dbContext.PrintingEditions.FirstOrDefault(pe => pe.Id == aInPe.PrintingEditionId 
+                var printingEdition = _dbContext.PrintingEditions.FirstOrDefault(pe => pe.Id == aInPe.PrintingEditionId
                 && !pe.IsRemoved);
-                if (pe != null)
+                if (printingEdition != null)
                 {
-                    printingEditions.Add(pe);
+                    printingEditions.Add(printingEdition);
                 }
             }
             return printingEditions;

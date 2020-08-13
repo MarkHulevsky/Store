@@ -13,7 +13,7 @@ namespace Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers
             filter.PropName = filterModel.PropName;
             filter.SortType = (SortType)filterModel.SortType;
             filter.Paging = _pagingMapper.Map(new Paging(), filterModel.Paging);
-            foreach(var status in filterModel.OrderStatuses)
+            foreach (var status in filterModel.OrderStatuses)
             {
                 filter.OrderStatuses.Add((OrderStatus)status);
             }

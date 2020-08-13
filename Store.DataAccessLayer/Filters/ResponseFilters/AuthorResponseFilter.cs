@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Store.DataAccess.Filters.ResponseFulters
 {
-    public class AuthorResponseFilter: BaseResponseFilter
+    public class AuthorResponseFilter : BaseResponseFilter
     {
         public IEnumerable<Author> Authors { get; set; } = new List<Author>();
     }

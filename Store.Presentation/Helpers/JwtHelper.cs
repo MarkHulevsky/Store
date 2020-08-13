@@ -52,7 +52,7 @@ namespace Store.Presentation.Helpers
             SecurityToken securityToken;
             var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
             var jwtSecurityToken = securityToken as JwtSecurityToken;
-            if (jwtSecurityToken == null || 
+            if (jwtSecurityToken == null ||
                 !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             {
                 throw new SecurityTokenException("Invalid token");
@@ -65,7 +65,7 @@ namespace Store.Presentation.Helpers
         {
             var user = await _accountService.FindByEmailAsync(userModel.Email);
             var roles = await _accountService.GetRolesAsync(user.Email);
-            
+
             var accessClaims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),

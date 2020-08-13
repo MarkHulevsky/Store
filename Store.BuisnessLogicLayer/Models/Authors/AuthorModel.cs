@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Store.BuisnessLogicLayer.Models.Authors
 {
-    public class AuthorModel: BaseModel
+    public class AuthorModel : BaseModel
     {
         public string Name { get; set; }
         public List<PrintingEditionModel> PrintingEditions { get; set; } = new List<PrintingEditionModel>();

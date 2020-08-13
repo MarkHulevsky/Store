@@ -1,15 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Store.Presentation.Models.AccountModels
+namespace Store.BuisnessLogicLayer.Models.Account
 {
-    public class LoginViewModel
+    public class ForgotPasswordModel
     {
         [Required(ErrorMessage = "Email required")]
         [EmailAddress(ErrorMessage = "Required email address format")]
         public string Email { get; set; }
-
-        [Required(ErrorMessage = "Password required")]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
     }
 }

@@ -117,7 +117,7 @@ namespace Store.Presentation
 
             services.AddSwaggerGen(option =>
             {
-                option.SwaggerDoc("v1", new OpenApiInfo{ Title = "Store API", Version = "v1" });
+                option.SwaggerDoc("v1", new OpenApiInfo { Title = "Store API", Version = "v1" });
             });
         }
 

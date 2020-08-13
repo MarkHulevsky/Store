@@ -2,7 +2,7 @@
 
 namespace Store.DataAccessLayer.Repositories.Interfaces
 {
-    public interface IPaymentRepository: IRepository<Payment>
+    public interface IPaymentRepository : IRepository<Payment>
     {
     }
 }

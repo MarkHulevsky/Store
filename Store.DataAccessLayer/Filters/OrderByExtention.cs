@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Store.DataAccess.Entities.Constants;
+using System;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace Store.DataAccessLayer.Filters
 {
@@ -17,7 +16,7 @@ namespace Store.DataAccessLayer.Filters
 
             var lambda = (dynamic)CreateExpression(typeof(TSource), key);
 
-            if (sortType == "Descending")
+            if (sortType == Constants.descendingSortTypeName)
             {
                 return Queryable.OrderByDescending(query, lambda);
             }
@@ -27,7 +26,7 @@ namespace Store.DataAccessLayer.Filters
 
         private static LambdaExpression CreateExpression(Type type, string propertyName)
         {
-            var param = Expression.Parameter(type, "x");
+            var param = Expression.Parameter(type, propertyName);
 
             Expression body = param;
             foreach (var member in propertyName.Split('.'))

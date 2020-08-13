@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Store.DataAccessLayer.Repositories.Interfaces
 {
-    public interface IPrintingEditionRepository: IRepository<PrintingEdition>
+    public interface IPrintingEditionRepository : IRepository<PrintingEdition>
     {
         PrintingEditionResponseFilter Filter(PrintingEditionsRequestFilter filter);
         Task<List<Author>> GetAuthorsAsync(PrintingEdition printingEdition);

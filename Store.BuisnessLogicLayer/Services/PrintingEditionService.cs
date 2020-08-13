@@ -66,28 +66,28 @@ namespace Store.BuisnessLogicLayer.Services
             await _printingEditionRepository.RemoveAsync(id);
         }
 
-        public async Task EditAsync(PrintingEditionModel peModel)
+        public async Task EditAsync(PrintingEditionModel printingEditionModel)
         {
-            if (peModel.Authors != null)
+            if (printingEditionModel.Authors != null)
             {
-                await AddToAuthorAsync(peModel, peModel.Authors);
+                await AddToAuthorAsync(printingEditionModel, printingEditionModel.Authors);
             }
-            var pe = _printingEditionMapper.Map(new PrintingEdition(), peModel);
-            await _printingEditionRepository.UpdateAsync(pe);
+            var printingEdition = _printingEditionMapper.Map(new PrintingEdition(), printingEditionModel);
+            await _printingEditionRepository.UpdateAsync(printingEdition);
         }
 
         public async Task<PrintingEditionResponseFilterModel> FilterAsync(PrintingEditionsRequestFilterModel filterModel)
         {
-            var peFilter = PrintingEditionRequestFilterMapper.Map(filterModel);
-            var printingEditionsResponse = _printingEditionRepository.Filter(peFilter);
+            var printingEditionFilter = PrintingEditionRequestFilterMapper.Map(filterModel);
+            var printingEditionsResponse = _printingEditionRepository.Filter(printingEditionFilter);
             var printingEditionResponseModel = new PrintingEditionResponseFilterModel();
             printingEditionResponseModel.TotalCount = printingEditionsResponse.TotalCount;
-            foreach (var pe in printingEditionsResponse.PrintingEditions)
+            foreach (var printingEdition in printingEditionsResponse.PrintingEditions)
             {
-                var authorsModels = await GetAuthorsAsync(pe);
-                var peModel = _printingEditionModelMapper.Map(new PrintingEditionModel(), pe);
-                peModel.Authors = authorsModels;
-                printingEditionResponseModel.PrintingEditions.Add(peModel);
+                var authorsModels = await GetAuthorsAsync(printingEdition);
+                var printingEditionModel = _printingEditionModelMapper.Map(new PrintingEditionModel(), printingEdition);
+                printingEditionModel.Authors = authorsModels;
+                printingEditionResponseModel.PrintingEditions.Add(printingEditionModel);
             }
             return printingEditionResponseModel;
         }

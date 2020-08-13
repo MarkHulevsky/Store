@@ -2,7 +2,7 @@
 
 namespace Store.DataAccessLayer.Repositories.Interfaces
 {
-    public interface IAuthorInPrintingEditionRepository: IRepository<AuthorInPrintingEdition>
+    public interface IAuthorInPrintingEditionRepository : IRepository<AuthorInPrintingEdition>
     {
     }
 }

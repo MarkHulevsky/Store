@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Store.DataAccess.Entities.Constants;
 using Store.DataAccess.Filters.ResponseFulters;
 using Store.DataAccess.Repositories.Base;
 using Store.DataAccessLayer.Entities;
@@ -16,12 +17,12 @@ namespace Store.DataAccess.Repositories.DapperRepositories
     {
         public PrintingEditionRepository(IConfiguration configuration) : base(configuration)
         {
-
+            tableName = Constants.printingEditionTableName;
         }
 
         public PrintingEditionResponseFilter Filter(PrintingEditionsRequestFilter filter)
         {
-            var query = $"SELECT * FROM {TableName} WHERE Title LIKE '%{filter.SearchString}%' AND IsRemoved = 0";
+            var query = $"SELECT * FROM {tableName} WHERE Title LIKE '%{filter.SearchString}%' AND IsRemoved = 0";
             var queryblePrintingEditions = _dbContext.Query<PrintingEdition>(query).AsQueryable();
 
             var uQuery = new List<PrintingEdition>().AsQueryable();
@@ -42,7 +43,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
             var printingEditions = queryblePrintingEditions.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
                 .Take(filter.Paging.ItemsCount).ToList();
-            query = $"SELECT COUNT(*) FROM {TableName} WHERE IsRemoved = 0";
+            query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";
             var totalCount = _dbContext.QueryFirstOrDefault<int>(query);
 
             var result = new PrintingEditionResponseFilter
@@ -55,7 +56,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public override async Task<PrintingEdition> CreateAsync(PrintingEdition model)
         {
-            var query = $"INSERT INTO {TableName} " +
+            var query = $"INSERT INTO {tableName} " +
                 $"(Id, Title, Description, Price, Currency, Type, IsRemoved, CreationDate) " +
                 $"OUTPUT INSERTED.Id " +
                 $"VALUES ('{Guid.NewGuid()}', '{model.Title}', '{model.Description}', " +
@@ -81,7 +82,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public override async Task<PrintingEdition> UpdateAsync(PrintingEdition model)
         {
-            var query = $"UPDATE {TableName} SET Title = '{model.Title}', Price = '{model.Price}'," +
+            var query = $"UPDATE {tableName} SET Title = '{model.Title}', Price = '{model.Price}'," +
                 $"Type = {(int)model.Type}, Description = '{model.Description}', Currency = {(int)model.Currency} " +
                 $"WHERE Id = '{model.Id}'";
             var result = await _dbContext.QueryFirstOrDefaultAsync<PrintingEdition>(query);

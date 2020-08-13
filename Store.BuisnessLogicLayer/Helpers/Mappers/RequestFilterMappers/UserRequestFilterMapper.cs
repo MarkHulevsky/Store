@@ -14,7 +14,7 @@ namespace Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers
             filter.SearchString = filterModel.SearchString;
             filter.SortType = (SortType)filterModel.SortType;
             filter.Paging = _pagingMapper.Map(new Paging(), filterModel.Paging);
-            foreach(var status in filterModel.Statuses)
+            foreach (var status in filterModel.Statuses)
             {
                 filter.Statuses.Add(status);
             }

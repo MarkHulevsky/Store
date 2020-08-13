@@ -5,7 +5,7 @@ using static Store.BuisnessLogicLayer.Models.Enums.Enums;
 
 namespace Store.BuisnessLogicLayer.Models.PrintingEditions
 {
-    public class PrintingEditionModel: BaseModel
+    public class PrintingEditionModel : BaseModel
     {
         public string Title { get; set; }
         public string Description { get; set; }

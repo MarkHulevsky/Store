@@ -20,7 +20,7 @@ namespace Store.BuisnessLogic.Helpers
                     {
                         destInfo.SetValue(destination, srcPropInfo.GetValue(source));
                     }
-                    catch{}
+                    catch { }
                 }
             }
 

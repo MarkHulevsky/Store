@@ -10,6 +10,6 @@ namespace Store.DataAccessLayer.Repositories.Interfaces
         Task<T> GetAsync(Guid id);
         Task<T> CreateAsync(T model);
         Task<T> UpdateAsync(T model);
-        Task<int> RemoveAsync(Guid id);
+        Task<T> RemoveAsync(Guid id);
     }
 }

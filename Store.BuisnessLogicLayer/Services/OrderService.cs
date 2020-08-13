@@ -10,7 +10,6 @@ using Store.BuisnessLogicLayer.Models.Payments;
 using Store.BuisnessLogicLayer.Models.PrintingEditions;
 using Store.BuisnessLogicLayer.Models.Users;
 using Store.BuisnessLogicLayer.Services.Interfaces;
-using Store.DataAccess.Filters.ResponseFulters;
 using Store.DataAccessLayer.Entities;
 using Store.DataAccessLayer.Repositories.Interfaces;
 using System;
@@ -21,7 +20,7 @@ using static Store.BuisnessLogicLayer.Models.Enums.Enums;
 
 namespace Store.BuisnessLogicLayer.Services
 {
-    public class OrderService: IOrderService
+    public class OrderService : IOrderService
     {
         private readonly IPaymentRepository _paymentRepository;
         private readonly IOrderItemRepository _orderItemRepository;
@@ -32,13 +31,13 @@ namespace Store.BuisnessLogicLayer.Services
 
         private readonly Mapper<User, UserModel> _userModelMapper = new Mapper<User, UserModel>();
         private readonly Mapper<Order, OrderModel> _orderModelMapper = new Mapper<Order, OrderModel>();
-        private readonly Mapper<OrderItemModel, OrderItem> _orderItemMapper = 
+        private readonly Mapper<OrderItemModel, OrderItem> _orderItemMapper =
             new Mapper<OrderItemModel, OrderItem>();
         private readonly Mapper<OrderItem, OrderItemModel> _orderItemModelMapper = new Mapper<OrderItem, OrderItemModel>();
         private readonly Mapper<PrintingEdition, PrintingEditionModel> _printingEditionModelMapper =
             new Mapper<PrintingEdition, PrintingEditionModel>();
 
-        public OrderService(IPaymentRepository paymentRepository, 
+        public OrderService(IPaymentRepository paymentRepository,
             IOrderItemRepository orderItemRepository, IOrderRepository orderRepository,
             IConfiguration configuration, IPrintingEditionRepository printingEditionRepository,
             IUserRepository userRepository)
@@ -73,7 +72,7 @@ namespace Store.BuisnessLogicLayer.Services
             };
 
             var charge = chargeService.Create(chargeOptions);
-            
+
             if (charge.Status == "succeeded")
             {
                 var payment = new Payment()
@@ -145,8 +144,9 @@ namespace Store.BuisnessLogicLayer.Services
             foreach (var orderItem in orderItems)
             {
                 var orderItemModel = _orderItemModelMapper.Map(new OrderItemModel(), orderItem);
-                var pe = _printingEditionRepository.GetAsync(orderItem.PrintingEditionId).Result;
-                orderItemModel.PrintingEdition = _printingEditionModelMapper.Map(new PrintingEditionModel(), pe);
+                var printingEdition = _printingEditionRepository.GetAsync(orderItem.PrintingEditionId).Result;
+                orderItemModel.PrintingEdition = _printingEditionModelMapper
+                    .Map(new PrintingEditionModel(), printingEdition);
                 orderItemModels.Add(orderItemModel);
             }
             return orderItemModels;

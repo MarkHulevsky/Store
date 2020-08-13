@@ -6,7 +6,7 @@ using static Store.DataAccessLayer.Entities.Enums.Enums;
 
 namespace Store.DataAccessLayer.Entities
 {
-    public class Order: BaseEntity
+    public class Order : BaseEntity
     {
         public string Description { get; set; }
         public Guid UserId { get; set; }

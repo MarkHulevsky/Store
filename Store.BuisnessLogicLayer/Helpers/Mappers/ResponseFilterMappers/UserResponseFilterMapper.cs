@@ -2,9 +2,6 @@
 using Store.BuisnessLogicLayer.Models.Users;
 using Store.DataAccess.Filters;
 using Store.DataAccessLayer.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers
 {

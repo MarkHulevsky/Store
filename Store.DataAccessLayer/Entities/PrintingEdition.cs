@@ -5,7 +5,7 @@ using static Store.DataAccessLayer.Entities.Enums.Enums;
 
 namespace Store.DataAccessLayer.Entities
 {
-    public class PrintingEdition: BaseEntity
+    public class PrintingEdition : BaseEntity
     {
         public string Title { get; set; }
         public string Description { get; set; }

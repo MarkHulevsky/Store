@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Store.DataAccessLayer.Repositories.Interfaces
 {
-    public interface IUserRepository: IRepository<User>
+    public interface IUserRepository : IRepository<User>
     {
         new Task<IdentityResult> UpdateAsync(User user);
         UserResponseFilter Filter(UserRequestFilter filter);
@@ -15,7 +15,7 @@ namespace Store.DataAccessLayer.Repositories.Interfaces
         Task<string> GetFrogotPasswordTokenAsync(string email);
         new Task<IdentityResult> CreateAsync(User user);
         Task<User> FindByEmailAsync(string email);
-        Task<IdentityResult> AddToRoleAsync(User user ,string roleName);
+        Task<IdentityResult> AddToRoleAsync(User user, string roleName);
         Task<List<string>> GetRolesAsync(User user);
         Task<SignInResult> SignInAsync(User user);
         Task SignOutAsync();

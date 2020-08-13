@@ -27,12 +27,13 @@ namespace Store.DataAccessLayer.Repositories.Base
             return model;
         }
 
-        public virtual async Task<int> RemoveAsync(Guid id)
+        public virtual async Task<T> RemoveAsync(Guid id)
         {
             var entity = await _dbContext.Set<T>().FirstOrDefaultAsync(entity => entity.Id == id);
             entity.IsRemoved = true;
-            _dbContext.Set<T>().Update(entity);
-            return await _dbContext.SaveChangesAsync();
+            entity = _dbContext.Set<T>().Update(entity).Entity;
+            await _dbContext.SaveChangesAsync();
+            return entity;
         }
 
         public virtual async Task<T> GetAsync(Guid id)

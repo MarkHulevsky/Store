@@ -6,7 +6,7 @@ using System;
 
 namespace Store.DataAccessLayer.AppContext
 {
-    public class ApplicationContext: IdentityDbContext<User, IdentityRole<Guid>, Guid, 
+    public class ApplicationContext : IdentityDbContext<User, IdentityRole<Guid>, Guid,
         IdentityUserClaim<Guid>, IdentityUserRole<Guid>, IdentityUserLogin<Guid>, IdentityRoleClaim<Guid>,
         IdentityUserToken<Guid>>
     {
@@ -18,7 +18,7 @@ namespace Store.DataAccessLayer.AppContext
         public DbSet<Payment> Payments { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
-            :base(options)
+            : base(options)
         {
             Database.EnsureCreated();
         }

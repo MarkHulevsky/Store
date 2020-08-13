@@ -18,7 +18,7 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
         private readonly SignInManager<User> _signInManager;
 
         public UserRepository(ApplicationContext context, UserManager<User> userManager,
-            SignInManager<User> signInManager) 
+            SignInManager<User> signInManager)
             : base(context)
         {
             _userManager = userManager;
@@ -36,7 +36,7 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
                 uQuery = uQuery.Concat(query.Where(u => u.IsActive == status));
             }
             query = uQuery;
-            
+
             query = query.OrderBy($"{filter.PropName}", $"{filter.SortType}");
 
             var users = query.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
@@ -77,7 +77,7 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == editedUser.Id);
             user.IsActive = editedUser.IsActive;
             user.FirstName = editedUser.FirstName;
-            user.LastName= editedUser.LastName;
+            user.LastName = editedUser.LastName;
             user.Email = editedUser.Email;
             user.Password = editedUser.Password;
             return await _userManager.UpdateAsync(user);

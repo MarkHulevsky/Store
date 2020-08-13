@@ -1,16 +1,15 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Store.BuisnessLogic.Helpers.Interfaces;
-using System;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace Store.BuisnessLogicLayer.Helpers
 {
-    public class EmailHelper: IEmailHalper
+    public class EmailHelper : IEmailHalper
     {
         private readonly IConfiguration _configuration;
-        
+
         public EmailHelper(IConfiguration configuration)
         {
             _configuration = configuration;

@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Store.BuisnessLogicLayer.Services
 {
-    public class UserService: IUserService
+    public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
         private readonly UserManager<User> _userManager;
@@ -32,7 +32,7 @@ namespace Store.BuisnessLogicLayer.Services
         public async Task<UserModel> GetCurrentAsync(ClaimsPrincipal httpUser)
         {
             var user = await _userManager.GetUserAsync(httpUser);
-            var userModel =  _userModelMapper.Map(new UserModel(), user);
+            var userModel = _userModelMapper.Map(new UserModel(), user);
             userModel.Roles = await _userManager.GetRolesAsync(user) as List<string>;
             return userModel;
         }
@@ -55,15 +55,15 @@ namespace Store.BuisnessLogicLayer.Services
         public async Task<BaseModel> EditAsync(UserModel userModel)
         {
             var user = await _userRepository.GetAsync(userModel.Id);
-            if (user != null)
+            if (user == null)
             {
-                user = _userMapper.Map(new User(), userModel);
-                await _userRepository.UpdateAsync(user);
-                return new BaseModel();
+                var baseModel = new BaseModel();
+                baseModel.Errors.Add("No such user");
+                return baseModel;
             }
-            var baseModel = new BaseModel();
-            baseModel.Errors.Add("No such user");
-            return baseModel;
+            user = _userMapper.Map(new User(), userModel);
+            await _userRepository.UpdateAsync(user);
+            return new BaseModel();
         }
 
         public async Task RemoveAsync(Guid userId)

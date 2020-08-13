@@ -1,12 +1,11 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Store.DataAccess.Entities.Constants;
 using Store.DataAccess.Filters;
 using Store.DataAccess.Repositories.Base;
 using Store.DataAccessLayer.Entities;
 using Store.DataAccessLayer.Filters;
-using Microsoft.EntityFrameworkCore;
 using Store.DataAccessLayer.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -25,7 +24,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
         {
             _signInManager = signInManager;
             _userManager = userManager;
-            TableName = "AspNetUsers";
+            tableName = Constants.userTableName;
         }
 
         public async Task<IdentityResult> AddToRoleAsync(User user, string roleName)
@@ -40,7 +39,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public UserResponseFilter Filter(UserRequestFilter filter)
         {
-            var query = $"SELECT * FROM {TableName} WHERE (FirstName LIKE '%{filter.SearchString}%'" +
+            var query = $"SELECT * FROM {tableName} WHERE (FirstName LIKE '%{filter.SearchString}%'" +
                 $"OR LastName LIKE '%{filter.SearchString}%') AND IsRemoved = 0";
             var users = _dbContext.Query<User>(query).ToList();
             var userList = new List<User>().AsQueryable();
@@ -53,7 +52,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             queryableUsers = queryableUsers.OrderBy($"{filter.PropName}", $"{filter.SortType}");
             users = queryableUsers.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
                 .Take(filter.Paging.ItemsCount).ToList();
-            query = $"SELECT COUNT(*) FROM {TableName} WHERE IsRemoved = 0";
+            query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";
             var count = _dbContext.QueryFirstOrDefault<int>(query);
             var result = new UserResponseFilter
             {
@@ -66,7 +65,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public async Task<User> FindByEmailAsync(string email)
         {
-            var query = $"SELECT * FROM {TableName} WHERE Email = '{email}'";
+            var query = $"SELECT * FROM {tableName} WHERE Email = '{email}'";
             var user = await _dbContext.QueryFirstOrDefaultAsync<User>(query, new { email });
             return user;
         }
@@ -114,7 +113,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public new async Task<IdentityResult> UpdateAsync(User editedUser)
         {
-            var query = $"UPDATE {TableName} SET FirstName = '{editedUser.FirstName}', " +
+            var query = $"UPDATE {tableName} SET FirstName = '{editedUser.FirstName}', " +
                 $"LastName = '{editedUser.LastName}', IsActive = {Convert.ToInt32(editedUser.IsActive)}," +
                 $"Email = '{editedUser.Email}', EmailConfirmed = {Convert.ToInt32(editedUser.EmailConfirmed)} " +
                 $"WHERE Id = '{editedUser.Id}'";
@@ -128,25 +127,14 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public new async Task<User> GetAsync(Guid id)
         {
-            var query = $"SELECT * FROM {TableName} WHERE Id = '{id}' AND IsRemoved = 0";
+            var query = $"SELECT * FROM {tableName} WHERE Id = '{id}' AND IsRemoved = 0";
             var user = await _dbContext.QueryFirstOrDefaultAsync<User>(query);
             return user;
         }
 
-        public new async Task<int> RemoveAsync(Guid id)
-        {
-            var query = $"UPDATE {TableName} SET IsRemoved = 1 WHERE Id = '{id}'";
-            var result = await _dbContext.QueryFirstOrDefaultAsync<User>(query);
-            if (result != null)
-            {
-                return 1;
-            }
-            return 0;
-        }
-
         public new async Task<List<User>> GetAllAsync()
         {
-            var query = $"SELECT * FROM ${TableName}";
+            var query = $"SELECT * FROM ${tableName}";
             var users = _dbContext.Query<User>(query).ToList();
             return users;
         }

@@ -18,7 +18,7 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
         public override async Task<AuthorInPrintingEdition> CreateAsync(AuthorInPrintingEdition model)
         {
             var ent = await _dbContext.AuthorInPrintingEditions
-                .FirstOrDefaultAsync(ap => ap.AuthorId == model.AuthorId 
+                .FirstOrDefaultAsync(ap => ap.AuthorId == model.AuthorId
                 && ap.PrintingEditionId == model.PrintingEditionId);
             if (ent == null)
             {

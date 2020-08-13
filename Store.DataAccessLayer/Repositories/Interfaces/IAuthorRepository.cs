@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Store.DataAccessLayer.Repositories.Interfaces
 {
-    public interface IAuthorRepository: IRepository<Author>
+    public interface IAuthorRepository : IRepository<Author>
     {
         Task<AuthorResponseFilter> FilterAsync(AuthorRequestFilter filter);
         Task<Author> FindAuthorByNameAsync(string name);

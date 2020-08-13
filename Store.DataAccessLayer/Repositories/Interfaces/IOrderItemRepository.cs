@@ -2,7 +2,7 @@
 
 namespace Store.DataAccessLayer.Repositories.Interfaces
 {
-    public interface IOrderItemRepository: IRepository<OrderItem>
+    public interface IOrderItemRepository : IRepository<OrderItem>
     {
     }
 }

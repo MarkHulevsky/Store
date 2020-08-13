@@ -72,7 +72,7 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
                 var author = await _dbContext.Authors.FirstOrDefaultAsync(a => a.Id == aInPe.AuthorId
                 && !a.IsRemoved);
                 if (author != null)
-                { 
+                {
                     authors.Add(author);
                 }
             }

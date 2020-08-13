@@ -31,14 +31,14 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetFiltred([FromBody]OrderRequestFilterModel filter)
+        public async Task<IActionResult> GetFiltred([FromBody] OrderRequestFilterModel filter)
         {
             var ordersResponse = await _orderService.FilterAsync(filter);
             return Ok(ordersResponse);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody]CartModel cartModel)
+        public async Task<IActionResult> Create([FromBody] CartModel cartModel)
         {
             var currentUser = await _userService.GetCurrentAsync(HttpContext.User);
             cartModel.UserId = currentUser.Id;
@@ -47,7 +47,7 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public IActionResult Pay([FromBody]PaymentModel paymentModel)
+        public IActionResult Pay([FromBody] PaymentModel paymentModel)
         {
             _orderService.PayOrder(paymentModel);
             return Ok();
@@ -55,7 +55,7 @@ namespace Store.Presentation.Controllers
 
         [Authorize(Roles = "admin")]
         [HttpDelete]
-        public async Task Remove([FromBody]string orderId)
+        public async Task Remove([FromBody] string orderId)
         {
             await _orderService.RemoveAsync(Guid.Parse(orderId));
         }

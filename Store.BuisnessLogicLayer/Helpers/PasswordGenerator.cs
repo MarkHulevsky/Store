@@ -15,7 +15,7 @@ namespace Store.BuisnessLogicLayer.Helpers
 
             var password = string.Empty;
 
-            for(int i = 0; i < _passwordLength; i++)
+            for (int i = 0; i < _passwordLength; i++)
             {
                 password += xeger.Generate();
             }

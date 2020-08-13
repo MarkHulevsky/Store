@@ -16,7 +16,7 @@ namespace Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers
             filter.SortType = (SortType)filterModel.SortType;
             filter.Paging = _pagingMapper.Map(new Paging(), filterModel.Paging);
 
-            foreach(var type in filterModel.Types)
+            foreach (var type in filterModel.Types)
             {
                 filter.Types.Add((PrintingEditionType)type);
             }

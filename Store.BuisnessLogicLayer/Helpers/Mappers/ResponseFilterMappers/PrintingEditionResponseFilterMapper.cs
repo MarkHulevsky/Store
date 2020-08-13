@@ -7,15 +7,15 @@ namespace Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers
 {
     public static class PrintingEditionResponseFilterMapper
     {
-        private static readonly Mapper<PrintingEdition, PrintingEditionModel> _peModelMapper =
+        private static readonly Mapper<PrintingEdition, PrintingEditionModel> _printingEditionModelMapper =
             new Mapper<PrintingEdition, PrintingEditionModel>();
         public static PrintingEditionResponseFilterModel Map(PrintingEditionResponseFilter responseFilter)
         {
             var responseFilterModel = new PrintingEditionResponseFilterModel();
             responseFilterModel.TotalCount = responseFilter.TotalCount;
-            foreach(var pe in responseFilter.PrintingEditions)
+            foreach (var pe in responseFilter.PrintingEditions)
             {
-                var peModel = _peModelMapper.Map(new PrintingEditionModel(), pe);
+                var peModel = _printingEditionModelMapper.Map(new PrintingEditionModel(), pe);
                 responseFilterModel.PrintingEditions.Add(peModel);
             }
             return responseFilterModel;

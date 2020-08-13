@@ -1,6 +1,5 @@
 ﻿using Store.BuisnessLogic.Models.Filters.ResponseFilters;
 using Store.BuisnessLogic.Models.Orders;
-using Store.BuisnessLogicLayer.Models.Base;
 using Store.BuisnessLogicLayer.Models.Filters;
 using Store.BuisnessLogicLayer.Models.Orders;
 using Store.BuisnessLogicLayer.Models.Payments;

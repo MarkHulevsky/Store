@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Dapper.Contrib.Extensions;
 using Microsoft.Extensions.Configuration;
+using Store.DataAccess.Entities.Constants;
 using Store.DataAccess.Filters.ResponseFulters;
 using Store.DataAccess.Repositories.Base;
 using Store.DataAccessLayer.Entities;
@@ -13,10 +14,11 @@ using System.Threading.Tasks;
 
 namespace Store.DataAccess.Repositories.DapperRepositories
 {
-    public class OrderRepository: BaseDapperRepository<Order>, IOrderRepository
+    public class OrderRepository : BaseDapperRepository<Order>, IOrderRepository
     {
-        public OrderRepository(IConfiguration configuration): base(configuration)
+        public OrderRepository(IConfiguration configuration) : base(configuration)
         {
+            tableName = Constants.orderTableName;
         }
 
         public async Task AddToPaymentAsync(Guid paymentId, Guid orderId)
@@ -27,7 +29,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             {
                 order.PaymentId = paymentId;
                 order.Status = DataAccessLayer.Entities.Enums.Enums.OrderStatus.Paid;
-                var query = $"UPDATE {TableName} SET PaymentId = '{order.PaymentId}', Status = {(int)order.Status}" +
+                var query = $"UPDATE {tableName} SET PaymentId = '{order.PaymentId}', Status = {(int)order.Status}" +
                     $"WHERE Id = '{order.Id}'";
                 await _dbContext.ExecuteAsync(query);
             }
@@ -39,7 +41,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             model.Id = Guid.NewGuid();
             model.Description = string.Empty;
             model.CreationDate = DateTime.Now;
-            var query = $"INSERT INTO {TableName} " +
+            var query = $"INSERT INTO {tableName} " +
                 $"(Id, Description, UserId, PaymentId, Status, CreationDate, IsRemoved) " +
                 $"OUTPUT INSERTED.Id " +
                 $"VALUES ('{model.Id}' ,'{model.Description}', '{model.UserId}', '{model.PaymentId}', " +
@@ -51,7 +53,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public OrderResponseFilter Filter(OrderRequestFilter filter)
         {
-            var query = $"SELECT * FROM {TableName} WHERE IsRemoved != 1";
+            var query = $"SELECT * FROM {tableName} WHERE IsRemoved != 1";
             var querybaleOrders = _dbContext.Query<Order>(query).AsQueryable();
 
             var uQuery = new List<Order>().AsQueryable();
@@ -59,13 +61,13 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             {
                 uQuery = uQuery.Concat(querybaleOrders.Where(o => o.Status == status));
             }
-            
+
             querybaleOrders = uQuery;
             querybaleOrders = querybaleOrders.OrderBy(filter.PropName, $"{filter.SortType}");
             var orders = querybaleOrders.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
                 .Take(filter.Paging.ItemsCount).ToList();
 
-            query = $"SELECT COUNT(*) FROM {TableName} WHERE IsRemoved = 0";
+            query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";
             var totalCount = _dbContext.Query<int>(query).FirstOrDefault();
             var result = new OrderResponseFilter
             {
@@ -84,7 +86,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public async Task<List<Order>> GetUserOrdersAsync(Guid userId)
         {
-            var query = $"SELECT * FROM {TableName} WHERE UserId = '{userId}'";
+            var query = $"SELECT * FROM {tableName} WHERE UserId = '{userId}'";
             var orders = _dbContext.Query<Order>(query).ToList();
             return orders;
         }

@@ -3,11 +3,10 @@ using Store.DataAccessLayer.Entities.Base;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using static Store.DataAccessLayer.Entities.Enums.Enums;
 
 namespace Store.DataAccessLayer.Entities
 {
-    public class User: IdentityUser<Guid>, IBaseEntity
+    public class User : IdentityUser<Guid>, IBaseEntity
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

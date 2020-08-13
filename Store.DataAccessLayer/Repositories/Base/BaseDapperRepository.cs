@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace Store.DataAccess.Repositories.Base
 {
-    public class BaseDapperRepository<T>: IRepository<T> where T : class, IBaseEntity
+    public class BaseDapperRepository<T> : IRepository<T> where T : class, IBaseEntity
     {
         protected readonly SqlConnection _dbContext;
         protected readonly IConfiguration _configuration;
         private readonly string _connectionString;
-        public string TableName { get; set; }
+        protected string tableName;
 
         public BaseDapperRepository(IConfiguration configuration)
         {
@@ -24,7 +24,6 @@ namespace Store.DataAccess.Repositories.Base
             _connectionString = _configuration.GetConnectionString("DefaultConnection");
             _dbContext = new SqlConnection(_connectionString);
             _dbContext.Open();
-            TableName = typeof(T).Name + "s";
         }
 
         public virtual async Task<T> CreateAsync(T model)
@@ -33,7 +32,7 @@ namespace Store.DataAccess.Repositories.Base
             await _dbContext.InsertAsync(model);
             return model;
         }
-        
+
         public virtual async Task<T> UpdateAsync(T model)
         {
             if (await _dbContext.UpdateAsync(model))
@@ -45,7 +44,7 @@ namespace Store.DataAccess.Repositories.Base
 
         public async Task<List<T>> GetAllAsync()
         {
-            var query = $"SELECT * FROM {TableName} WHERE IsRemoved != 1";
+            var query = $"SELECT * FROM {tableName} WHERE IsRemoved != 1";
             var result = _dbContext.Query<T>(query).ToList();
             return result;
         }
@@ -56,15 +55,11 @@ namespace Store.DataAccess.Repositories.Base
             return entity;
         }
 
-        public async Task<int> RemoveAsync(Guid id)
+        public async Task<T> RemoveAsync(Guid id)
         {
-            var query = $"UPDATE {TableName} SET IsRemoved = 1 WHERE Id = '{id}'";
-            var result = await _dbContext.QueryAsync(query);
-            if (result != null)
-            {
-                return 1;
-            }
-            return 0;
+            var query = $"UPDATE {tableName} SET IsRemoved = 1 WHERE Id = '{id}'";
+            var result = await _dbContext.QueryFirstOrDefaultAsync<T>(query);
+            return result;
         }
 
         ~BaseDapperRepository()

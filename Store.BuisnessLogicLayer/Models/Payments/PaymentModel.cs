@@ -3,7 +3,7 @@ using System;
 
 namespace Store.BuisnessLogicLayer.Models.Payments
 {
-    public class PaymentModel: BaseModel
+    public class PaymentModel : BaseModel
     {
         public Guid OrderId { get; set; }
         public string UserEmail { get; set; }

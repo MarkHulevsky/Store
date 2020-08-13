@@ -5,7 +5,6 @@ using Store.BuisnessLogic.Helpers;
 using Store.BuisnessLogicLayer.Models.Filters;
 using Store.BuisnessLogicLayer.Models.Users;
 using Store.BuisnessLogicLayer.Services.Interfaces;
-using Store.Presentation.Models.AccountModels;
 using System;
 using System.Threading.Tasks;
 
@@ -14,8 +13,8 @@ namespace Store.Presentation.Controllers
     [Route("api/[controller]/[action]")]
     public class UserController : Controller
     {
-        private readonly Mapper<EditProfileViewModel, UserModel> _userModelMapper = 
-            new Mapper<EditProfileViewModel, UserModel>();
+        private readonly Mapper<EditProfileModel, UserModel> _userModelMapper =
+            new Mapper<EditProfileModel, UserModel>();
         private readonly IUserService _userService;
 
         public UserController(IUserService userService)
@@ -41,7 +40,7 @@ namespace Store.Presentation.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPut]
-        public async Task<IActionResult> EditProfile([FromBody] EditProfileViewModel model)
+        public async Task<IActionResult> EditProfile([FromBody] EditProfileModel model)
         {
             var userModel = _userModelMapper.Map(new UserModel(), model);
             var result = await _userService.EditAsync(userModel);

@@ -22,7 +22,7 @@ namespace Store.Presentation.Middlewares
             {
                 await next(context);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.Log(ex.ToString());
             }
