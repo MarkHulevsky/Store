@@ -7,6 +7,7 @@ namespace Store.DataAccessLayer.Entities
     public class Author : BaseEntity
     {
         public string Name { get; set; }
+        [NotMapped]
         public virtual List<AuthorInPrintingEdition> AuthorInPrintingEditions { get; set; }
         [NotMapped]
         public List<PrintingEdition> PrintingEditions { get; set; }

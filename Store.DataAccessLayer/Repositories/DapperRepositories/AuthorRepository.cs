@@ -6,6 +6,7 @@ using Store.DataAccess.Repositories.Base;
 using Store.DataAccessLayer.Entities;
 using Store.DataAccessLayer.Filters;
 using Store.DataAccessLayer.Repositories.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -18,6 +19,19 @@ namespace Store.DataAccess.Repositories.DapperRepositories
         public AuthorRepository(IConfiguration configuration) : base(configuration)
         {
             tableName = Constants.authorTableName;
+        }
+
+        public override async Task<Author> CreateAsync(Author model)
+        {
+            model.Id = Guid.NewGuid();
+            var creationDateString = DateTime.Now.ToUniversalTime().ToString("yyyyMMdd");
+            model.IsRemoved = false;
+            var query = $"INSERT INTO {tableName} (Id, CreationDate, IsRemoved, Name) " +
+                $"OUTPUT INSERTED.Id " +
+                $"VALUES ('{model.Id}', '{creationDateString}', " +
+                $"{Convert.ToInt32(model.IsRemoved)}, '{model.Name}')";
+            model.Id = await _dbContext.QueryFirstOrDefaultAsync<Guid>(query);
+            return model;
         }
 
         public async Task<AuthorResponseFilter> FilterAsync(AuthorRequestFilter filter)

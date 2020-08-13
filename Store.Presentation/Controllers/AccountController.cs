@@ -60,6 +60,7 @@ namespace Store.Presentation.Controllers
             var principal = _jwtHelper.GetPrincipalFromExpiredToken(refreshTokenModel.AccessToken);
             jwtToken.AccessToken = _jwtHelper.GenerateJwtTokenWithClaims(principal.Claims);
             jwtToken.RefreshToken = _jwtHelper.GenerateRefreshToken();
+            SetCookieTokenResponse(jwtToken.AccessToken, jwtToken.RefreshToken);
             return Ok(jwtToken);
         }
 

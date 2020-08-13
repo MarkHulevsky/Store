@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Store.DataAccessLayer.Entities.Enums.Enums;
 
 namespace Store.DataAccess.Repositories.DapperRepositories
 {
@@ -40,12 +41,13 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             model.PaymentId = Guid.Empty;
             model.Id = Guid.NewGuid();
             model.Description = string.Empty;
-            model.CreationDate = DateTime.Now;
+            var creationDateString = DateTime.Now.ToUniversalTime().ToString("yyyyMMdd");
+            model.Status = OrderStatus.Unpaid;
             var query = $"INSERT INTO {tableName} " +
                 $"(Id, Description, UserId, PaymentId, Status, CreationDate, IsRemoved) " +
                 $"OUTPUT INSERTED.Id " +
                 $"VALUES ('{model.Id}' ,'{model.Description}', '{model.UserId}', '{model.PaymentId}', " +
-                $"{(int)model.Status}, '{model.CreationDate}', 0)";
+                $"{(int)model.Status}, '{creationDateString}', 0)";
 
             model.Id = await _dbContext.QueryFirstOrDefaultAsync<Guid>(query);
             return model;
