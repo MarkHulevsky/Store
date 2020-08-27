@@ -16,9 +16,9 @@ namespace Store.Presentation.Controllers
     public class AccountController : Controller
     {
         private readonly IAccountService _accountService;
-        private readonly IJwtHelper _jwtHelper;
+        private readonly IJwtProvider _jwtHelper;
 
-        public AccountController(IAccountService accountService, IJwtHelper jwtHelper)
+        public AccountController(IAccountService accountService, IJwtProvider jwtHelper)
         {
             _accountService = accountService;
             _jwtHelper = jwtHelper;

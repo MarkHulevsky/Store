@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Store.BuisnessLogic.Helpers.Interfaces
 {
-    public interface IJwtHelper
+    public interface IJwtProvider
     {
         Task<string> GetTokenAsync(UserModel userModel);
         string GenerateRefreshToken();

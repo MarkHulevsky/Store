@@ -14,11 +14,11 @@ using System.Threading.Tasks;
 
 namespace Store.BuisnessLogic.Helpers
 {
-    public class JwtHelper : IJwtHelper
+    public class JwtProvider : IJwtProvider
     {
         private readonly IAccountService _accountService;
         private readonly IConfiguration _configuration;
-        public JwtHelper(IAccountService accountService, IConfiguration configuration)
+        public JwtProvider(IAccountService accountService, IConfiguration configuration)
         {
             _accountService = accountService;
             _configuration = configuration;

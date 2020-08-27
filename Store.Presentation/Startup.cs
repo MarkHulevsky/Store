@@ -17,7 +17,7 @@ using Store.BuisnessLogic.Services.Interfaces;
 using Store.DataAccess.AppContext;
 using Store.DataAccess.Entities;
 using Store.DataAccess.Initialization;  
-using Store.DataAccess.Repositories.DapperRepositories;
+using Store.DataAccess.Repositories.EFRepositories;
 using Store.DataAccess.Repositories.Interfaces;
 using Store.Presentation.Middlewares;
 using System;
@@ -46,7 +46,7 @@ namespace Store.Presentation
             services.AddScoped<IOrderItemRepository, OrderItemRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IEmailProvider, EmailProvider>();
-            services.AddScoped<IJwtHelper, JwtHelper>();
+            services.AddScoped<IJwtProvider, JwtProvider>();
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAccountService, AccountService>();
