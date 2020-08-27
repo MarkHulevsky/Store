@@ -39,16 +39,14 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public override async Task<Order> CreateAsync(Order model)
         {
-            model.PaymentId = Guid.Empty;
-            model.Id = Guid.NewGuid();
+            model.PaymentId = Guid.Empty;            
             model.Description = string.Empty;
-            var creationDateString = DateTime.Now.ToUniversalTime().ToString("yyyyMMdd");
             model.Status = OrderStatus.Unpaid;
             var query = $"INSERT INTO {tableName} " +
                 $"(Id, Description, UserId, PaymentId, Status, CreationDate, IsRemoved) " +
                 $"OUTPUT INSERTED.Id " +
                 $"VALUES ('{model.Id}' ,'{model.Description}', '{model.UserId}', '{model.PaymentId}', " +
-                $"{(int)model.Status}, '{creationDateString}', 0)";
+                $"{(int)model.Status}, '{model.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}', 0)";
 
             model.Id = await _dbContext.QueryFirstOrDefaultAsync<Guid>(query);
             return model;

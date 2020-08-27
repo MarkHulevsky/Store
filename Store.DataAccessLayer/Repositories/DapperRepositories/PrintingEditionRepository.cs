@@ -73,12 +73,11 @@ namespace Store.DataAccess.Repositories.DapperRepositories
         public override async Task<PrintingEdition> CreateAsync(PrintingEdition model)
         {
             var creationDateString = DateTime.Now.ToUniversalTime().ToString("yyyyMMdd");
-
             var query = $"INSERT INTO {tableName} " +
                 $"(Id, Title, Description, Price, Currency, Type, IsRemoved, CreationDate) " +
                 $"OUTPUT INSERTED.Id " +
-                $"VALUES ('{Guid.NewGuid()}', '{model.Title}', '{model.Description}', " +
-                $"{model.Price}, {(int)model.Currency}, {(int)model.Type}, 0, '{creationDateString}' )";
+                $"VALUES ('{model.Id}', '{model.Title}', '{model.Description}', " +
+                $"{model.Price}, {(int)model.Currency}, {(int)model.Type}, 0, '{model.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}' )";
 
             model.Id = await _dbContext.QueryFirstOrDefaultAsync<Guid>(query);
             return model;

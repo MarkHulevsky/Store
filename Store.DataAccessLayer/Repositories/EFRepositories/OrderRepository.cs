@@ -39,7 +39,6 @@ namespace Store.DataAccess.Repositories.EFRepositories
                 return entity;
             }
             model.Status = OrderStatus.Unpaid;
-            model.CreationDate = DateTime.UtcNow;
             var result = await DbSet.AddAsync(model);
             await SaveChangesAsync();
             model.Id = result.Entity.Id;

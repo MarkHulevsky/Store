@@ -24,12 +24,9 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public override async Task<Author> CreateAsync(Author model)
         {
-            model.Id = Guid.NewGuid();
-            var creationDateString = DateTime.Now.ToUniversalTime().ToString("yyyyMMdd");
-            model.IsRemoved = false;
             var query = $"INSERT INTO {tableName} (Id, CreationDate, IsRemoved, Name) " +
                 $"OUTPUT INSERTED.Id " +
-                $"VALUES ('{model.Id}', '{creationDateString}', " +
+                $"VALUES ('{model.Id}', '{model.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}', " +
                 $"{Convert.ToInt32(model.IsRemoved)}, '{model.Name}')";
             model.Id = await _dbContext.QueryFirstOrDefaultAsync<Guid>(query);
             return model;

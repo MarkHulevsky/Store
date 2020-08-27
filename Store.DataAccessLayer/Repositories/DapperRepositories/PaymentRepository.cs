@@ -18,11 +18,9 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public override async Task<Payment> CreateAsync(Payment model)
         {
-            model.Id = Guid.NewGuid();
-            var creationDateString = DateTime.Now.ToUniversalTime().ToString("yyyyMMdd");
             var query = $"INSERT INTO {tableName} " +
                 $"(Id, IsRemoved, CreationDate, TransactionId) " +
-                $"VALUES ('{model.Id}', 0, '{creationDateString}', '{model.TransactionId}' )";
+                $"VALUES ('{model.Id}', 0, '{model.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}', '{model.TransactionId}' )";
             await _dbContext.QueryFirstOrDefaultAsync(query);
             return model;
         }

@@ -28,7 +28,6 @@ namespace Store.DataAccess.Repositories.Base
 
         public virtual async Task<T> CreateAsync(T model)
         {
-            model.CreationDate = DateTime.Now;
             await _dbContext.InsertAsync(model);
             return model;
         }

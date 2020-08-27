@@ -19,8 +19,6 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public override async Task<AuthorInPrintingEdition> CreateAsync(AuthorInPrintingEdition model)
         {
-            var creationDateString = DateTime.Now.ToUniversalTime().ToString("yyyyMMdd");
-            model.Id = Guid.NewGuid();
             var query = $"SELECT * FROM {tableName} " +
                 $"WHERE AuthorId = '{model.AuthorId}' AND PrintingEditionId = '{model.PrintingEditionId}'";
             var entity = await _dbContext.QueryFirstOrDefaultAsync<AuthorInPrintingEdition>(query);
@@ -30,7 +28,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             }
             query = $"INSERT INTO {tableName} (Id, AuthorId, PrintingEditionId, CreationDate, IsRemoved) " +
                 $"VALUES ('{model.Id}' ,'{model.AuthorId}', '{model.PrintingEditionId}'," +
-                $" '{creationDateString}', 0)";
+                $" '{entity.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}', 0)";
             await _dbContext.QueryAsync<AuthorInPrintingEdition>(query);
             return model;
         }

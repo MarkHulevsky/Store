@@ -78,7 +78,6 @@ namespace Store.DataAccess.Initialization
             }
             var book = new PrintingEdition
             {
-                Id = Guid.NewGuid(),
                 CreationDate = DateTime.Now,
                 Currency = CurrencyType.USD,
                 IsRemoved = false,
@@ -89,7 +88,6 @@ namespace Store.DataAccess.Initialization
             };
             var magazine = new PrintingEdition
             {
-                Id = Guid.NewGuid(),
                 CreationDate = DateTime.Now,
                 Currency = CurrencyType.USD,
                 IsRemoved = false,
@@ -100,7 +98,6 @@ namespace Store.DataAccess.Initialization
             };
             var newspaper = new PrintingEdition
             {
-                Id = Guid.NewGuid(),
                 CreationDate = DateTime.Now,
                 Currency = CurrencyType.USD,
                 IsRemoved = false,
@@ -124,7 +121,6 @@ namespace Store.DataAccess.Initialization
             }
             var author = new Author
             {
-                Id = Guid.NewGuid(),
                 Name = "Author",
                 CreationDate = DateTime.Now,
                 IsRemoved = false,

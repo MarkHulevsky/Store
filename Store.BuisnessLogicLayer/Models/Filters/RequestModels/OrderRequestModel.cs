@@ -7,5 +7,9 @@ namespace Store.BuisnessLogic.Models.Filters
     {
         public string SortPropertyName { get; set; }
         public List<OrderStatus> OrderStatuses { get; set; }
+        public OrderRequestModel()
+        {
+            OrderStatuses = new List<OrderStatus>();
+        }
     }
 }

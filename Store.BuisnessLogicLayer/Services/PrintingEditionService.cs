@@ -79,7 +79,6 @@ namespace Store.BuisnessLogic.Services
                 {
                     AuthorId = author.Id,
                     PrintingEditionId = printingEditionModel.Id,
-                    Id = Guid.NewGuid()
                 };
                 await _authorInPrintingEditionRepository.CreateAsync(aInPe);
             }
