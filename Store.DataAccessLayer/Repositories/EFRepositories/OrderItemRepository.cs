@@ -1,9 +1,9 @@
-﻿using Store.DataAccessLayer.AppContext;
-using Store.DataAccessLayer.Entities;
-using Store.DataAccessLayer.Repositories.Base;
-using Store.DataAccessLayer.Repositories.Interfaces;
+﻿using Store.DataAccess.AppContext;
+using Store.DataAccess.Entities;
+using Store.DataAccess.Repositories.Base;
+using Store.DataAccess.Repositories.Interfaces;
 
-namespace Store.DataAccessLayer.Repositories.EFRepositories
+namespace Store.DataAccess.Repositories.EFRepositories
 {
     public class OrderItemRepository : BaseEFRepository<OrderItem>, IOrderItemRepository
     {

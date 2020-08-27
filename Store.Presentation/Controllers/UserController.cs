@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Store.BuisnessLogic.Helpers;
-using Store.BuisnessLogicLayer.Models.Filters;
-using Store.BuisnessLogicLayer.Models.Users;
-using Store.BuisnessLogicLayer.Services.Interfaces;
+using Store.BuisnessLogic.Models.Filters;
+using Store.BuisnessLogic.Models.Users;
+using Store.BuisnessLogic.Services.Interfaces;
 using System;
 using System.Threading.Tasks;
 
@@ -32,7 +32,7 @@ namespace Store.Presentation.Controllers
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
-        public IActionResult GetFiltred([FromBody] UserRequestFilterModel filter)
+        public IActionResult GetFiltred([FromBody] UserRequestModel filter)
         {
             var usersResponse = _userService.Filter(filter);
             return Ok(usersResponse);

@@ -1,8 +1,8 @@
-﻿using Store.BuisnessLogicLayer.Models.Base;
-using Store.BuisnessLogicLayer.Models.Orders;
+﻿using Store.BuisnessLogic.Models.Base;
+using Store.BuisnessLogic.Models.Orders;
 using System.Collections.Generic;
 
-namespace Store.BuisnessLogicLayer.Models.Users
+namespace Store.BuisnessLogic.Models.Users
 {
     public class UserModel : BaseModel
     {
@@ -11,8 +11,14 @@ namespace Store.BuisnessLogicLayer.Models.Users
         public string LastName { get; set; }
         public bool EmailConfirmed { get; set; }
         public string Password { get; set; }
-        public List<string> Roles { get; set; } = new List<string>();
-        public bool IsActive { get; set; } = true;
-        public List<OrderModel> Orders { get; set; } = new List<OrderModel>();
+        public List<string> Roles { get; set; }
+        public bool IsActive { get; set; }
+        public List<OrderModel> Orders { get; set; }
+        public UserModel()
+        {
+            Roles = new List<string>();
+            Orders = new List<OrderModel>();
+            IsActive = true;
+        }
     }
 }

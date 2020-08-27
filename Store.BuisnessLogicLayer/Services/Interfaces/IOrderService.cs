@@ -1,13 +1,12 @@
-﻿using Store.BuisnessLogic.Models.Filters.ResponseFilters;
+﻿using Store.BuisnessLogic.Models.Filters;
+using Store.BuisnessLogic.Models.Filters.ResponseFilters;
 using Store.BuisnessLogic.Models.Orders;
-using Store.BuisnessLogicLayer.Models.Filters;
-using Store.BuisnessLogicLayer.Models.Orders;
-using Store.BuisnessLogicLayer.Models.Payments;
+using Store.BuisnessLogic.Models.Payments;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Store.BuisnessLogicLayer.Services.Interfaces
+namespace Store.BuisnessLogic.Services.Interfaces
 {
     public interface IOrderService
     {
@@ -15,6 +14,6 @@ namespace Store.BuisnessLogicLayer.Services.Interfaces
         Task<List<OrderModel>> GetUserOrdersAsync(Guid userId);
         Task<OrderModel> CreateAsync(CartModel cartModel);
         Task RemoveAsync(Guid id);
-        Task<OrderResponseFilterModel> FilterAsync(OrderRequestFilterModel filter);
+        OrderResponseModel Filter(OrderRequestModel filter);
     }
 }

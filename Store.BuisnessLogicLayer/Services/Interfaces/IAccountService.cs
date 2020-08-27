@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Store.BuisnessLogicLayer.Models.Base;
-using Store.BuisnessLogicLayer.Models.Users;
+using Store.BuisnessLogic.Models.Base;
+using Store.BuisnessLogic.Models.Users;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Store.BuisnessLogicLayer.Services.Interfaces
+namespace Store.BuisnessLogic.Services.Interfaces
 {
     public interface IAccountService
     {
@@ -15,7 +15,7 @@ namespace Store.BuisnessLogicLayer.Services.Interfaces
         Task<IdentityResult> RegisterAsync(UserModel user);
         Task SendConfirmUrlAsync(string email, string url);
         Task ConfirmEmail(string userEmail);
-        Task<bool> LoginAsync(UserModel user);
+        Task<BaseModel> LoginAsync(UserModel user);
         Task LogoutAsync();
     }
 }

@@ -1,33 +1,54 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Store.BuisnessLogic.Helpers;
 using Store.BuisnessLogic.Helpers.Interfaces;
-using Store.BuisnessLogicLayer.Models.Base;
-using Store.BuisnessLogicLayer.Models.Users;
-using Store.BuisnessLogicLayer.Services.Interfaces;
-using Store.DataAccessLayer.Entities;
-using Store.DataAccessLayer.Repositories.Interfaces;
+using Store.BuisnessLogic.Models.Base;
+using Store.BuisnessLogic.Models.Users;
+using Store.BuisnessLogic.Services.Interfaces;
+using Store.DataAccess.Entities;
+using Store.DataAccess.Repositories.Interfaces;
+using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace Store.BuisnessLogicLayer.Services
+namespace Store.BuisnessLogic.Services
 {
     public class AccountService : IAccountService
     {
-        private const string userRoleName = "user";
-        private readonly IUserRepository _userRepository;
-        private readonly IEmailHalper _emailHalper;
-        private readonly Mapper<User, UserModel> _userModelMapper = new Mapper<User, UserModel>();
-        private readonly Mapper<UserModel, User> _userMapper = new Mapper<UserModel, User>();
+        private const string RESET_PASSWORD_SUBJECT = "Reset password";
+        private const string RESET_PASSWORD_BODY = "Your new password:";
+        private const string CONFIRM_EMAIL_SUBJECT = "Confirm regestration";
+        private const string CONFIRM_EMAIL_BODY = "To complete registration follow the link:";
+        private const string USER_ROLE_NAME = "user";
+        private const string USER_NOT_FOUND_ERROR = "No user with such email";
+        private const string INCORRECT_LOGIN_DATA_ERROR = "Icorrect password or email";
 
-        public AccountService(IUserRepository userRepository, IEmailHalper emailHalper)
+        private readonly IUserRepository _userRepository;
+        private readonly IEmailProvider _emailHalper;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly Mapper<User, UserModel> _userModelMapper;
+        private readonly Mapper<UserModel, User> _userMapper;
+
+        public AccountService(IUserRepository userRepository, IEmailProvider emailProvider,
+            UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _userRepository = userRepository;
-            _emailHalper = emailHalper;
+            _emailHalper = emailProvider;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _userModelMapper = new Mapper<User, UserModel>();
+            _userMapper = new Mapper<UserModel, User>();
         }
 
         public async Task<BaseModel> ResetPasswordAsync(string email, string token, string newPassword)
         {
-            var result = await _userRepository.ResetPasswordAsync(email, token, newPassword);
+            var user = await _userRepository.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return null;
+            }
+            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
             if (!result.Succeeded)
             {
                 var errors = new List<string>();
@@ -40,8 +61,8 @@ namespace Store.BuisnessLogicLayer.Services
                     Errors = errors
                 };
             }
-            var subject = "Reset password";
-            var body = $"Your new password: {newPassword}";
+            var subject = RESET_PASSWORD_SUBJECT;
+            var body = $"{RESET_PASSWORD_BODY} {newPassword}";
             await _emailHalper.SendAsync(email, subject, body);
             return new BaseModel();
         }
@@ -50,19 +71,27 @@ namespace Store.BuisnessLogicLayer.Services
         {
             if (!string.IsNullOrWhiteSpace(email))
             {
-                return await _userRepository.GetFrogotPasswordTokenAsync(email);
+                var user = await _userRepository.FindByEmailAsync(email);
+                var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
+                if (user == null || !isEmailConfirmed)
+                {
+                    return null;
+                }
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                return token;
             }
-            return string.Empty;
+            return null;
         }
 
         public async Task<List<string>> GetRolesAsync(string email)
         {
             var user = await _userRepository.FindByEmailAsync(email);
-            if (user != null)
+            if (user == null)
             {
-                return await _userRepository.GetRolesAsync(user);
+                return null;
             }
-            return new List<string>();
+            var roles = await _userManager.GetRolesAsync(user);
+            return roles as List<string>;
         }
 
         public async Task<UserModel> FindByEmailAsync(string email)
@@ -72,56 +101,77 @@ namespace Store.BuisnessLogicLayer.Services
             {
                 return null;
             }
-            return _userModelMapper.Map(new UserModel(), user);
+            var userModel = _userModelMapper.Map(user);
+            return userModel;
         }
 
         public async Task<IdentityResult> RegisterAsync(UserModel userModel)
         {
-            var user = _userMapper.Map(new User(), userModel);
-            user.UserName = user.Email;
-            var result = await _userRepository.CreateAsync(user);
+            var user = _userMapper.Map(userModel);
+            user.UserName = userModel.Email;
+            var result = await _userManager.CreateAsync(user, user.Password);
             if (result.Succeeded)
             {
-                await _userRepository.AddToRoleAsync(user, userRoleName);
+                await _userManager.AddToRoleAsync(user, USER_ROLE_NAME);
             }
             return result;
         }
 
         public async Task SendConfirmUrlAsync(string email, string url)
         {
-            var subject = "Confirm regestration";
-            var body = $"To complete registration follow the link: {url}";
+            var subject = CONFIRM_EMAIL_SUBJECT;
+            var body = $"{CONFIRM_EMAIL_BODY} {url}";
             await _emailHalper.SendAsync(email, subject, body);
         }
 
-        public async Task ConfirmEmail(string userEmail)
+        public async Task ConfirmEmail(string encodedEmail)
         {
-            var user = await _userRepository.FindByEmailAsync(userEmail);
+            var email = Encoding.UTF8.GetString(Convert.FromBase64String(encodedEmail));
+            var user = await _userRepository.FindByEmailAsync(email);
             if (user == null)
             {
                 return;
             }
-            user.EmailConfirmed = true;
-            await _userRepository.UpdateAsync(user);
-            var userModel = _userModelMapper.Map(new UserModel(), user);
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            await _userManager.ConfirmEmailAsync(user, token);
+            var userModel = _userModelMapper.Map(user);
             await LoginAsync(userModel);
         }
 
-        public async Task<bool> LoginAsync(UserModel userModel)
+        public async Task<BaseModel> LoginAsync(UserModel userModel)
         {
             var user = await _userRepository.FindByEmailAsync(userModel.Email);
             if (user == null)
             {
-                return false;
+                var errors = new List<string>
+                {
+                    USER_NOT_FOUND_ERROR
+                };
+                return new BaseModel
+                {
+                    Errors = errors
+                };
+
             }
             user.Password = userModel.Password;
-            var result = await _userRepository.SignInAsync(user);
-            return result.Succeeded;
+            var result = await _signInManager.PasswordSignInAsync(user, user.Password, false, false);
+            if (!result.Succeeded)
+            {
+                var errors = new List<string>
+                {
+                    INCORRECT_LOGIN_DATA_ERROR
+                };
+                return new BaseModel
+                {
+                    Errors = errors
+                };
+            }
+            return userModel;
         }
 
         public async Task LogoutAsync()
         {
-            await _userRepository.SignOutAsync();
+            await _signInManager.SignOutAsync();
         }
     }
 }

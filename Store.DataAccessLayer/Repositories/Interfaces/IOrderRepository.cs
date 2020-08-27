@@ -1,17 +1,16 @@
-﻿using Store.DataAccess.Filters.ResponseFulters;
-using Store.DataAccessLayer.Entities;
-using Store.DataAccessLayer.Filters;
+﻿using Store.DataAccess.Entities;
+using Store.DataAccess.Filters;
+using Store.DataAccess.Filters.ResponseFulters;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Store.DataAccessLayer.Repositories.Interfaces
+namespace Store.DataAccess.Repositories.Interfaces
 {
     public interface IOrderRepository : IRepository<Order>
     {
         Task AddToPaymentAsync(Guid paymentId, Guid orderId);
         Task<List<Order>> GetUserOrdersAsync(Guid userId);
-        OrderResponseFilter Filter(OrderRequestFilter filter);
-        List<OrderItem> GetOrderItems(Guid orderId);
+        OrderResponseDataModel Filter(OrderRequestDataModel filter);
     }
 }

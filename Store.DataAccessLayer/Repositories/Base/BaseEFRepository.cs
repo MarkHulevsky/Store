@@ -1,17 +1,24 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Store.DataAccessLayer.AppContext;
-using Store.DataAccessLayer.Entities.Base;
-using Store.DataAccessLayer.Repositories.Interfaces;
+using Store.DataAccess.AppContext;
+using Store.DataAccess.Entities.Base;
+using Store.DataAccess.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Store.DataAccessLayer.Repositories.Base
+namespace Store.DataAccess.Repositories.Base
 {
     public abstract class BaseEFRepository<T> : IRepository<T> where T : class, IBaseEntity
     {
-        protected readonly ApplicationContext _dbContext;
+        private readonly ApplicationContext _dbContext;
+        protected DbSet<T> DbSet
+        {
+            get
+            {
+                return _dbContext.Set<T>();
+            }
+        }
 
         public BaseEFRepository(ApplicationContext context)
         {
@@ -21,7 +28,7 @@ namespace Store.DataAccessLayer.Repositories.Base
         public virtual async Task<T> CreateAsync(T model)
         {
             model.CreationDate = DateTime.UtcNow;
-            var entityEntry = await _dbContext.Set<T>().AddAsync(model);
+            var entityEntry = await DbSet.AddAsync(model);
             model = entityEntry.Entity;
             await _dbContext.SaveChangesAsync();
             return model;
@@ -29,30 +36,34 @@ namespace Store.DataAccessLayer.Repositories.Base
 
         public virtual async Task<T> RemoveAsync(Guid id)
         {
-            var entity = await _dbContext.Set<T>().FirstOrDefaultAsync(entity => entity.Id == id);
+            var entity = await DbSet.FirstOrDefaultAsync(entity => entity.Id == id);
             entity.IsRemoved = true;
-            entity = _dbContext.Set<T>().Update(entity).Entity;
+            entity = DbSet.Update(entity).Entity;
             await _dbContext.SaveChangesAsync();
             return entity;
         }
 
         public virtual async Task<T> GetAsync(Guid id)
         {
-            return await _dbContext.Set<T>().FirstOrDefaultAsync(entity => entity.Id == id && entity.IsRemoved == false);
+            return await DbSet.FirstOrDefaultAsync(entity => entity.Id == id && entity.IsRemoved == false);
         }
 
         public virtual async Task<List<T>> GetAllAsync()
         {
-            return await _dbContext.Set<T>().Where(ent => !ent.IsRemoved).ToListAsync();
+            return await DbSet.Where(ent => !ent.IsRemoved).ToListAsync();
         }
 
         public virtual async Task<T> UpdateAsync(T model)
         {
-            var entity = await _dbContext.Set<T>().FirstOrDefaultAsync(ent => ent.Id == model.Id);
+            var entity = await DbSet.FirstOrDefaultAsync(ent => ent.Id == model.Id);
             entity = _dbContext.Set<T>().Update(model).Entity;
             await _dbContext.SaveChangesAsync();
             return entity;
         }
 
+        protected async Task SaveChangesAsync()
+        {
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

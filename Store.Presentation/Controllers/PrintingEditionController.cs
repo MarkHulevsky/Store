@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
-using Store.BuisnessLogicLayer.Models.Filters;
-using Store.BuisnessLogicLayer.Models.PrintingEditions;
-using Store.BuisnessLogicLayer.Services.Interfaces;
-using Store.Presentation.Helpers.Interfaces;
+using Store.BuisnessLogic.Helpers.Interfaces;
+using Store.BuisnessLogic.Models.Filters;
+using Store.BuisnessLogic.Models.PrintingEditions;
+using Store.BuisnessLogic.Services.Interfaces;
 using System;
 using System.Threading.Tasks;
 
@@ -17,9 +17,9 @@ namespace Store.Presentation.Controllers
     {
         private readonly IPrintingEditionService _printingEditionService;
         private readonly IConfiguration _configuration;
-        private readonly IHttpHelper _http;
+        private readonly IHttpProvider _http;
         public PrintingEditionController(IPrintingEditionService printingEditionService,
-            IConfiguration configuration, IHttpHelper http)
+            IConfiguration configuration, IHttpProvider http)
         {
             _printingEditionService = printingEditionService;
             _configuration = configuration;
@@ -45,9 +45,9 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetFiltred([FromBody] PrintingEditionsRequestFilterModel filter)
+        public IActionResult GetFiltred([FromBody] PrintingEditionsRequestModel filter)
         {
-            var peResponse = await _printingEditionService.FilterAsync(filter);
+            var peResponse = _printingEditionService.Filter(filter);
             return Ok(peResponse);
         }
 

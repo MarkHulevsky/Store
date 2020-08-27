@@ -1,6 +1,6 @@
-﻿using Store.DataAccessLayer.Entities.Base;
+﻿using Store.DataAccess.Entities.Base;
 
-namespace Store.DataAccessLayer.Entities
+namespace Store.DataAccess.Entities
 {
     public class Payment : BaseEntity
     {

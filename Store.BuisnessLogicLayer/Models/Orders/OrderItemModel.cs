@@ -1,8 +1,8 @@
-﻿using Store.BuisnessLogicLayer.Models.Base;
-using Store.BuisnessLogicLayer.Models.PrintingEditions;
+﻿using Store.BuisnessLogic.Models.Base;
+using Store.BuisnessLogic.Models.PrintingEditions;
 using System;
 
-namespace Store.BuisnessLogicLayer.Models.Orders
+namespace Store.BuisnessLogic.Models.Orders
 {
     public class OrderItemModel : BaseModel
     {

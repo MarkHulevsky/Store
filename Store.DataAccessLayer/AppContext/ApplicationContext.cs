@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Store.DataAccessLayer.Entities;
+using Store.DataAccess.Entities;
 using System;
 
-namespace Store.DataAccessLayer.AppContext
+namespace Store.DataAccess.AppContext
 {
     public class ApplicationContext : IdentityDbContext<User, IdentityRole<Guid>, Guid,
         IdentityUserClaim<Guid>, IdentityUserRole<Guid>, IdentityUserLogin<Guid>, IdentityRoleClaim<Guid>,
@@ -20,7 +20,6 @@ namespace Store.DataAccessLayer.AppContext
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -32,6 +31,17 @@ namespace Store.DataAccessLayer.AppContext
         {
             builder.Entity<AuthorInPrintingEdition>()
                 .HasKey(table => new { table.AuthorId, table.PrintingEditionId });
+
+            builder.Entity<AuthorInPrintingEdition>()
+                .HasOne(ap => ap.PrintingEdition)
+                .WithMany(pe => pe.AuthorInPrintingEditions)
+                .HasForeignKey(ap => ap.PrintingEditionId);
+
+            builder.Entity<AuthorInPrintingEdition>()
+                .HasOne(ap => ap.Author)
+                .WithMany(author => author.AuthorInPrintingEditions)
+                .HasForeignKey(ap => ap.AuthorId);
+
             base.OnModelCreating(builder);
         }
     }

@@ -1,7 +1,7 @@
-﻿using Store.BuisnessLogicLayer.Models.Base;
+﻿using Store.BuisnessLogic.Models.Base;
 using System;
 
-namespace Store.BuisnessLogicLayer.Models.Payments
+namespace Store.BuisnessLogic.Models.Payments
 {
     public class PaymentModel : BaseModel
     {

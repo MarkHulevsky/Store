@@ -1,16 +1,16 @@
-﻿using Store.BuisnessLogic.Models.Filters.ResponseFilters;
-using Store.BuisnessLogicLayer.Models.Base;
-using Store.BuisnessLogicLayer.Models.Filters;
-using Store.BuisnessLogicLayer.Models.Users;
+﻿using Store.BuisnessLogic.Models.Base;
+using Store.BuisnessLogic.Models.Filters;
+using Store.BuisnessLogic.Models.Filters.ResponseFilters;
+using Store.BuisnessLogic.Models.Users;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Store.BuisnessLogicLayer.Services.Interfaces
+namespace Store.BuisnessLogic.Services.Interfaces
 {
     public interface IUserService
     {
-        UserResponseFilterModel Filter(UserRequestFilterModel filterModel);
+        UserResponseModel Filter(UserRequestModel filterModel);
         Task<UserModel> GetCurrentAsync(ClaimsPrincipal user);
         Task<BaseModel> EditAsync(UserModel userModel);
         Task ChangeStatusAsync(UserModel userModel);

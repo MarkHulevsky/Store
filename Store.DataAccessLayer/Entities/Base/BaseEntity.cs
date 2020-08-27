@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Store.DataAccessLayer.Entities.Base
+namespace Store.DataAccess.Entities.Base
 {
     public class BaseEntity : IBaseEntity
     {

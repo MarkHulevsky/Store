@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Store.DataAccessLayer.Repositories.Interfaces
+namespace Store.DataAccess.Repositories.Interfaces
 {
     public interface IRepository<T>
     {

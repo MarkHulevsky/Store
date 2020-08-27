@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Store.BuisnessLogicLayer.Models.Account
+namespace Store.BuisnessLogic.Models.Account
 {
     public class RegisterModel
     {

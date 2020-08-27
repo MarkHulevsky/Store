@@ -1,7 +1,9 @@
-﻿namespace Store.BuisnessLogicLayer.Common.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace Store.BuisnessLogic.Common.Interfaces
 {
     public interface ILogger
     {
-        void Log(string message);
+        Task LogAsync(string message);
     }
 }

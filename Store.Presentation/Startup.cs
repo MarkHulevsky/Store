@@ -8,19 +8,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Store.BuisnessLogic.Common;
+using Store.BuisnessLogic.Common.Interfaces;
+using Store.BuisnessLogic.Helpers;
 using Store.BuisnessLogic.Helpers.Interfaces;
-using Store.BuisnessLogicLayer.Common;
-using Store.BuisnessLogicLayer.Common.Interfaces;
-using Store.BuisnessLogicLayer.Helpers;
-using Store.BuisnessLogicLayer.Services;
-using Store.BuisnessLogicLayer.Services.Interfaces;
-using Store.DataAccess.Repositories.DapperRepositories;
-using Store.DataAccessLayer.AppContext;
-using Store.DataAccessLayer.Entities;
-using Store.DataAccessLayer.Initialization;
-using Store.DataAccessLayer.Repositories.Interfaces;
-using Store.Presentation.Helpers;
-using Store.Presentation.Helpers.Interfaces;
+using Store.BuisnessLogic.Services;
+using Store.BuisnessLogic.Services.Interfaces;
+using Store.DataAccess.AppContext;
+using Store.DataAccess.Entities;
+using Store.DataAccess.Initialization;
+using Store.DataAccess.Repositories.EFRepositories;
+using Store.DataAccess.Repositories.Interfaces;
 using Store.Presentation.Middlewares;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -47,7 +45,7 @@ namespace Store.Presentation
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IOrderItemRepository, OrderItemRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
-            services.AddScoped<IEmailHalper, EmailHelper>();
+            services.AddScoped<IEmailProvider, EmailProvider>();
             services.AddScoped<IJwtHelper, JwtHelper>();
 
             services.AddScoped<IUserService, UserService>();
@@ -55,7 +53,7 @@ namespace Store.Presentation
             services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<IPrintingEditionService, PrintingEditionService>();
             services.AddScoped<IOrderService, OrderService>();
-            services.AddScoped<IHttpHelper, HttpHelper>();
+            services.AddScoped<IHttpProvider, HttpProvider>();
 
             services.AddDbContext<ApplicationContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));

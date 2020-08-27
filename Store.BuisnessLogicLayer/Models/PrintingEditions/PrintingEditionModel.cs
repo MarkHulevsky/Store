@@ -1,17 +1,21 @@
-﻿using Store.BuisnessLogicLayer.Models.Authors;
-using Store.BuisnessLogicLayer.Models.Base;
+﻿using Store.BuisnessLogic.Models.Authors;
+using Store.BuisnessLogic.Models.Base;
 using System.Collections.Generic;
-using static Store.BuisnessLogicLayer.Models.Enums.Enums;
+using static Shared.Enums.Enums;
 
-namespace Store.BuisnessLogicLayer.Models.PrintingEditions
+namespace Store.BuisnessLogic.Models.PrintingEditions
 {
     public class PrintingEditionModel : BaseModel
     {
         public string Title { get; set; }
         public string Description { get; set; }
         public float Price { get; set; }
-        public Currency Currency { get; set; }
+        public CurrencyType Currency { get; set; }
         public PrintingEditionType Type { get; set; }
-        public IEnumerable<AuthorModel> Authors { get; set; } = new List<AuthorModel>();
+        public List<AuthorModel> Authors { get; set; }
+        public PrintingEditionModel()
+        {
+            Authors = new List<AuthorModel>();
+        }
     }
 }

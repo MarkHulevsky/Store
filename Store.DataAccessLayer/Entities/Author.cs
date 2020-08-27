@@ -1,8 +1,8 @@
-﻿using Store.DataAccessLayer.Entities.Base;
+﻿using Store.DataAccess.Entities.Base;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Store.DataAccessLayer.Entities
+namespace Store.DataAccess.Entities
 {
     public class Author : BaseEntity
     {
@@ -14,6 +14,7 @@ namespace Store.DataAccessLayer.Entities
         public Author()
         {
             AuthorInPrintingEditions = new List<AuthorInPrintingEdition>();
+            PrintingEditions = new List<PrintingEdition>();
         }
     }
 }

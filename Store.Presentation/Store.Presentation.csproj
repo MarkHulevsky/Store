@@ -38,10 +38,6 @@
     <ProjectReference Include="..\Store.BuisnessLogicLayer\Store.BuisnessLogic.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\UserModels\" />
-  </ItemGroup>
-
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 

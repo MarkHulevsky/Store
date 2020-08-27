@@ -1,14 +1,11 @@
-﻿using Store.DataAccess.Filters.ResponseFulters;
-using Store.DataAccessLayer.Entities;
-using Store.DataAccessLayer.Filters;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Store.DataAccess.Entities;
+using Store.DataAccess.Filters;
+using Store.DataAccess.Filters.ResponseFulters;
 
-namespace Store.DataAccessLayer.Repositories.Interfaces
+namespace Store.DataAccess.Repositories.Interfaces
 {
     public interface IPrintingEditionRepository : IRepository<PrintingEdition>
     {
-        PrintingEditionResponseFilter Filter(PrintingEditionsRequestFilter filter);
-        Task<List<Author>> GetAuthorsAsync(PrintingEdition printingEdition);
+        PrintingEditionResponseDataModel Filter(PrintingEditionsRequestDataModel filter);
     }
 }

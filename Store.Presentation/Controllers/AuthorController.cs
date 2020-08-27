@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Store.BuisnessLogicLayer.Models.Authors;
-using Store.BuisnessLogicLayer.Models.Filters;
-using Store.BuisnessLogicLayer.Services.Interfaces;
+using Store.BuisnessLogic.Models.Authors;
+using Store.BuisnessLogic.Models.Filters;
+using Store.BuisnessLogic.Services.Interfaces;
 using System;
 using System.Threading.Tasks;
 
@@ -26,7 +26,7 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetFiltred([FromBody] AuthorRequestFilterModel filterModel)
+        public async Task<IActionResult> GetFiltred([FromBody] AuthorRequestModel filterModel)
         {
             var authorsResponse = await _authorService.FilterAsync(filterModel);
             return Ok(authorsResponse);

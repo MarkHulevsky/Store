@@ -1,11 +1,11 @@
-﻿using Store.BuisnessLogic.Models.Filters.ResponseFilters;
-using Store.BuisnessLogicLayer.Models.Authors;
-using Store.BuisnessLogicLayer.Models.Filters;
+﻿using Store.BuisnessLogic.Models.Authors;
+using Store.BuisnessLogic.Models.Filters;
+using Store.BuisnessLogic.Models.Filters.ResponseFilters;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Store.BuisnessLogicLayer.Services.Interfaces
+namespace Store.BuisnessLogic.Services.Interfaces
 {
     public interface IAuthorService
     {
@@ -13,6 +13,6 @@ namespace Store.BuisnessLogicLayer.Services.Interfaces
         Task CreateAsync(AuthorModel authorModel);
         Task RemoveAsync(Guid id);
         Task EditAsync(AuthorModel authorModel);
-        Task<AuthorResponseFilterModel> FilterAsync(AuthorRequestFilterModel filterModel);
+        Task<AuthorResponseModel> FilterAsync(AuthorRequestModel filterModel);
     }
 }

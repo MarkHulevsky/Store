@@ -1,4 +1,4 @@
-﻿namespace Store.BuisnessLogicLayer.Models.Filters
+﻿namespace Store.BuisnessLogic.Models.Filters
 {
     public class PagingModel
     {

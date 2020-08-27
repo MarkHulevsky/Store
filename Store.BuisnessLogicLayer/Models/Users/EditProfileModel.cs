@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Store.BuisnessLogicLayer.Models.Users
+namespace Store.BuisnessLogic.Models.Users
 {
     public class EditProfileModel
     {

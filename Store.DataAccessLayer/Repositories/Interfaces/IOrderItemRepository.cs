@@ -1,6 +1,6 @@
-﻿using Store.DataAccessLayer.Entities;
+﻿using Store.DataAccess.Entities;
 
-namespace Store.DataAccessLayer.Repositories.Interfaces
+namespace Store.DataAccess.Repositories.Interfaces
 {
     public interface IOrderItemRepository : IRepository<OrderItem>
     {

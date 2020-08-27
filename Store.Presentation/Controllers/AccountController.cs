@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Store.BuisnessLogic.Helpers;
+using Store.BuisnessLogic.Helpers.Interfaces;
+using Store.BuisnessLogic.Models.Account;
 using Store.BuisnessLogic.Models.Token;
-using Store.BuisnessLogicLayer.Helpers;
-using Store.BuisnessLogicLayer.Models.Account;
-using Store.BuisnessLogicLayer.Models.Users;
-using Store.BuisnessLogicLayer.Services.Interfaces;
-using Store.Presentation.Helpers.Interfaces;
+using Store.BuisnessLogic.Models.Users;
+using Store.BuisnessLogic.Services.Interfaces;
+using System;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Store.Presentation.Controllers
@@ -32,25 +33,10 @@ namespace Store.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordModel model)
         {
-            var userModel = await _accountService.FindByEmailAsync(model.Email);
-            if (userModel != null)
-            {
-                var token = await _accountService.GetForgotPasswordTokenAsync(model.Email);
-                string newPassword = PasswordGenerator.GeneratePassword();
-
-                var result = await _accountService.ResetPasswordAsync(model.Email, token, newPassword);
-
-                if (result.Errors.Count > 0)
-                {
-                    userModel.Errors = result.Errors;
-                    return Ok(userModel);
-                }
-
-                return Ok();
-            }
-            userModel = new UserModel();
-            userModel.Errors.Add("No user with such email");
-            return Ok(userModel);
+            var token = await _accountService.GetForgotPasswordTokenAsync(model.Email);
+            string newPassword = PasswordGenerator.GeneratePassword();
+            var baseModel = await _accountService.ResetPasswordAsync(model.Email, token, newPassword);
+            return Ok(baseModel);
         }
 
         [HttpPost]
@@ -70,17 +56,22 @@ namespace Store.Presentation.Controllers
             var userModel = new UserModel();
             if (ModelState.IsValid)
             {
-                var userModelMapper = new Mapper<RegisterModel, UserModel>();
-                userModel = userModelMapper.Map(new UserModel(), model);
+                var _userModelMapper = new Mapper<RegisterModel, UserModel>();
+                userModel = _userModelMapper.Map(model);
 
                 var result = await _accountService.RegisterAsync(userModel);
                 if (result.Succeeded)
                 {
+                    var encodedEmail = Convert.ToBase64String(Encoding.UTF8.GetBytes(model.Email));
                     string url = Url.Action("ConfirmEmail", "Account",
-                        new { email = model.Email }, Request.Scheme);
+                        new { email = encodedEmail }, Request.Scheme);
                     await _accountService.SendConfirmUrlAsync(model.Email, url);
+                    return Ok();
                 }
-                userModel.Errors.Add("User with such email is alrady exists or password is too short");
+                foreach (var error in result.Errors)
+                {
+                    userModel.Errors.Add(error.Description);
+                }
             }
 
             var errors = ModelState.Values.SelectMany(v => v.Errors);
@@ -93,9 +84,9 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task ConfirmEmail(string email)
+        public async Task ConfirmEmail(string encodedEmail)
         {
-            await _accountService.ConfirmEmail(email);
+            await _accountService.ConfirmEmail(encodedEmail);
         }
 
         [HttpPost]
@@ -106,9 +97,9 @@ namespace Store.Presentation.Controllers
                 Email = model.Email,
                 Password = model.Password
             };
-            var succeed = await _accountService.LoginAsync(userModel);
+            var result = await _accountService.LoginAsync(userModel);
 
-            if (!succeed)
+            if (result.Errors.Count != 0)
             {
                 return Unauthorized(userModel);
             }

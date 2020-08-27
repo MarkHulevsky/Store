@@ -1,9 +1,8 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
-using Store.DataAccess.Entities.Constants;
+using Store.DataAccess.Entities;
 using Store.DataAccess.Repositories.Base;
-using Store.DataAccessLayer.Entities;
-using Store.DataAccessLayer.Repositories.Interfaces;
+using Store.DataAccess.Repositories.Interfaces;
 using System;
 using System.Threading.Tasks;
 
@@ -11,9 +10,10 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 {
     public class PaymentRepository : BaseDapperRepository<Payment>, IPaymentRepository
     {
-        public PaymentRepository(IConfiguration configuration) : base(configuration) 
+        public const string PAYMENTS_TABLE_NAME = "Payments";
+        public PaymentRepository(IConfiguration configuration) : base(configuration)
         {
-            tableName = Constants.paymentTableName;
+            tableName = PAYMENTS_TABLE_NAME;
         }
 
         public override async Task<Payment> CreateAsync(Payment model)

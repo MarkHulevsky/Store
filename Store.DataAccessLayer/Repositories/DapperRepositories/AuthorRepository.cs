@@ -1,11 +1,12 @@
 ﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Store.DataAccess.Entities.Constants;
+using Store.DataAccess.Entities;
+using Store.DataAccess.Filters;
 using Store.DataAccess.Filters.ResponseFulters;
+using Store.DataAccess.Models.Constants;
 using Store.DataAccess.Repositories.Base;
-using Store.DataAccessLayer.Entities;
-using Store.DataAccessLayer.Filters;
-using Store.DataAccessLayer.Repositories.Interfaces;
+using Store.DataAccess.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -18,7 +19,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
     {
         public AuthorRepository(IConfiguration configuration) : base(configuration)
         {
-            tableName = Constants.authorTableName;
+            tableName = Constants.AUTHORS_TABLE_NAME;
         }
 
         public override async Task<Author> CreateAsync(Author model)
@@ -34,20 +35,41 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             return model;
         }
 
-        public async Task<AuthorResponseFilter> FilterAsync(AuthorRequestFilter filter)
+        public async Task<AuthorResponseDataModel> FilterAsync(AuthorRequestDataModel filter)
         {
-            var query = $"SELECT * FROM {tableName} WHERE IsRemoved != 1";
-            var queryableAuthors = _dbContext.Query<Author>(query).AsQueryable()
-                .OrderBy(filter.PropName, filter.SortType.ToString());
-            var authors = queryableAuthors.Skip(filter.Paging.ItemsCount * filter.Paging.CurrentPage)
-                .Take(filter.Paging.ItemsCount).ToList();
-            foreach (var author in authors)
-            {
-                author.PrintingEditions = await GetPrintingEditionsAsync(author);
-            }
+            var query = $"SELECT * FROM {tableName} LEFT JOIN (" +
+                $"SELECT {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.AuthorId, " +
+                $"{Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.PrintingEditionId FROM {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME} " +
+                $") AS {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME} " +
+                $"ON {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.AuthorId = {Constants.PRINTING_EDITIONS_TABLE_NAME}.Id " +
+                $"LEFT JOIN {Constants.PRINTING_EDITIONS_TABLE_NAME} " +
+                $"ON {Constants.PRINTING_EDITIONS_TABLE_NAME}.Id = {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.PrintingEditionId " +
+                $"WHERE IsRemoved != 1";
+
+            var authorsDictionary = new Dictionary<Guid, Author>();
+            var authors = await _dbContext.QueryAsync<Author, PrintingEdition, Author>(
+                query, (author, printingEdition) =>
+                {
+                    var authorEntry = new Author();
+                    if (!authorsDictionary.TryGetValue(author.Id, out authorEntry))
+                    {
+                        authorEntry = author;
+                        authorsDictionary.Add(authorEntry.Id, authorEntry);
+                    }
+                    authorEntry.PrintingEditions.Add(printingEdition);
+                    return authorEntry;
+                });
+            authors = await authors
+                .Distinct()
+                .AsQueryable()
+                .OrderBy(filter.SortPropertyName, filter.SortType.ToString())
+                .Skip(filter.Paging.ItemsCount * filter.Paging.CurrentPage)
+                .Take(filter.Paging.ItemsCount)
+                .ToListAsync();
+
             query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved != 1";
-            var totalCount = _dbContext.Query<int>(query).FirstOrDefault();
-            var result = new AuthorResponseFilter
+            var totalCount = await _dbContext.QueryFirstOrDefaultAsync<int>(query);
+            var result = new AuthorResponseDataModel
             {
                 Authors = authors,
                 TotalCount = totalCount
@@ -67,23 +89,6 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             var query = $"UPDATE {tableName} SET Name = '{model.Name}' WHERE Id = '{model.Id}'";
             var author = await _dbContext.QueryFirstOrDefaultAsync<Author>(query);
             return author;
-        }
-
-        public async Task<List<PrintingEdition>> GetPrintingEditionsAsync(Author author)
-        {
-            var query = $"SELECT * FROM AuthorInPrintingEditions WHERE AuthorId = '{author.Id}'";
-            var authorInPrintingEditions = await _dbContext.QueryAsync<AuthorInPrintingEdition>(query);
-            var printingEditions = new List<PrintingEdition>();
-            foreach (var aInPe in authorInPrintingEditions)
-            {
-                query = $"SELECT * FROM PrintingEditions WHERE Id = '{aInPe.PrintingEditionId}' and IsRemoved != 1";
-                var printingEdition = await _dbContext.QueryFirstOrDefaultAsync<PrintingEdition>(query);
-                if (printingEdition != null)
-                {
-                    printingEditions.Add(printingEdition);
-                }
-            }
-            return printingEditions;
         }
     }
 }

@@ -1,19 +1,22 @@
-﻿using Store.DataAccessLayer.Entities.Base;
+﻿using Store.DataAccess.Entities.Base;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using static Store.DataAccessLayer.Entities.Enums.Enums;
+using static Shared.Enums.Enums;
 
-namespace Store.DataAccessLayer.Entities
+namespace Store.DataAccess.Entities
 {
     public class PrintingEdition : BaseEntity
     {
         public string Title { get; set; }
         public string Description { get; set; }
         public float Price { get; set; }
-        public Currency Currency { get; set; }
+        public CurrencyType Currency { get; set; }
         public PrintingEditionType Type { get; set; }
-        public virtual List<AuthorInPrintingEdition> AuthorInPrintingEditions { get; set; } = new List<AuthorInPrintingEdition>();
-        [NotMapped]
-        public List<Author> Authors { get; set; } = new List<Author>();
+        public virtual List<AuthorInPrintingEdition> AuthorInPrintingEditions { get; set; }
+        public virtual List<Author> Authors { get; set; }
+        public PrintingEdition()
+        {
+            AuthorInPrintingEditions = new List<AuthorInPrintingEdition>();
+            Authors = new List<Author>();
+        }
     }
 }

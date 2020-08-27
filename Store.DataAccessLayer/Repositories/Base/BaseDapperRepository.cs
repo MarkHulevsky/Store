@@ -2,8 +2,8 @@
 using Dapper.Contrib.Extensions;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using Store.DataAccessLayer.Entities.Base;
-using Store.DataAccessLayer.Repositories.Interfaces;
+using Store.DataAccess.Entities.Base;
+using Store.DataAccess.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,8 +45,8 @@ namespace Store.DataAccess.Repositories.Base
         public async Task<List<T>> GetAllAsync()
         {
             var query = $"SELECT * FROM {tableName} WHERE IsRemoved != 1";
-            var result = _dbContext.Query<T>(query).ToList();
-            return result;
+            var result = await _dbContext.QueryAsync<T>(query);
+            return result.ToList();
         }
 
         public async Task<T> GetAsync(Guid id)

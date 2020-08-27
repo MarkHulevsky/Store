@@ -1,12 +1,11 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using Store.DataAccess.Entities.Constants;
+using Store.DataAccess.Entities;
 using Store.DataAccess.Filters;
+using Store.DataAccess.Models.Constants;
 using Store.DataAccess.Repositories.Base;
-using Store.DataAccessLayer.Entities;
-using Store.DataAccessLayer.Filters;
-using Store.DataAccessLayer.Repositories.Interfaces;
+using Store.DataAccess.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,28 +15,12 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 {
     public class UserRepository : BaseDapperRepository<User>, IUserRepository
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
-
-        public UserRepository(IConfiguration configuration, UserManager<User> userManager,
-           SignInManager<User> signInManager) : base(configuration)
+        public UserRepository(IConfiguration configuration) : base(configuration)
         {
-            _signInManager = signInManager;
-            _userManager = userManager;
-            tableName = Constants.userTableName;
+            tableName = Constants.USERS_TABLE_NAME;
         }
 
-        public async Task<IdentityResult> AddToRoleAsync(User user, string roleName)
-        {
-            return await _userManager.AddToRoleAsync(user, roleName);
-        }
-
-        public new async Task<IdentityResult> CreateAsync(User user)
-        {
-            return await _userManager.CreateAsync(user);
-        }
-
-        public UserResponseFilter Filter(UserRequestFilter filter)
+        public UserResponseDataModel Filter(UserRequestDataModel filter)
         {
             var query = $"SELECT * FROM {tableName} WHERE (FirstName LIKE '%{filter.SearchString}%'" +
                 $"OR LastName LIKE '%{filter.SearchString}%') AND IsRemoved = 0";
@@ -49,12 +32,12 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                 userList = userList.Concat(users.Where(u => u.IsActive == status));
             }
             var queryableUsers = userList;
-            queryableUsers = queryableUsers.OrderBy($"{filter.PropName}", $"{filter.SortType}");
+            queryableUsers = queryableUsers.OrderBy($"{filter.SortPropertyName}", $"{filter.SortType}");
             users = queryableUsers.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
                 .Take(filter.Paging.ItemsCount).ToList();
             query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";
             var count = _dbContext.QueryFirstOrDefault<int>(query);
-            var result = new UserResponseFilter
+            var result = new UserResponseDataModel
             {
                 Users = users,
                 TotalCount = count
@@ -70,73 +53,11 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             return user;
         }
 
-        public async Task<string> GetFrogotPasswordTokenAsync(string email)
-        {
-            var user = await FindByEmailAsync(email);
-            if (user != null && await _userManager.IsEmailConfirmedAsync(user))
-            {
-                return await _userManager.GeneratePasswordResetTokenAsync(user);
-            }
-            return string.Empty;
-        }
-
-        public async Task<List<string>> GetRolesAsync(User user)
-        {
-            var roles = await _userManager.GetRolesAsync(user) as List<string>;
-            if (roles.Count > 0)
-            {
-                return roles;
-            }
-            return new List<string>();
-        }
-
-        public async Task<IdentityResult> ResetPasswordAsync(string email, string token, string newPassword)
-        {
-            var user = await FindByEmailAsync(email);
-            var result = new IdentityResult();
-            if (user != null && !string.IsNullOrWhiteSpace(token))
-            {
-                result = await _userManager.ResetPasswordAsync(user, token, newPassword);
-            }
-            return result;
-        }
-
-        public async Task<SignInResult> SignInAsync(User user)
-        {
-            return await _signInManager.PasswordSignInAsync(user, user.Password, false, false);
-        }
-
-        public async Task SignOutAsync()
-        {
-            await _signInManager.SignOutAsync();
-        }
-
-        public new async Task<IdentityResult> UpdateAsync(User editedUser)
-        {
-            var query = $"UPDATE {tableName} SET FirstName = '{editedUser.FirstName}', " +
-                $"LastName = '{editedUser.LastName}', IsActive = {Convert.ToInt32(editedUser.IsActive)}," +
-                $"Email = '{editedUser.Email}', EmailConfirmed = {Convert.ToInt32(editedUser.EmailConfirmed)} " +
-                $"WHERE Id = '{editedUser.Id}'";
-            var user = await _dbContext.QueryFirstOrDefaultAsync<User>(query);
-            if (user != null)
-            {
-                return new IdentityResult();
-            }
-            return null;
-        }
-
         public new async Task<User> GetAsync(Guid id)
         {
             var query = $"SELECT * FROM {tableName} WHERE Id = '{id}' AND IsRemoved = 0";
             var user = await _dbContext.QueryFirstOrDefaultAsync<User>(query);
             return user;
-        }
-
-        public new async Task<List<User>> GetAllAsync()
-        {
-            var query = $"SELECT * FROM ${tableName}";
-            var users = _dbContext.Query<User>(query).ToList();
-            return users;
         }
 
         ~UserRepository()

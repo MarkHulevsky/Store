@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Store.BuisnessLogic.Models.Filters;
 using Store.BuisnessLogic.Models.Orders;
-using Store.BuisnessLogicLayer.Models.Filters;
-using Store.BuisnessLogicLayer.Models.Payments;
-using Store.BuisnessLogicLayer.Services.Interfaces;
+using Store.BuisnessLogic.Models.Payments;
+using Store.BuisnessLogic.Services.Interfaces;
 using System;
 using System.Threading.Tasks;
 
@@ -31,9 +31,9 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetFiltred([FromBody] OrderRequestFilterModel filter)
+        public IActionResult GetFiltred([FromBody] OrderRequestModel filter)
         {
-            var ordersResponse = await _orderService.FilterAsync(filter);
+            var ordersResponse = _orderService.Filter(filter);
             return Ok(ordersResponse);
         }
 

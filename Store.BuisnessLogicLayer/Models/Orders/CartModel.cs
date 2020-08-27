@@ -1,5 +1,4 @@
-﻿using Store.BuisnessLogicLayer.Models.Base;
-using Store.BuisnessLogicLayer.Models.Orders;
+﻿using Store.BuisnessLogic.Models.Base;
 using System;
 
 namespace Store.BuisnessLogic.Models.Orders

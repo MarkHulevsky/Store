@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Store.DataAccess.AppContext;
+using Store.DataAccess.Entities;
+using Store.DataAccess.Filters;
 using Store.DataAccess.Filters.ResponseFulters;
-using Store.DataAccessLayer.AppContext;
-using Store.DataAccessLayer.Entities;
-using Store.DataAccessLayer.Filters;
-using Store.DataAccessLayer.Repositories.Base;
-using Store.DataAccessLayer.Repositories.Interfaces;
+using Store.DataAccess.Repositories.Base;
+using Store.DataAccess.Repositories.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Store.DataAccessLayer.Repositories.EFRepositories
+namespace Store.DataAccess.Repositories.EFRepositories
 {
     public class PrintingEditionRepository : BaseEFRepository<PrintingEdition>, IPrintingEditionRepository
     {
@@ -18,19 +18,21 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
         {
         }
 
-        public PrintingEditionResponseFilter Filter(PrintingEditionsRequestFilter filter)
+        public PrintingEditionResponseDataModel Filter(PrintingEditionsRequestDataModel filter)
         {
-            var query = _dbContext.PrintingEditions
+            var query = DbSet
+                .Include(printingEdition => printingEdition.AuthorInPrintingEditions)
+                .ThenInclude(authorInPrintingEdition => authorInPrintingEdition.Author)
                 .Where(pe => !pe.IsRemoved && EF.Functions.Like(pe.Title, $"%{filter.SearchString}%"));
 
-            var uQuery = new List<PrintingEdition>().AsQueryable();
+            var subquery = new List<PrintingEdition>().AsQueryable();
 
             foreach (var type in filter.Types)
             {
-                uQuery = uQuery.Concat(query.Where(pe => pe.Type == type));
+                subquery = subquery.Concat(query.Where(pe => pe.Type == type));
             }
 
-            query = uQuery;
+            query = subquery;
 
             if (filter.MaxPrice > filter.MinPrice && filter.MaxPrice != filter.MinPrice)
             {
@@ -38,46 +40,34 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
             }
 
             query = query.OrderBy("Price", $"{filter.SortType}");
-
             var printingEditions = query.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
                 .Take(filter.Paging.ItemsCount).ToList();
-            var result = new PrintingEditionResponseFilter
+            foreach (var printingEdition in printingEditions)
+            {
+                var authors = printingEdition.AuthorInPrintingEditions
+                    .Select(authorInPrintingEditions => authorInPrintingEditions.Author)
+                    .ToList();
+                printingEdition.Authors = authors;
+            }
+            var result = new PrintingEditionResponseDataModel
             {
                 PrintingEditions = printingEditions,
-                TotalCount = _dbContext.PrintingEditions.Where(pe => !pe.IsRemoved).Count(),
+                TotalCount = DbSet.Where(pe => !pe.IsRemoved).Count(),
             };
             return result;
         }
 
         public override async Task<PrintingEdition> UpdateAsync(PrintingEdition model)
         {
-            var entity = await _dbContext.PrintingEditions.FirstOrDefaultAsync(pe => pe.Id == model.Id);
+            var entity = await DbSet.FirstOrDefaultAsync(pe => pe.Id == model.Id);
             entity.Title = model.Title;
             entity.Price = model.Price;
             entity.Type = model.Type;
             entity.Description = model.Description;
             entity.Currency = entity.Currency;
-            entity = _dbContext.PrintingEditions.Update(entity).Entity;
-            await _dbContext.SaveChangesAsync();
+            entity = DbSet.Update(entity).Entity;
+            await SaveChangesAsync();
             return entity;
-        }
-
-        public async Task<List<Author>> GetAuthorsAsync(PrintingEdition printingEdition)
-        {
-            var authorInPrintingEditions = await _dbContext.AuthorInPrintingEditions
-                .Where(aInPe => aInPe.PrintingEditionId == printingEdition.Id).ToListAsync();
-            var authors = new List<Author>();
-            foreach (var aInPe in authorInPrintingEditions)
-            {
-                var author = await _dbContext.Authors.FirstOrDefaultAsync(a => a.Id == aInPe.AuthorId
-                && !a.IsRemoved);
-                if (author != null)
-                {
-                    authors.Add(author);
-                }
-            }
-
-            return authors;
         }
     }
 }

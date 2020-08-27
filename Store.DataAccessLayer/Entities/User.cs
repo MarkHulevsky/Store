@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Store.DataAccessLayer.Entities.Base;
+using Store.DataAccess.Entities.Base;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Store.DataAccessLayer.Entities
+namespace Store.DataAccess.Entities
 {
     public class User : IdentityUser<Guid>, IBaseEntity
     {
@@ -13,9 +13,15 @@ namespace Store.DataAccessLayer.Entities
         public bool IsRemoved { get; set; }
         public DateTime CreationDate { get; set; }
         public bool IsActive { get; set; } = true;
+        public virtual List<Order> Order { get; set; }
         [NotMapped]
         public string Password { get; set; }
         [NotMapped]
-        public ICollection<string> Errors { get; set; } = new List<string>();
+        public ICollection<string> Errors { get; set; }
+        public User()
+        {
+            Order = new List<Order>();
+            Errors = new List<string>();
+        }
     }
 }

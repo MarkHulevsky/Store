@@ -1,18 +1,21 @@
-﻿using Store.DataAccessLayer.Entities.Base;
+﻿using Store.DataAccess.Entities.Base;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using static Store.DataAccessLayer.Entities.Enums.Enums;
+using static Shared.Enums.Enums;
 
-namespace Store.DataAccessLayer.Entities
+namespace Store.DataAccess.Entities
 {
     public class Order : BaseEntity
     {
         public string Description { get; set; }
         public Guid UserId { get; set; }
+        public virtual User User { get; set; }
         public Guid PaymentId { get; set; }
         public OrderStatus Status { get; set; }
-        [NotMapped]
-        public virtual List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public virtual List<OrderItem> OrderItems { get; set; }
+        public Order()
+        {
+            OrderItems = new List<OrderItem>();
+        }
     }
 }

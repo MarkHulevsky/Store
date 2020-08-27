@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Store.BuisnessLogicLayer.Common.Interfaces;
+using Store.BuisnessLogic.Common.Interfaces;
 using System;
 using System.Threading.Tasks;
 
@@ -24,7 +24,7 @@ namespace Store.Presentation.Middlewares
             }
             catch (Exception ex)
             {
-                logger.Log(ex.ToString());
+                await logger.LogAsync(ex.ToString());
             }
         }
     }

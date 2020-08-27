@@ -1,11 +1,11 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
-using Store.DataAccess.Entities.Constants;
+using Store.DataAccess.Entities;
+using Store.DataAccess.Filters;
 using Store.DataAccess.Filters.ResponseFulters;
+using Store.DataAccess.Models.Constants;
 using Store.DataAccess.Repositories.Base;
-using Store.DataAccessLayer.Entities;
-using Store.DataAccessLayer.Filters;
-using Store.DataAccessLayer.Repositories.Interfaces;
+using Store.DataAccess.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,22 +17,43 @@ namespace Store.DataAccess.Repositories.DapperRepositories
     {
         public PrintingEditionRepository(IConfiguration configuration) : base(configuration)
         {
-            tableName = Constants.printingEditionTableName;
+            tableName = Constants.PRINTING_EDITIONS_TABLE_NAME;
         }
 
-        public PrintingEditionResponseFilter Filter(PrintingEditionsRequestFilter filter)
+        public PrintingEditionResponseDataModel Filter(PrintingEditionsRequestDataModel filter)
         {
-            var query = $"SELECT * FROM {tableName} WHERE Title LIKE '%{filter.SearchString}%' AND IsRemoved = 0";
-            var queryblePrintingEditions = _dbContext.Query<PrintingEdition>(query).AsQueryable();
+            var query = $"SELECT * FROM {tableName} LEFT JOIN (" +
+                $"SELECT {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.PrintingEditionId, " +
+                $"{Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.AuthorId FROM {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME} " +
+                $") AS {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME} " +
+                $"ON {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.PrintingEditionId = {Constants.PRINTING_EDITIONS_TABLE_NAME}.Id " +
+                $"LEFT JOIN {Constants.AUTHORS_TABLE_NAME} " +
+                $"ON {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.AuthorId = {Constants.AUTHORS_TABLE_NAME}.Id " +
+                $"WHERE {tableName}.Title LIKE '%{filter.SearchString}%' AND {tableName}.IsRemoved = 0";
 
-            var uQuery = new List<PrintingEdition>().AsQueryable();
+            var printingEditionDictionary = new Dictionary<Guid, PrintingEdition>();
+            var queryblePrintingEditions = _dbContext.Query<PrintingEdition, Author, PrintingEdition>(
+                query, (printingEdition, author) =>
+                {
+                    var printingEditionEntry = new PrintingEdition();
+                    if (!printingEditionDictionary.TryGetValue(printingEdition.Id, out printingEditionEntry))
+                    {
+                        printingEditionEntry = printingEdition;
+                        printingEditionDictionary.Add(printingEditionEntry.Id, printingEditionEntry);
+                    }
+                    printingEditionEntry.Authors.Add(author);
+                    return printingEditionEntry;
+                })
+                .Distinct()
+                .AsQueryable();
+            var subquery = new List<PrintingEdition>().AsQueryable();
 
             foreach (var type in filter.Types)
             {
-                uQuery = uQuery.Concat(queryblePrintingEditions.Where(pe => pe.Type == type));
+                subquery = subquery.Concat(queryblePrintingEditions.Where(pe => pe.Type == type));
             }
 
-            queryblePrintingEditions = uQuery;
+            queryblePrintingEditions = subquery;
 
             if (filter.MaxPrice > filter.MinPrice && filter.MaxPrice != filter.MinPrice)
             {
@@ -43,10 +64,11 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
             var printingEditions = queryblePrintingEditions.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
                 .Take(filter.Paging.ItemsCount).ToList();
+
             query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";
             var totalCount = _dbContext.QueryFirstOrDefault<int>(query);
 
-            var result = new PrintingEditionResponseFilter
+            var result = new PrintingEditionResponseDataModel
             {
                 PrintingEditions = printingEditions,
                 TotalCount = totalCount
@@ -66,20 +88,6 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
             model.Id = await _dbContext.QueryFirstOrDefaultAsync<Guid>(query);
             return model;
-        }
-
-        public async Task<List<Author>> GetAuthorsAsync(PrintingEdition printingEdition)
-        {
-            var query = $"SELECT * FROM AuthorInPrintingEditions WHERE PrintingEditionId = '{printingEdition.Id}'";
-            var authorInPrintingEditions = _dbContext.Query<AuthorInPrintingEdition>(query).ToList();
-            var authors = new List<Author>();
-            foreach (var aInPe in authorInPrintingEditions)
-            {
-                query = $"SELECT * FROM Authors WHERE Id = '{aInPe.AuthorId}'";
-                var author = await _dbContext.QueryFirstOrDefaultAsync<Author>(query);
-                authors.Add(author);
-            }
-            return authors;
         }
 
         public override async Task<PrintingEdition> UpdateAsync(PrintingEdition model)

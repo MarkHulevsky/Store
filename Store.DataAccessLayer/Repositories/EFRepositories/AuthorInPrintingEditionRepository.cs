@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Store.DataAccessLayer.AppContext;
-using Store.DataAccessLayer.Entities;
-using Store.DataAccessLayer.Repositories.Base;
-using Store.DataAccessLayer.Repositories.Interfaces;
+using Store.DataAccess.AppContext;
+using Store.DataAccess.Entities;
+using Store.DataAccess.Repositories.Base;
+using Store.DataAccess.Repositories.Interfaces;
 using System;
 using System.Threading.Tasks;
 
-namespace Store.DataAccessLayer.Repositories.EFRepositories
+namespace Store.DataAccess.Repositories.EFRepositories
 {
     public class AuthorInPrintingEditionRepository : BaseEFRepository<AuthorInPrintingEdition>,
         IAuthorInPrintingEditionRepository
@@ -17,14 +17,13 @@ namespace Store.DataAccessLayer.Repositories.EFRepositories
 
         public override async Task<AuthorInPrintingEdition> CreateAsync(AuthorInPrintingEdition model)
         {
-            var ent = await _dbContext.AuthorInPrintingEditions
-                .FirstOrDefaultAsync(ap => ap.AuthorId == model.AuthorId
+            var entity = await DbSet.FirstOrDefaultAsync(ap => ap.AuthorId == model.AuthorId
                 && ap.PrintingEditionId == model.PrintingEditionId);
-            if (ent == null)
+            if (entity == null)
             {
                 model.CreationDate = DateTime.UtcNow;
-                await _dbContext.AuthorInPrintingEditions.AddAsync(model);
-                await _dbContext.SaveChangesAsync();
+                await DbSet.AddAsync(model);
+                await SaveChangesAsync();
             }
             return model;
         }

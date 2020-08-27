@@ -1,64 +1,50 @@
 ﻿using Store.BuisnessLogic.Helpers;
+using Store.BuisnessLogic.Helpers.Mappers.ListMappers;
 using Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers;
+using Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers;
+using Store.BuisnessLogic.Models.Authors;
+using Store.BuisnessLogic.Models.Filters;
 using Store.BuisnessLogic.Models.Filters.ResponseFilters;
-using Store.BuisnessLogicLayer.Models.Authors;
-using Store.BuisnessLogicLayer.Models.Filters;
-using Store.BuisnessLogicLayer.Models.PrintingEditions;
-using Store.BuisnessLogicLayer.Services.Interfaces;
-using Store.DataAccessLayer.Entities;
-using Store.DataAccessLayer.Repositories.Interfaces;
+using Store.BuisnessLogic.Models.PrintingEditions;
+using Store.BuisnessLogic.Services.Interfaces;
+using Store.DataAccess.Entities;
+using Store.DataAccess.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Store.BuisnessLogicLayer.Services
+namespace Store.BuisnessLogic.Services
 {
     public class PrintingEditionService : IPrintingEditionService
     {
-        IPrintingEditionRepository _printingEditionRepository;
-        IAuthorRepository _authorRepository;
-        IAuthorInPrintingEditionRepository _authorInPrintingEditionRepository;
+        private readonly IPrintingEditionRepository _printingEditionRepository;
+        private readonly IAuthorInPrintingEditionRepository _authorInPrintingEditionRepository;
 
-        private readonly Mapper<Author, AuthorModel> _authorModelMapper = new Mapper<Author, AuthorModel>();
-        private readonly Mapper<AuthorModel, Author> _authorMapper = new Mapper<AuthorModel, Author>();
-        private readonly Mapper<PrintingEditionModel, PrintingEdition> _printingEditionMapper =
-            new Mapper<PrintingEditionModel, PrintingEdition>();
-        private readonly Mapper<PrintingEdition, PrintingEditionModel> _printingEditionModelMapper =
-            new Mapper<PrintingEdition, PrintingEditionModel>();
+        private readonly Mapper<PrintingEditionModel, PrintingEdition> _printingEditionMapper;
+        private readonly Mapper<PrintingEdition, PrintingEditionModel> _printingEditionModelMapper;
 
         public PrintingEditionService(IPrintingEditionRepository printingEditionRepository,
-            IAuthorRepository authorRepository, IAuthorInPrintingEditionRepository authorInPrintingEditionRepository)
+            IAuthorInPrintingEditionRepository authorInPrintingEditionRepository)
         {
             _printingEditionRepository = printingEditionRepository;
-            _authorRepository = authorRepository;
             _authorInPrintingEditionRepository = authorInPrintingEditionRepository;
-        }
-
-        public async Task<List<AuthorModel>> GetAuthorsAsync(PrintingEdition pe)
-        {
-            var authors = await _printingEditionRepository.GetAuthorsAsync(pe);
-            var authorModels = new List<AuthorModel>();
-            foreach (var author in authors)
-            {
-                var authorModel = _authorModelMapper.Map(new AuthorModel(), author);
-                authorModels.Add(authorModel);
-            }
-            return authorModels;
+            _printingEditionMapper = new Mapper<PrintingEditionModel, PrintingEdition>();
+            _printingEditionModelMapper = new Mapper<PrintingEdition, PrintingEditionModel>();
         }
 
         public async Task<PrintingEditionModel> GetByIdAsync(string id)
         {
-            var pe = await _printingEditionRepository.GetAsync(Guid.Parse(id));
-            var peModel = _printingEditionModelMapper.Map(new PrintingEditionModel(), pe);
-            peModel.Authors = await GetAuthorsAsync(pe);
-            return peModel;
+            var printingEditionId = Guid.Parse(id);
+            var printingEdition = await _printingEditionRepository.GetAsync(printingEditionId);
+            var printingEditionModel = _printingEditionModelMapper.Map(printingEdition);
+            return printingEditionModel;
         }
 
         public async Task<PrintingEdition> CreateAsync(PrintingEditionModel peModel)
         {
-            var pe = _printingEditionMapper.Map(new PrintingEdition(), peModel);
-            pe = await _printingEditionRepository.CreateAsync(pe);
-            return pe;
+            var printingEdition = _printingEditionMapper.Map(peModel);
+            printingEdition = await _printingEditionRepository.CreateAsync(printingEdition);
+            return printingEdition;
         }
 
         public async Task RemoveAsync(Guid id)
@@ -72,38 +58,21 @@ namespace Store.BuisnessLogicLayer.Services
             {
                 await AddToAuthorAsync(printingEditionModel, printingEditionModel.Authors);
             }
-            var printingEdition = _printingEditionMapper.Map(new PrintingEdition(), printingEditionModel);
+            var printingEdition = _printingEditionMapper.Map(printingEditionModel);
             await _printingEditionRepository.UpdateAsync(printingEdition);
         }
 
-        public async Task<PrintingEditionResponseFilterModel> FilterAsync(PrintingEditionsRequestFilterModel filterModel)
+        public PrintingEditionResponseModel Filter(PrintingEditionsRequestModel filterModel)
         {
-            var printingEditionFilter = PrintingEditionRequestFilterMapper.Map(filterModel);
+            var printingEditionFilter = PrintingEditionRequestMapper.Map(filterModel);
             var printingEditionsResponse = _printingEditionRepository.Filter(printingEditionFilter);
-            var printingEditionResponseModel = new PrintingEditionResponseFilterModel();
-            printingEditionResponseModel.TotalCount = printingEditionsResponse.TotalCount;
-            foreach (var printingEdition in printingEditionsResponse.PrintingEditions)
-            {
-                var authorsModels = await GetAuthorsAsync(printingEdition);
-                var printingEditionModel = _printingEditionModelMapper.Map(new PrintingEditionModel(), printingEdition);
-                printingEditionModel.Authors = authorsModels;
-                printingEditionResponseModel.PrintingEditions.Add(printingEditionModel);
-            }
+            var printingEditionResponseModel = PrintingEditionResponseFilterMapper.Map(printingEditionsResponse);
             return printingEditionResponseModel;
         }
 
-        public async Task AddToAuthorAsync(PrintingEditionModel printingEditionModel, IEnumerable<AuthorModel> authorModels)
+        public async Task AddToAuthorAsync(PrintingEditionModel printingEditionModel, List<AuthorModel> authorModels)
         {
-            var authors = new List<Author>();
-            foreach (var authorModel in authorModels)
-            {
-                if (authorModel != null)
-                {
-                    var author = _authorMapper.Map(new Author(), authorModel);
-                    authors.Add(author);
-                }
-            }
-
+            var authors = ListMapper<Author, AuthorModel>.Map(authorModels);
             foreach (var author in authors)
             {
                 var aInPe = new AuthorInPrintingEdition

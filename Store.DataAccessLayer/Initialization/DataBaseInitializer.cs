@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Store.DataAccess.Initialization;
-using Store.DataAccessLayer.AppContext;
-using Store.DataAccessLayer.Entities;
+using Store.DataAccess.AppContext;
+using Store.DataAccess.Entities;
 using System;
 using System.Linq;
+using static Shared.Enums.Enums;
 
-namespace Store.DataAccessLayer.Initialization
+namespace Store.DataAccess.Initialization
 {
     public class DataBaseInitializer : IDataBaseInitializer
     {
@@ -37,14 +37,16 @@ namespace Store.DataAccessLayer.Initialization
 
         private void InitRoles()
         {
-            if (_roleManager.FindByNameAsync(_adminRoleName).Result == null)
+            if (_roleManager.FindByNameAsync(_adminRoleName).Result != null)
             {
-                _roleManager.CreateAsync(new IdentityRole<Guid>(_adminRoleName)).Wait();
+                return;
             }
-            if (_roleManager.FindByNameAsync(_userRoleName).Result == null)
+            _roleManager.CreateAsync(new IdentityRole<Guid>(_adminRoleName)).Wait();
+            if (_roleManager.FindByNameAsync(_userRoleName).Result != null)
             {
-                _roleManager.CreateAsync(new IdentityRole<Guid>(_userRoleName)).Wait();
+                return;
             }
+            _roleManager.CreateAsync(new IdentityRole<Guid>(_userRoleName)).Wait();
         }
 
         private void InitUsers()
@@ -70,64 +72,66 @@ namespace Store.DataAccessLayer.Initialization
 
         private void InitPrintingEditions()
         {
-            if (_dbContext.PrintingEditions.Count() == 0)
+            if (_dbContext.PrintingEditions.Any())
             {
-                var book = new PrintingEdition
-                {
-                    Id = Guid.NewGuid(),
-                    CreationDate = DateTime.Now,
-                    Currency = Entities.Enums.Enums.Currency.USD,
-                    IsRemoved = false,
-                    Title = "Book Title",
-                    Description = "Book Description",
-                    Price = 20,
-                    Type = Entities.Enums.Enums.PrintingEditionType.Book
-                };
-                var magazine = new PrintingEdition
-                {
-                    Id = Guid.NewGuid(),
-                    CreationDate = DateTime.Now,
-                    Currency = Entities.Enums.Enums.Currency.USD,
-                    IsRemoved = false,
-                    Title = "Magazine Title",
-                    Description = "Magazine Description",
-                    Price = 20,
-                    Type = Entities.Enums.Enums.PrintingEditionType.Magazine
-                };
-                var newspaper = new PrintingEdition
-                {
-                    Id = Guid.NewGuid(),
-                    CreationDate = DateTime.Now,
-                    Currency = Entities.Enums.Enums.Currency.USD,
-                    IsRemoved = false,
-                    Title = "Newspaper Title",
-                    Description = "Newspaper Description",
-                    Price = 20,
-                    Type = Entities.Enums.Enums.PrintingEditionType.Newspaper
-                };
-
-                _dbContext.Add(book);
-                _dbContext.Add(magazine);
-                _dbContext.Add(newspaper);
-                _dbContext.SaveChanges();
+                return;
             }
+            var book = new PrintingEdition
+            {
+                Id = Guid.NewGuid(),
+                CreationDate = DateTime.Now,
+                Currency = CurrencyType.USD,
+                IsRemoved = false,
+                Title = "Book Title",
+                Description = "Book Description",
+                Price = 20,
+                Type = PrintingEditionType.Book
+            };
+            var magazine = new PrintingEdition
+            {
+                Id = Guid.NewGuid(),
+                CreationDate = DateTime.Now,
+                Currency = CurrencyType.USD,
+                IsRemoved = false,
+                Title = "Magazine Title",
+                Description = "Magazine Description",
+                Price = 20,
+                Type = PrintingEditionType.Magazine
+            };
+            var newspaper = new PrintingEdition
+            {
+                Id = Guid.NewGuid(),
+                CreationDate = DateTime.Now,
+                Currency = CurrencyType.USD,
+                IsRemoved = false,
+                Title = "Newspaper Title",
+                Description = "Newspaper Description",
+                Price = 20,
+                Type = PrintingEditionType.Newspaper
+            };
+
+            _dbContext.Add(book);
+            _dbContext.Add(magazine);
+            _dbContext.Add(newspaper);
+            _dbContext.SaveChanges();
         }
 
         private void InitAuthos()
         {
-            if (_dbContext.Authors.Count() == 0)
+            if (_dbContext.Authors.Any())
             {
-                var author = new Author
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Author",
-                    CreationDate = DateTime.Now,
-                    IsRemoved = false,
-                };
-
-                _dbContext.Authors.Add(author);
-                _dbContext.SaveChanges();
+                return;
             }
+            var author = new Author
+            {
+                Id = Guid.NewGuid(),
+                Name = "Author",
+                CreationDate = DateTime.Now,
+                IsRemoved = false,
+            };
+
+            _dbContext.Authors.Add(author);
+            _dbContext.SaveChanges();
         }
     }
 }
