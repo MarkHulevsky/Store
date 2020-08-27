@@ -54,7 +54,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             return model;
         }
 
-        public OrderResponseDataModel Filter(OrderRequestDataModel filter)
+        public async Task<OrderResponseDataModel> FilterAsync(OrderRequestDataModel filter)
         {
             var query = $"SELECT * FROM {tableName} " +
                 $"LEFT JOIN {Constants.USERS_TABLE_NAME} ON {tableName}.UserId = {Constants.USERS_TABLE_NAME}.Id " +
@@ -62,8 +62,9 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                 $"LEFT JOIN {Constants.PRINTING_EDITIONS_TABLE_NAME} " +
                 $"ON {Constants.ORDER_ITEMS_TABLE_NAME}.PrintingEditionId = {Constants.PRINTING_EDITIONS_TABLE_NAME}.Id " +
                 $"WHERE {tableName}.IsRemoved != 1";
+
             var orderDictionary = new Dictionary<Guid, Order>();
-            var querybaleOrders = _dbContext.Query<Order, User, OrderItem, PrintingEdition, Order>(
+            var orders = await _dbContext.QueryAsync<Order, User, OrderItem, PrintingEdition, Order>(
                 query, (order, user, orderItem, printingEdition) =>
                 {
                     var orderEntry = new Order();
@@ -77,9 +78,9 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                     orderItem.PrintingEdition = printingEdition;
                     orderEntry.OrderItems.Add(orderItem);
                     return orderEntry;
-                })
-                .Distinct()
-                .AsQueryable();
+                });
+
+            var querybaleOrders = orders.Distinct().AsQueryable();
 
             var subquery = new List<Order>().AsQueryable();
             foreach (var status in filter.OrderStatuses)
@@ -88,12 +89,14 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             }
 
             querybaleOrders = subquery;
-            querybaleOrders = querybaleOrders.OrderBy(filter.SortPropertyName, $"{filter.SortType}");
-            var orders = querybaleOrders.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
-                .Take(filter.Paging.ItemsCount).ToList();
+            querybaleOrders = querybaleOrders.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
+                .Take(filter.Paging.ItemsCount)
+                .OrderBy(filter.SortPropertyName, $"{filter.SortType}");
+
+            orders = querybaleOrders.ToList();
 
             query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";
-            var totalCount = _dbContext.Query<int>(query).FirstOrDefault();
+            var totalCount = await _dbContext.QueryFirstOrDefaultAsync<int>(query);
             var result = new OrderResponseDataModel
             {
                 Orders = orders,

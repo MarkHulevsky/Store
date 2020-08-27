@@ -10,7 +10,7 @@ namespace Store.BuisnessLogic.Services.Interfaces
 {
     public interface IUserService
     {
-        UserResponseModel Filter(UserRequestModel filterModel);
+        Task<UserResponseModel> FilterAsync(UserRequestModel filterModel);
         Task<UserModel> GetCurrentAsync(ClaimsPrincipal user);
         Task<BaseModel> EditAsync(UserModel userModel);
         Task ChangeStatusAsync(UserModel userModel);

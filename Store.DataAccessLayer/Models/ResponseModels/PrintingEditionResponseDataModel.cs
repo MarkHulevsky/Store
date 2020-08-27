@@ -6,7 +6,7 @@ namespace Store.DataAccess.Filters.ResponseFulters
 {
     public class PrintingEditionResponseDataModel : BaseResponseDataModel
     {
-        public List<PrintingEdition> PrintingEditions { get; set; }
+        public IEnumerable<PrintingEdition> PrintingEditions { get; set; }
         public PrintingEditionResponseDataModel()
         {
             PrintingEditions = new List<PrintingEdition>();

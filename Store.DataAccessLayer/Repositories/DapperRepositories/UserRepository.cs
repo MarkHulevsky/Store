@@ -20,23 +20,21 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             tableName = Constants.USERS_TABLE_NAME;
         }
 
-        public UserResponseDataModel Filter(UserRequestDataModel filter)
+        public async Task<UserResponseDataModel> FilterAsync(UserRequestDataModel filter)
         {
             var query = $"SELECT * FROM {tableName} WHERE (FirstName LIKE '%{filter.SearchString}%'" +
                 $"OR LastName LIKE '%{filter.SearchString}%') AND IsRemoved = 0";
-            var users = _dbContext.Query<User>(query).ToList();
-            var userList = new List<User>().AsQueryable();
+            var users = await _dbContext.QueryAsync<User>(query);
+            var queryableUsers = users.AsQueryable();
 
-            foreach (var status in filter.Statuses)
-            {
-                userList = userList.Concat(users.Where(u => u.IsActive == status));
-            }
-            var queryableUsers = userList;
-            queryableUsers = queryableUsers.OrderBy($"{filter.SortPropertyName}", $"{filter.SortType}");
-            users = queryableUsers.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
-                .Take(filter.Paging.ItemsCount).ToList();
+            queryableUsers = queryableUsers
+                .Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
+                .Take(filter.Paging.ItemsCount)
+                .OrderBy($"{filter.SortPropertyName}", $"{filter.SortType}");
+
+            users = await Task.FromResult(queryableUsers.ToList());
             query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";
-            var count = _dbContext.QueryFirstOrDefault<int>(query);
+            var count = await _dbContext.QueryFirstOrDefaultAsync<int>(query);
             var result = new UserResponseDataModel
             {
                 Users = users,

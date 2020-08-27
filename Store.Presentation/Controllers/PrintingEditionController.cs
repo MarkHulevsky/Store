@@ -45,9 +45,9 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetFiltred([FromBody] PrintingEditionsRequestModel filter)
+        public async Task<IActionResult> GetFiltred([FromBody] PrintingEditionsRequestModel filter)
         {
-            var peResponse = _printingEditionService.Filter(filter);
+            var peResponse = await _printingEditionService.FilterAsync(filter);
             return Ok(peResponse);
         }
 

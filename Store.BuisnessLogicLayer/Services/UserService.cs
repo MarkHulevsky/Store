@@ -37,10 +37,10 @@ namespace Store.BuisnessLogic.Services
             return userModel;
         }
 
-        public UserResponseModel Filter(UserRequestModel filterModel)
+        public async Task<UserResponseModel> FilterAsync(UserRequestModel filterModel)
         {
             var filter = UserRequestMapper.Map(filterModel);
-            var userResponse = _userRepository.Filter(filter);
+            var userResponse = await _userRepository.FilterAsync(filter);
             var userResponseModel = UserResponseFilterMapper.Map(userResponse);
             return userResponseModel;
         }

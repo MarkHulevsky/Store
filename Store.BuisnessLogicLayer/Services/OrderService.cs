@@ -77,10 +77,10 @@ namespace Store.BuisnessLogic.Services
             }
         }
 
-        public OrderResponseModel Filter(OrderRequestModel filterModel)
+        public async Task<OrderResponseModel> FilterAsync(OrderRequestModel filterModel)
         {
             var filter = OrderRequestMapper.Map(filterModel);
-            var orderResponse = _orderRepository.Filter(filter);
+            var orderResponse = await _orderRepository.FilterAsync(filter);
             var orderResponseModel = OrderResponseFilterMapper.Map(orderResponse);
             return orderResponseModel;
         }

@@ -10,7 +10,7 @@ namespace Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers
         {
             var filter = new UserRequestDataModel
             {
-                SortPropertyName = filterModel.SortPropertyPropName,
+                SortPropertyName = filterModel.SortPropertyName,
                 SearchString = filterModel.SearchString,
                 SortType = filterModel.SortType,
                 Paging = _pagingMapper.Map(filterModel.Paging)

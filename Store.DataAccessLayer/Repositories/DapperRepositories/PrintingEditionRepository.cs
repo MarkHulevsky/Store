@@ -20,19 +20,19 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             tableName = Constants.PRINTING_EDITIONS_TABLE_NAME;
         }
 
-        public PrintingEditionResponseDataModel Filter(PrintingEditionsRequestDataModel filter)
+        public async Task<PrintingEditionResponseDataModel> FilterAsync(PrintingEditionsRequestDataModel filter)
         {
             var query = $"SELECT * FROM {tableName} LEFT JOIN (" +
                 $"SELECT {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.PrintingEditionId, " +
                 $"{Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.AuthorId FROM {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME} " +
                 $") AS {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME} " +
-                $"ON {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.PrintingEditionId = {Constants.PRINTING_EDITIONS_TABLE_NAME}.Id " +
+                $"ON {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.PrintingEditionId = {tableName}.Id " +
                 $"LEFT JOIN {Constants.AUTHORS_TABLE_NAME} " +
                 $"ON {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.AuthorId = {Constants.AUTHORS_TABLE_NAME}.Id " +
                 $"WHERE {tableName}.Title LIKE '%{filter.SearchString}%' AND {tableName}.IsRemoved = 0";
 
             var printingEditionDictionary = new Dictionary<Guid, PrintingEdition>();
-            var queryblePrintingEditions = _dbContext.Query<PrintingEdition, Author, PrintingEdition>(
+            var printingEditions = await _dbContext.QueryAsync<PrintingEdition, Author, PrintingEdition>(
                 query, (printingEdition, author) =>
                 {
                     var printingEditionEntry = new PrintingEdition();
@@ -43,31 +43,25 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                     }
                     printingEditionEntry.Authors.Add(author);
                     return printingEditionEntry;
-                })
-                .Distinct()
-                .AsQueryable();
+                });
+            var queryblePrintingEditions = printingEditions.Distinct().AsQueryable();
             var subquery = new List<PrintingEdition>().AsQueryable();
-
             foreach (var type in filter.Types)
             {
                 subquery = subquery.Concat(queryblePrintingEditions.Where(pe => pe.Type == type));
             }
-
             queryblePrintingEditions = subquery;
-
             if (filter.MaxPrice > filter.MinPrice && filter.MaxPrice != filter.MinPrice)
             {
                 queryblePrintingEditions = queryblePrintingEditions.Where(pe => pe.Price <= filter.MaxPrice && pe.Price >= filter.MinPrice);
             }
-
-            queryblePrintingEditions = queryblePrintingEditions.OrderBy("Price", $"{filter.SortType}");
-
-            var printingEditions = queryblePrintingEditions.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
-                .Take(filter.Paging.ItemsCount).ToList();
-
+            queryblePrintingEditions = queryblePrintingEditions
+                .Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
+                .Take(filter.Paging.ItemsCount)
+                .OrderBy("Price", $"{filter.SortType}");
+            printingEditions = queryblePrintingEditions.ToList();
             query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";
             var totalCount = _dbContext.QueryFirstOrDefault<int>(query);
-
             var result = new PrintingEditionResponseDataModel
             {
                 PrintingEditions = printingEditions,

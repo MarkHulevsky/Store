@@ -32,9 +32,9 @@ namespace Store.Presentation.Controllers
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
-        public IActionResult GetFiltred([FromBody] UserRequestModel filter)
+        public async Task<IActionResult> GetFiltred([FromBody] UserRequestModel filter)
         {
-            var usersResponse = _userService.Filter(filter);
+            var usersResponse = await _userService.FilterAsync(filter);
             return Ok(usersResponse);
         }
 

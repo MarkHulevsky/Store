@@ -14,7 +14,7 @@ namespace Store.BuisnessLogic.Services.Interfaces
         Task<PrintingEdition> CreateAsync(PrintingEditionModel peModel);
         Task RemoveAsync(Guid id);
         Task EditAsync(PrintingEditionModel peModel);
-        PrintingEditionResponseModel Filter(PrintingEditionsRequestModel filter);
+        Task<PrintingEditionResponseModel> FilterAsync(PrintingEditionsRequestModel filter);
         Task AddToAuthorAsync(PrintingEditionModel printingEditionModel, List<AuthorModel> authorModels);
         Task<PrintingEditionModel> GetByIdAsync(string id);
     }

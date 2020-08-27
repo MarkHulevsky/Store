@@ -18,13 +18,13 @@ namespace Store.DataAccess.Repositories.EFRepositories
 
         public async Task<AuthorResponseDataModel> FilterAsync(AuthorRequestDataModel filter)
         {
-            var query = DbSet.Where(a => !a.IsRemoved)
+            var authors = await DbSet.Where(a => !a.IsRemoved)
                 .Include(author => author.AuthorInPrintingEditions)
                 .ThenInclude(authorInPrintingEdition => authorInPrintingEdition.PrintingEdition)
-                .OrderBy(filter.SortPropertyName, filter.SortType.ToString());
-
-            var authors = await query.Skip(filter.Paging.ItemsCount * filter.Paging.CurrentPage)
-                .Take(filter.Paging.ItemsCount).ToListAsync();
+                .OrderBy(filter.SortPropertyName, filter.SortType.ToString())
+                .Skip(filter.Paging.ItemsCount * filter.Paging.CurrentPage)
+                .Take(filter.Paging.ItemsCount)
+                .ToListAsync();
 
             foreach (var author in authors)
             {

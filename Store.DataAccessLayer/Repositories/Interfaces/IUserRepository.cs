@@ -6,7 +6,7 @@ namespace Store.DataAccess.Repositories.Interfaces
 {
     public interface IUserRepository : IRepository<User>
     {
-        UserResponseDataModel Filter(UserRequestDataModel filter);
+        Task<UserResponseDataModel> FilterAsync(UserRequestDataModel filter);
         Task<User> FindByEmailAsync(string email);
     }
 }

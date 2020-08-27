@@ -18,7 +18,7 @@ namespace Store.DataAccess.Repositories.EFRepositories
         {
         }
 
-        public PrintingEditionResponseDataModel Filter(PrintingEditionsRequestDataModel filter)
+        public Task<PrintingEditionResponseDataModel> FilterAsync(PrintingEditionsRequestDataModel filter)
         {
             var query = DbSet
                 .Include(printingEdition => printingEdition.AuthorInPrintingEditions)
@@ -39,22 +39,23 @@ namespace Store.DataAccess.Repositories.EFRepositories
                 query = query.Where(pe => pe.Price <= filter.MaxPrice && pe.Price >= filter.MinPrice);
             }
 
-            query = query.OrderBy("Price", $"{filter.SortType}");
-            var printingEditions = query.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
-                .Take(filter.Paging.ItemsCount).ToList();
-            foreach (var printingEdition in printingEditions)
+            query = query.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
+                .Take(filter.Paging.ItemsCount)
+                .OrderBy("Price", $"{filter.SortType}");
+            foreach (var printingEdition in query)
             {
                 var authors = printingEdition.AuthorInPrintingEditions
                     .Select(authorInPrintingEditions => authorInPrintingEditions.Author)
                     .ToList();
                 printingEdition.Authors = authors;
             }
+            var printingEditions = query.ToList();
             var result = new PrintingEditionResponseDataModel
             {
                 PrintingEditions = printingEditions,
                 TotalCount = DbSet.Where(pe => !pe.IsRemoved).Count(),
             };
-            return result;
+            return Task.FromResult(result);
         }
 
         public override async Task<PrintingEdition> UpdateAsync(PrintingEdition model)

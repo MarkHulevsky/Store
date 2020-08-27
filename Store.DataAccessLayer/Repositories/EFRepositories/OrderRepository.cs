@@ -46,7 +46,7 @@ namespace Store.DataAccess.Repositories.EFRepositories
             return model;
         }
 
-        public OrderResponseDataModel Filter(OrderRequestDataModel filter)
+        public async Task<OrderResponseDataModel> FilterAsync(OrderRequestDataModel filter)
         {
             var query = DbSet.Include(order => order.User)
                 .Include(order => order.OrderItems)
@@ -59,9 +59,11 @@ namespace Store.DataAccess.Repositories.EFRepositories
                 subquery = subquery.Concat(query.Where(o => o.Status == status));
             }
             query = subquery;
-            query = query.OrderBy(filter.SortPropertyName, $"{filter.SortType}");
-            var orders = query.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
-                .Take(filter.Paging.ItemsCount).ToList();
+            query = query.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
+                .Take(filter.Paging.ItemsCount)
+                .OrderBy(filter.SortPropertyName, $"{filter.SortType}");
+            var orders = await Task.FromResult(query.ToList());
+
             var result = new OrderResponseDataModel
             {
                 Orders = orders,
