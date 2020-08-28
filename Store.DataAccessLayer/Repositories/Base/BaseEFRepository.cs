@@ -43,14 +43,14 @@ namespace Store.DataAccess.Repositories.Base
             return entity;
         }
 
-        public virtual async Task<T> GetAsync(Guid id)
+        public virtual Task<T> GetAsync(Guid id)
         {
-            return await DbSet.FirstOrDefaultAsync(entity => entity.Id == id && entity.IsRemoved == false);
+            return DbSet.FirstOrDefaultAsync(entity => entity.Id == id && entity.IsRemoved == false);
         }
 
-        public virtual async Task<List<T>> GetAllAsync()
+        public virtual Task<List<T>> GetAllAsync()
         {
-            return await DbSet.Where(ent => !ent.IsRemoved).ToListAsync();
+            return DbSet.Where(ent => !ent.IsRemoved).ToListAsync();
         }
 
         public virtual async Task<T> UpdateAsync(T model)
@@ -61,9 +61,9 @@ namespace Store.DataAccess.Repositories.Base
             return entity;
         }
 
-        protected async Task SaveChangesAsync()
+        protected Task SaveChangesAsync()
         {
-            await _dbContext.SaveChangesAsync();
+            return _dbContext.SaveChangesAsync();
         }
     }
 }

@@ -117,25 +117,43 @@ namespace Store.BuisnessLogic.Services
             return result;
         }
 
-        public async Task SendConfirmUrlAsync(string email, string url)
+        public Task SendConfirmUrlAsync(string email, string url)
         {
             var subject = CONFIRM_EMAIL_SUBJECT;
             var body = $"{CONFIRM_EMAIL_BODY} {url}";
-            await _emailHalper.SendAsync(email, subject, body);
+            return _emailHalper.SendAsync(email, subject, body);
         }
 
-        public async Task ConfirmEmail(string encodedEmail)
+        public async Task<BaseModel> ConfirmEmail(string email, string token)
         {
-            var email = Encoding.UTF8.GetString(Convert.FromBase64String(encodedEmail));
             var user = await _userRepository.FindByEmailAsync(email);
             if (user == null)
             {
-                return;
+                return null;
             }
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                var userModel = _userModelMapper.Map(user);
+                await LoginAsync(userModel);
+                return new BaseModel();
+            }
+            var errors = new List<string>();
+            foreach(var error in result.Errors)
+            {
+                errors.Add(error.Description);
+            }
+            return new BaseModel
+            {
+                Errors = errors
+            };
+        }
+
+        public async Task<string> GenerateEmailConfirmationTokenAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            await _userManager.ConfirmEmailAsync(user, token);
-            var userModel = _userModelMapper.Map(user);
-            await LoginAsync(userModel);
+            return token;
         }
 
         public async Task<BaseModel> LoginAsync(UserModel userModel)
@@ -169,9 +187,9 @@ namespace Store.BuisnessLogic.Services
             return userModel;
         }
 
-        public async Task LogoutAsync()
+        public Task LogoutAsync()
         {
-            await _signInManager.SignOutAsync();
+            return _signInManager.SignOutAsync();
         }
     }
 }

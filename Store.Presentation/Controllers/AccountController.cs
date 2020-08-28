@@ -62,9 +62,9 @@ namespace Store.Presentation.Controllers
                 var result = await _accountService.RegisterAsync(userModel);
                 if (result.Succeeded)
                 {
-                    var encodedEmail = Convert.ToBase64String(Encoding.UTF8.GetBytes(model.Email));
+                    var token = await _accountService.GenerateEmailConfirmationTokenAsync(model.Email);
                     string url = Url.Action("ConfirmEmail", "Account",
-                        new { email = encodedEmail }, Request.Scheme);
+                        new { email = model.Email, token }, Request.Scheme);
                     await _accountService.SendConfirmUrlAsync(model.Email, url);
                     return Ok();
                 }
@@ -84,9 +84,10 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task ConfirmEmail(string encodedEmail)
+        public async Task<IActionResult> ConfirmEmail(string email, string token)
         {
-            await _accountService.ConfirmEmail(encodedEmail);
+            var result = await _accountService.ConfirmEmail(email, token);
+            return Ok(result);
         }
 
         [HttpPost]
@@ -115,9 +116,9 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task SignOut()
+        public Task SignOut()
         {
-            await _accountService.LogoutAsync();
+            return _accountService.LogoutAsync();
         }
     }
 }

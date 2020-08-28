@@ -109,9 +109,9 @@ namespace Store.BuisnessLogic.Services
             return orderModel;
         }
 
-        public async Task RemoveAsync(Guid id)
+        public Task RemoveAsync(Guid id)
         {
-            await _orderRepository.RemoveAsync(id);
+            return _orderRepository.RemoveAsync(id);
         }
     }
 }

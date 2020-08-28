@@ -52,9 +52,9 @@ namespace Store.DataAccess.Repositories.EFRepositories
             return entity;
         }
 
-        public async Task<Author> FindAuthorByNameAsync(string name)
+        public Task<Author> FindAuthorByNameAsync(string name)
         {
-            return await DbSet.FirstOrDefaultAsync(a => a.Name == name);
+            return DbSet.FirstOrDefaultAsync(a => a.Name == name);
         }
     }
 }

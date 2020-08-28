@@ -5,7 +5,6 @@ using Store.DataAccess.Filters;
 using Store.DataAccess.Repositories.Base;
 using Store.DataAccess.Repositories.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -42,9 +41,9 @@ namespace Store.DataAccess.Repositories.EFRepositories
             return result;
         }
 
-        public async Task<User> FindByEmailAsync(string email)
+        public Task<User> FindByEmailAsync(string email)
         {
-            return await DbSet.FirstOrDefaultAsync(u => u.Email == email);
+            return DbSet.FirstOrDefaultAsync(u => u.Email == email);
         }
 
     }

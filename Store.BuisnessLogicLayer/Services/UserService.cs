@@ -77,9 +77,9 @@ namespace Store.BuisnessLogic.Services
             return result;
         }
 
-        public async Task RemoveAsync(Guid userId)
+        public Task RemoveAsync(Guid userId)
         {
-            await _userRepository.RemoveAsync(userId);
+            return _userRepository.RemoveAsync(userId);
         }
     }
 }

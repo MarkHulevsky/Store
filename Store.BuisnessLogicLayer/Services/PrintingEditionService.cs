@@ -47,9 +47,9 @@ namespace Store.BuisnessLogic.Services
             return printingEdition;
         }
 
-        public async Task RemoveAsync(Guid id)
+        public Task RemoveAsync(Guid id)
         {
-            await _printingEditionRepository.RemoveAsync(id);
+            return _printingEditionRepository.RemoveAsync(id);
         }
 
         public async Task EditAsync(PrintingEditionModel printingEditionModel)

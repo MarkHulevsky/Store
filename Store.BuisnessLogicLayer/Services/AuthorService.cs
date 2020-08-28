@@ -42,9 +42,9 @@ namespace Store.BuisnessLogic.Services
             }
         }
 
-        public async Task RemoveAsync(Guid id)
+        public Task RemoveAsync(Guid id)
         {
-            await _authorRepository.RemoveAsync(id);
+            return _authorRepository.RemoveAsync(id);
         }
 
         public async Task EditAsync(AuthorModel authorModel)
