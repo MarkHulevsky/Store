@@ -32,7 +32,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                 .Take(filter.Paging.ItemsCount)
                 .OrderBy($"{filter.SortPropertyName}", $"{filter.SortType}");
 
-            users = await Task.FromResult(queryableUsers.ToList());
+            users = queryableUsers.ToList();
             query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";
             var count = await _dbContext.QueryFirstOrDefaultAsync<int>(query);
             var result = new UserResponseDataModel

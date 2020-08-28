@@ -61,7 +61,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                 .OrderBy("Price", $"{filter.SortType}");
             printingEditions = queryblePrintingEditions.ToList();
             query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";
-            var totalCount = _dbContext.QueryFirstOrDefault<int>(query);
+            var totalCount = await _dbContext.QueryFirstOrDefaultAsync<int>(query);
             var result = new PrintingEditionResponseDataModel
             {
                 PrintingEditions = printingEditions,
@@ -72,7 +72,6 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public override async Task<PrintingEdition> CreateAsync(PrintingEdition model)
         {
-            var creationDateString = DateTime.Now.ToUniversalTime().ToString("yyyyMMdd");
             var query = $"INSERT INTO {tableName} " +
                 $"(Id, Title, Description, Price, Currency, Type, IsRemoved, CreationDate) " +
                 $"OUTPUT INSERTED.Id " +
