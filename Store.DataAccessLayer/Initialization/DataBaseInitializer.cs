@@ -3,6 +3,7 @@ using Store.DataAccess.AppContext;
 using Store.DataAccess.Entities;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using static Shared.Enums.Enums;
 
 namespace Store.DataAccess.Initialization
@@ -29,26 +30,27 @@ namespace Store.DataAccess.Initialization
 
         public void InitializeDb()
         {
-            InitRoles();
-            InitUsers();
-            InitPrintingEditions();
-            InitAuthos();
+            InitRoles().GetAwaiter().GetResult();
+            InitUsers().GetAwaiter().GetResult();
+            InitPrintingEditions().GetAwaiter().GetResult();
+            InitAuthos().GetAwaiter().GetResult();
         }
 
-        private void InitRoles()
+        private async Task InitRoles()
         {
-            if (_roleManager.FindByNameAsync(_adminRoleName).Result != null ||
-                _roleManager.FindByNameAsync(_userRoleName).Result != null)
+            var isCreated = await _roleManager.FindByNameAsync(_adminRoleName) != null ||
+                _roleManager.FindByNameAsync(_userRoleName)!= null;
+            if (isCreated)
             {
                 return;
             }
-            _roleManager.CreateAsync(new IdentityRole<Guid>(_adminRoleName)).Wait();
-            _roleManager.CreateAsync(new IdentityRole<Guid>(_userRoleName)).Wait();
+            await _roleManager.CreateAsync(new IdentityRole<Guid>(_adminRoleName));
+            await _roleManager.CreateAsync(new IdentityRole<Guid>(_userRoleName));
         }
 
-        private void InitUsers()
+        private async Task InitUsers()
         {
-            if (_userManager.FindByNameAsync(_adminEmail).Result != null)
+            if (await _userManager.FindByNameAsync(_adminEmail) != null)
             {
                 return;
             }
@@ -60,14 +62,14 @@ namespace Store.DataAccess.Initialization
                 LastName = _adminLastName,
                 EmailConfirmed = true
             };
-            var result = _userManager.CreateAsync(admin, _adminPassword);
-            if (result.Result.Succeeded)
+            var result = await _userManager.CreateAsync(admin, _adminPassword);
+            if (result.Succeeded)
             {
-                _userManager.AddToRoleAsync(admin, _adminRoleName).Wait();
+                await _userManager.AddToRoleAsync(admin, _adminRoleName);
             }
         }
 
-        private void InitPrintingEditions()
+        private async Task InitPrintingEditions()
         {
             if (_dbContext.PrintingEditions.Any())
             {
@@ -104,13 +106,13 @@ namespace Store.DataAccess.Initialization
                 Type = PrintingEditionType.Newspaper
             };
 
-            _dbContext.Add(book);
-            _dbContext.Add(magazine);
-            _dbContext.Add(newspaper);
-            _dbContext.SaveChanges();
+            await _dbContext.AddAsync(book);
+            await _dbContext.AddAsync(magazine);
+            await _dbContext.AddAsync(newspaper);
+            await _dbContext.SaveChangesAsync();
         }
 
-        private void InitAuthos()
+        private async Task InitAuthos()
         {
             if (_dbContext.Authors.Any())
             {
@@ -123,8 +125,8 @@ namespace Store.DataAccess.Initialization
                 IsRemoved = false,
             };
 
-            _dbContext.Authors.Add(author);
-            _dbContext.SaveChanges();
+            await _dbContext.Authors.AddAsync(author);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

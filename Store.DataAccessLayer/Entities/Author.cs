@@ -1,5 +1,6 @@
 ﻿using Store.DataAccess.Entities.Base;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Store.DataAccess.Entities
 {
@@ -7,6 +8,7 @@ namespace Store.DataAccess.Entities
     {
         public string Name { get; set; }
         public virtual List<AuthorInPrintingEdition> AuthorInPrintingEditions { get; set; }
+        [NotMapped]
         public virtual List<PrintingEdition> PrintingEditions { get; set; }
         public Author()
         {

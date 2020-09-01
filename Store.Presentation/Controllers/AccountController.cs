@@ -52,33 +52,31 @@ namespace Store.Presentation.Controllers
         public async Task<IActionResult> SignUp([FromBody] RegisterModel model)
         {
             var userModel = new UserModel();
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var userModelMapper = new Mapper<RegisterModel, UserModel>();
-                userModel = userModelMapper.Map(model);
-
-                var result = await _accountService.RegisterAsync(userModel);
-                if (result.Succeeded)
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var error in errors)
                 {
-                    var token = await _accountService.GenerateEmailConfirmationTokenAsync(model.Email);
-                    string url = Url.Action("ConfirmEmail", "Account",
-                        new { email = model.Email, token }, Request.Scheme);
-                    await _accountService.SendConfirmUrlAsync(model.Email, url);
-                    return Ok(null);
+                    userModel.Errors.Add(error.ErrorMessage);
                 }
+                return Ok(userModel);
+            }
+            var userModelMapper = new Mapper<RegisterModel, UserModel>();
+            userModel = userModelMapper.Map(model);
+
+            var result = await _accountService.RegisterAsync(userModel);
+            if (!result.Succeeded)
+            {
                 foreach (var error in result.Errors)
                 {
                     userModel.Errors.Add(error.Description);
                 }
                 return Ok(userModel);
             }
-
-            var errors = ModelState.Values.SelectMany(v => v.Errors);
-            foreach (var error in errors)
-            {
-                userModel.Errors.Add(error.ErrorMessage);
-            }
-
+            var token = await _accountService.GenerateEmailConfirmationTokenAsync(model.Email);
+            string url = Url.Action("ConfirmEmail", "Account",
+                new { email = model.Email, token }, Request.Scheme);
+            await _accountService.SendConfirmUrlAsync(model.Email, url);
             return Ok(userModel);
         }
 

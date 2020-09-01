@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Store.DataAccess.Migrations
 {
-    public partial class Initialization : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -49,6 +49,20 @@ namespace Store.DataAccess.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Authors",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    IsRemoved = table.Column<bool>(nullable: false),
+                    CreationDate = table.Column<DateTime>(nullable: false),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Authors", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -213,24 +227,30 @@ namespace Store.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Authors",
+                name: "AuthorInPrintingEditions",
                 columns: table => new
                 {
+                    AuthorId = table.Column<Guid>(nullable: false),
+                    PrintingEditionId = table.Column<Guid>(nullable: false),
                     Id = table.Column<Guid>(nullable: false),
                     IsRemoved = table.Column<bool>(nullable: false),
-                    CreationDate = table.Column<DateTime>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    PrintingEditionId = table.Column<Guid>(nullable: true)
+                    CreationDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Authors", x => x.Id);
+                    table.PrimaryKey("PK_AuthorInPrintingEditions", x => new { x.AuthorId, x.PrintingEditionId });
                     table.ForeignKey(
-                        name: "FK_Authors_PrintingEditions_PrintingEditionId",
+                        name: "FK_AuthorInPrintingEditions_Authors_AuthorId",
+                        column: x => x.AuthorId,
+                        principalTable: "Authors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AuthorInPrintingEditions_PrintingEditions_PrintingEditionId",
                         column: x => x.PrintingEditionId,
                         principalTable: "PrintingEditions",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -256,33 +276,6 @@ namespace Store.DataAccess.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_OrderItems_PrintingEditions_PrintingEditionId",
-                        column: x => x.PrintingEditionId,
-                        principalTable: "PrintingEditions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AuthorInPrintingEditions",
-                columns: table => new
-                {
-                    AuthorId = table.Column<Guid>(nullable: false),
-                    PrintingEditionId = table.Column<Guid>(nullable: false),
-                    Id = table.Column<Guid>(nullable: false),
-                    IsRemoved = table.Column<bool>(nullable: false),
-                    CreationDate = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AuthorInPrintingEditions", x => new { x.AuthorId, x.PrintingEditionId });
-                    table.ForeignKey(
-                        name: "FK_AuthorInPrintingEditions_Authors_AuthorId",
-                        column: x => x.AuthorId,
-                        principalTable: "Authors",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AuthorInPrintingEditions_PrintingEditions_PrintingEditionId",
                         column: x => x.PrintingEditionId,
                         principalTable: "PrintingEditions",
                         principalColumn: "Id",
@@ -331,11 +324,6 @@ namespace Store.DataAccess.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_AuthorInPrintingEditions_PrintingEditionId",
                 table: "AuthorInPrintingEditions",
-                column: "PrintingEditionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Authors_PrintingEditionId",
-                table: "Authors",
                 column: "PrintingEditionId");
 
             migrationBuilder.CreateIndex(

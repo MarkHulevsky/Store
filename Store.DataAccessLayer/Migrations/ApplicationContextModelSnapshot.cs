@@ -148,7 +148,7 @@ namespace Store.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Store.DataAccessLayer.Entities.Author", b =>
+            modelBuilder.Entity("Store.DataAccess.Entities.Author", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -163,17 +163,12 @@ namespace Store.DataAccess.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("PrintingEditionId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("PrintingEditionId");
 
                     b.ToTable("Authors");
                 });
 
-            modelBuilder.Entity("Store.DataAccessLayer.Entities.AuthorInPrintingEdition", b =>
+            modelBuilder.Entity("Store.DataAccess.Entities.AuthorInPrintingEdition", b =>
                 {
                     b.Property<Guid>("AuthorId")
                         .HasColumnType("uniqueidentifier");
@@ -197,7 +192,7 @@ namespace Store.DataAccess.Migrations
                     b.ToTable("AuthorInPrintingEditions");
                 });
 
-            modelBuilder.Entity("Store.DataAccessLayer.Entities.Order", b =>
+            modelBuilder.Entity("Store.DataAccess.Entities.Order", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -228,7 +223,7 @@ namespace Store.DataAccess.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("Store.DataAccessLayer.Entities.OrderItem", b =>
+            modelBuilder.Entity("Store.DataAccess.Entities.OrderItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -261,7 +256,7 @@ namespace Store.DataAccess.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("Store.DataAccessLayer.Entities.Payment", b =>
+            modelBuilder.Entity("Store.DataAccess.Entities.Payment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -281,7 +276,7 @@ namespace Store.DataAccess.Migrations
                     b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("Store.DataAccessLayer.Entities.PrintingEdition", b =>
+            modelBuilder.Entity("Store.DataAccess.Entities.PrintingEdition", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -313,7 +308,7 @@ namespace Store.DataAccess.Migrations
                     b.ToTable("PrintingEditions");
                 });
 
-            modelBuilder.Entity("Store.DataAccessLayer.Entities.User", b =>
+            modelBuilder.Entity("Store.DataAccess.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -405,7 +400,7 @@ namespace Store.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Store.DataAccessLayer.Entities.User", null)
+                    b.HasOne("Store.DataAccess.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -414,7 +409,7 @@ namespace Store.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("Store.DataAccessLayer.Entities.User", null)
+                    b.HasOne("Store.DataAccess.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -429,7 +424,7 @@ namespace Store.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Store.DataAccessLayer.Entities.User", null)
+                    b.HasOne("Store.DataAccess.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -438,53 +433,46 @@ namespace Store.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("Store.DataAccessLayer.Entities.User", null)
+                    b.HasOne("Store.DataAccess.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Store.DataAccessLayer.Entities.Author", b =>
+            modelBuilder.Entity("Store.DataAccess.Entities.AuthorInPrintingEdition", b =>
                 {
-                    b.HasOne("Store.DataAccessLayer.Entities.PrintingEdition", null)
-                        .WithMany("Authors")
-                        .HasForeignKey("PrintingEditionId");
-                });
-
-            modelBuilder.Entity("Store.DataAccessLayer.Entities.AuthorInPrintingEdition", b =>
-                {
-                    b.HasOne("Store.DataAccessLayer.Entities.Author", "Author")
+                    b.HasOne("Store.DataAccess.Entities.Author", "Author")
                         .WithMany("AuthorInPrintingEditions")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Store.DataAccessLayer.Entities.PrintingEdition", "PrintingEdition")
+                    b.HasOne("Store.DataAccess.Entities.PrintingEdition", "PrintingEdition")
                         .WithMany("AuthorInPrintingEditions")
                         .HasForeignKey("PrintingEditionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Store.DataAccessLayer.Entities.Order", b =>
+            modelBuilder.Entity("Store.DataAccess.Entities.Order", b =>
                 {
-                    b.HasOne("Store.DataAccessLayer.Entities.User", "User")
+                    b.HasOne("Store.DataAccess.Entities.User", "User")
                         .WithMany("Order")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Store.DataAccessLayer.Entities.OrderItem", b =>
+            modelBuilder.Entity("Store.DataAccess.Entities.OrderItem", b =>
                 {
-                    b.HasOne("Store.DataAccessLayer.Entities.Order", "Order")
+                    b.HasOne("Store.DataAccess.Entities.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Store.DataAccessLayer.Entities.PrintingEdition", "PrintingEdition")
+                    b.HasOne("Store.DataAccess.Entities.PrintingEdition", "PrintingEdition")
                         .WithMany()
                         .HasForeignKey("PrintingEditionId")
                         .OnDelete(DeleteBehavior.Cascade)
