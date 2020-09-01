@@ -42,9 +42,9 @@ namespace Store.BuisnessLogic.Services
             }
         }
 
-        public Task RemoveAsync(Guid id)
+        public async Task RemoveAsync(Guid id)
         {
-            return _authorRepository.RemoveAsync(id);
+            await _authorRepository.RemoveAsync(id);
         }
 
         public async Task EditAsync(AuthorModel authorModel)
@@ -62,7 +62,7 @@ namespace Store.BuisnessLogic.Services
         {
             var filter = AuthorRequestMapper.Map(filterModel);
             var authorResponse = await _authorRepository.FilterAsync(filter);
-            var authorResponseModel = AuthorResponseFilterMapper.Map(authorResponse);
+            var authorResponseModel = AuthorResponseMapper.Map(authorResponse);
             return authorResponseModel;
         }
     }

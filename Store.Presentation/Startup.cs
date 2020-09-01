@@ -16,13 +16,14 @@ using Store.BuisnessLogic.Services;
 using Store.BuisnessLogic.Services.Interfaces;
 using Store.DataAccess.AppContext;
 using Store.DataAccess.Entities;
-using Store.DataAccess.Initialization;  
+using Store.DataAccess.Initialization;
 using Store.DataAccess.Repositories.EFRepositories;
 using Store.DataAccess.Repositories.Interfaces;
 using Store.Presentation.Middlewares;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using StripeConfiguration = Stripe.StripeConfiguration;
 
 namespace Store.Presentation
 {
@@ -62,7 +63,7 @@ namespace Store.Presentation
                .AddEntityFrameworkStores<ApplicationContext>()
                  .AddDefaultTokenProviders();
 
-
+            StripeConfiguration.ApiKey = Configuration.GetSection("Stripe")["SecretKey"];
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services

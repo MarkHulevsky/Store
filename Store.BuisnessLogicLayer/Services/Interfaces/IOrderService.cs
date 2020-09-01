@@ -10,7 +10,7 @@ namespace Store.BuisnessLogic.Services.Interfaces
 {
     public interface IOrderService
     {
-        void PayOrder(PaymentModel paymentModel);
+        Task PayOrderAsync(PaymentModel paymentModel);
         Task<List<OrderModel>> GetUserOrdersAsync(Guid userId);
         Task<OrderModel> CreateAsync(CartModel cartModel);
         Task RemoveAsync(Guid id);

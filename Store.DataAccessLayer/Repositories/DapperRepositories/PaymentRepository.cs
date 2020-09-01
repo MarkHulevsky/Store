@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Store.DataAccess.Entities;
 using Store.DataAccess.Repositories.Base;
 using Store.DataAccess.Repositories.Interfaces;
-using System;
 using System.Threading.Tasks;
 
 namespace Store.DataAccess.Repositories.DapperRepositories

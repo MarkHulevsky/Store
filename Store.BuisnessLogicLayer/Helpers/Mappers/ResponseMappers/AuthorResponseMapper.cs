@@ -6,11 +6,16 @@ using Store.DataAccess.Filters.ResponseFulters;
 
 namespace Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers
 {
-    public static class AuthorResponseFilterMapper
+    public static class AuthorResponseMapper
     {
-        private static readonly Mapper<Author, AuthorModel> _authorModelMapper = new Mapper<Author, AuthorModel>();
-        private static readonly Mapper<PrintingEdition, PrintingEditionModel> _printingEditionModelMapper =
-            new Mapper<PrintingEdition, PrintingEditionModel>();
+        private static readonly Mapper<Author, AuthorModel> _authorModelMapper;
+        private static readonly Mapper<PrintingEdition, PrintingEditionModel> _printingEditionModelMapper;
+
+        static AuthorResponseMapper()
+        {
+            _authorModelMapper = new Mapper<Author, AuthorModel>();
+            _printingEditionModelMapper = new Mapper<PrintingEdition, PrintingEditionModel>();
+        }
         public static AuthorResponseModel Map(AuthorResponseDataModel responseFilter)
         {
             var responseFilterModel = new AuthorResponseModel
@@ -19,10 +24,10 @@ namespace Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers
             };
             foreach (var author in responseFilter.Authors)
             {
-                var authorModel = _authorModelMapper.Map(new AuthorModel(), author);
+                var authorModel = _authorModelMapper.Map(author);
                 foreach (var pe in author.PrintingEditions)
                 {
-                    var peModel = _printingEditionModelMapper.Map(new PrintingEditionModel(), pe);
+                    var peModel = _printingEditionModelMapper.Map(pe);
                     authorModel.PrintingEditions.Add(peModel);
                 }
                 responseFilterModel.Authors.Add(authorModel);

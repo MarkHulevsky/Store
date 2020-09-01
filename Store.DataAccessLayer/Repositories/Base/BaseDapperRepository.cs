@@ -15,8 +15,8 @@ namespace Store.DataAccess.Repositories.Base
     {
         protected readonly SqlConnection _dbContext;
         protected readonly IConfiguration _configuration;
-        protected string tableName;
         private readonly string _connectionString;
+        protected string tableName;
 
         public BaseDapperRepository(IConfiguration configuration)
         {

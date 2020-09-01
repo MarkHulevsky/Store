@@ -4,7 +4,7 @@ using Store.DataAccess.Entities;
 using Store.DataAccess.Models.Constants;
 using Store.DataAccess.Repositories.Base;
 using Store.DataAccess.Repositories.Interfaces;
-using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Store.DataAccess.Repositories.DapperRepositories
@@ -16,6 +16,11 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             tableName = Constants.ORDER_ITEMS_TABLE_NAME;
         }
 
+        public Task AddRangeAsync(List<OrderItem> orderItems)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public override async Task<OrderItem> CreateAsync(OrderItem model)
         {
             var query = $"INSERT INTO {tableName} (Id, Amount, PrintingEditionId, OrderId, Count," +
@@ -25,5 +30,6 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             var result = await _dbContext.QueryFirstOrDefaultAsync<OrderItem>(query);
             return result;
         }
+
     }
 }

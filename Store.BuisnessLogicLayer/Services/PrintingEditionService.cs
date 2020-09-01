@@ -47,9 +47,9 @@ namespace Store.BuisnessLogic.Services
             return printingEdition;
         }
 
-        public Task RemoveAsync(Guid id)
+        public async Task RemoveAsync(Guid id)
         {
-            return _printingEditionRepository.RemoveAsync(id);
+            await _printingEditionRepository.RemoveAsync(id);
         }
 
         public async Task EditAsync(PrintingEditionModel printingEditionModel)
@@ -66,7 +66,7 @@ namespace Store.BuisnessLogic.Services
         {
             var printingEditionFilter = PrintingEditionRequestMapper.Map(filterModel);
             var printingEditionsResponse = await _printingEditionRepository.FilterAsync(printingEditionFilter);
-            var printingEditionResponseModel = PrintingEditionResponseFilterMapper.Map(printingEditionsResponse);
+            var printingEditionResponseModel = PrintingEditionResponseMapper.Map(printingEditionsResponse);
             return printingEditionResponseModel;
         }
 

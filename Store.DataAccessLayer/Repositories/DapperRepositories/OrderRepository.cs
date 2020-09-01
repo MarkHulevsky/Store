@@ -39,7 +39,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public override async Task<Order> CreateAsync(Order model)
         {
-            model.PaymentId = Guid.Empty;            
+            model.PaymentId = Guid.Empty;
             model.Description = string.Empty;
             model.Status = OrderStatus.Unpaid;
             var query = $"INSERT INTO {tableName} " +

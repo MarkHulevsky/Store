@@ -75,7 +75,7 @@ namespace Store.BuisnessLogic.Helpers
             };
 
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(
-                            _configuration.GetSection("JwtSettings")["Key"]));
+                _configuration.GetSection("JwtSettings")["Key"]));
 
             var credentials = new SigningCredentials(symmetricSecurityKey,
                 SecurityAlgorithms.HmacSha256);

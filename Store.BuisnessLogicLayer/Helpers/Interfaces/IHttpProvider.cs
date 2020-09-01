@@ -4,6 +4,6 @@ namespace Store.BuisnessLogic.Helpers.Interfaces
 {
     public interface IHttpProvider
     {
-        Task<string> GetHttpContent(string url);
+        Task<string> GetHttpContentAsync(string url);
     }
 }

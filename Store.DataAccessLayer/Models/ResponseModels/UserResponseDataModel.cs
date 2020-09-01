@@ -6,6 +6,10 @@ namespace Store.DataAccess.Filters
 {
     public class UserResponseDataModel : BaseResponseDataModel
     {
-        public IEnumerable<User> Users { get; set; } = new List<User>();
+        public IEnumerable<User> Users { get; set; }
+        public UserResponseDataModel()
+        {
+            Users = new List<User>();
+        }
     }
 }

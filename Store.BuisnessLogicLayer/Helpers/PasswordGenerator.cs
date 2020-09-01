@@ -5,17 +5,17 @@ namespace Store.BuisnessLogic.Helpers
 {
     public static class PasswordGenerator
     {
-        private const string _pattern = @"[a-z0-9A-Z]";
-        private const int _passwordLength = 10;
+        private const string PATTERN = @"[a-z0-9A-Z]";
+        private const int PASSWORD_LENGTH = 10;
 
         public static string GeneratePassword()
         {
             var rand = new Random();
-            var xeger = new Xeger(_pattern, rand);
+            var xeger = new Xeger(PATTERN, rand);
 
             var password = string.Empty;
 
-            for (int i = 0; i < _passwordLength; i++)
+            for (int i = 0; i < PASSWORD_LENGTH; i++)
             {
                 password += xeger.Generate();
             }

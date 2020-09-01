@@ -5,7 +5,11 @@ namespace Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers
 {
     public static class UserRequestMapper
     {
-        private static readonly Mapper<PagingModel, Paging> _pagingMapper = new Mapper<PagingModel, Paging>();
+        private static readonly Mapper<PagingModel, Paging> _pagingMapper;
+        static UserRequestMapper()
+        {
+            _pagingMapper = new Mapper<PagingModel, Paging>();
+        } 
         public static UserRequestDataModel Map(UserRequestModel filterModel)
         {
             var filter = new UserRequestDataModel

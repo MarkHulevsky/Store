@@ -8,16 +8,15 @@ namespace Store.BuisnessLogic.Helpers
 {
     public class HttpProvider : IHttpProvider
     {
-        private const string Method = "GET";
-        private const string Accept = "application/json";
-        private const string UserAgent = "Mozilla/5.0";
-        public async Task<string> GetHttpContent(string url)
+        private const string METHOD = "GET";
+        private const string ACCEPT = "application/json";
+        private const string USER_AGENT = "Mozilla/5.0";
+        public async Task<string> GetHttpContentAsync(string url)
         {
-            var request =
-            (HttpWebRequest)WebRequest.Create(url);
-            request.Method = Method;
-            request.Accept = Accept;
-            request.UserAgent = UserAgent;
+            var request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = METHOD;
+            request.Accept = ACCEPT;
+            request.UserAgent = USER_AGENT;
             var response = (HttpWebResponse)request.GetResponse();
             var reader = new StreamReader(response.GetResponseStream());
             var output = new StringBuilder();

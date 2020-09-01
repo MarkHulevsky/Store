@@ -47,9 +47,9 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public IActionResult Pay([FromBody] PaymentModel paymentModel)
+        public async Task<IActionResult> Pay([FromBody] PaymentModel paymentModel)
         {
-            _orderService.PayOrder(paymentModel);
+            await _orderService.PayOrderAsync(paymentModel);
             return Ok();
         }
 

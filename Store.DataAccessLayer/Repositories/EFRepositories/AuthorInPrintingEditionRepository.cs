@@ -3,7 +3,6 @@ using Store.DataAccess.AppContext;
 using Store.DataAccess.Entities;
 using Store.DataAccess.Repositories.Base;
 using Store.DataAccess.Repositories.Interfaces;
-using System;
 using System.Threading.Tasks;
 
 namespace Store.DataAccess.Repositories.EFRepositories
@@ -21,7 +20,6 @@ namespace Store.DataAccess.Repositories.EFRepositories
                 && ap.PrintingEditionId == model.PrintingEditionId);
             if (entity == null)
             {
-                model.CreationDate = DateTime.UtcNow;
                 await DbSet.AddAsync(model);
                 await SaveChangesAsync();
             }

@@ -6,6 +6,10 @@ namespace Store.DataAccess.Filters.ResponseFulters
 {
     public class AuthorResponseDataModel : BaseResponseDataModel
     {
-        public IEnumerable<Author> Authors { get; set; } = new List<Author>();
+        public IEnumerable<Author> Authors { get; set; }
+        public AuthorResponseDataModel()
+        {
+            Authors = new List<Author>();
+        }
     }
 }

@@ -2,7 +2,6 @@
 using Store.BuisnessLogic.Models.PrintingEditions;
 using Store.DataAccess.Entities;
 using System.Collections.Generic;
-using static Shared.Enums.Enums;
 
 namespace Store.BuisnessLogic.Helpers.Mappers.ListMappers
 {

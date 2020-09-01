@@ -7,24 +7,24 @@ namespace Store.Presentation.Middlewares
 {
     public class LoggerMiddleware
     {
-        private readonly RequestDelegate next;
-        private readonly ILogger logger;
+        private readonly RequestDelegate _next;
+        private readonly ILogger _logger;
 
         public LoggerMiddleware(RequestDelegate next, ILogger logger)
         {
-            this.next = next;
-            this.logger = logger;
+            _next = next;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
         {
             try
             {
-                await next(context);
+                await _next(context);
             }
             catch (Exception ex)
             {
-                await logger.LogAsync(ex.ToString());
+                await _logger.LogAsync(ex.ToString());
             }
         }
     }

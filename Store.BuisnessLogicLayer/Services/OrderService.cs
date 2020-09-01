@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Store.BuisnessLogic.Helpers;
+﻿using Store.BuisnessLogic.Helpers;
 using Store.BuisnessLogic.Helpers.Mappers.ListMappers;
 using Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers;
 using Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers;
@@ -15,7 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Order = Store.DataAccess.Entities.Order;
-using OrderItem = Store.DataAccess.Entities.OrderItem;
 
 namespace Store.BuisnessLogic.Services
 {
@@ -24,28 +22,21 @@ namespace Store.BuisnessLogic.Services
         private readonly IPaymentRepository _paymentRepository;
         private readonly IOrderItemRepository _orderItemRepository;
         private readonly IOrderRepository _orderRepository;
-        private readonly IConfiguration _configuration;
-
         private readonly Mapper<Order, OrderModel> _orderModelMapper;
-        private readonly Mapper<OrderItemModel, OrderItem> _orderItemMapper;
 
-        private const string chargeSucceeded = "succeeded";
+        private const string CHARGE_SUCCEEDED = "succeeded";
 
         public OrderService(IPaymentRepository paymentRepository,
-            IOrderItemRepository orderItemRepository, IOrderRepository orderRepository,
-            IConfiguration configuration)
+            IOrderItemRepository orderItemRepository, IOrderRepository orderRepository)
         {
             _paymentRepository = paymentRepository;
             _orderItemRepository = orderItemRepository;
             _orderRepository = orderRepository;
-            _configuration = configuration;
-            _orderItemMapper = new Mapper<OrderItemModel, OrderItem>();
             _orderModelMapper = new Mapper<Order, OrderModel>();
         }
 
-        public void PayOrder(PaymentModel paymentModel)
+        public async Task PayOrderAsync(PaymentModel paymentModel)
         {
-            StripeConfiguration.ApiKey = _configuration.GetSection("Stripe")["SecretKey"];
             var customerService = new CustomerService();
             var chargeService = new ChargeService();
 
@@ -55,7 +46,7 @@ namespace Store.BuisnessLogic.Services
                 Source = paymentModel.TokenId
             };
 
-            var customer = customerService.Create(customerOptions);
+            var customer = await customerService.CreateAsync(customerOptions);
 
             var chargeOptions = new ChargeCreateOptions
             {
@@ -64,16 +55,16 @@ namespace Store.BuisnessLogic.Services
                 Customer = customer.Id
             };
 
-            var charge = chargeService.Create(chargeOptions);
+            var charge = await chargeService.CreateAsync(chargeOptions);
 
-            if (charge.Status == chargeSucceeded)
+            if (charge.Status == CHARGE_SUCCEEDED)
             {
                 var payment = new Payment()
                 {
                     TransactionId = charge.BalanceTransactionId
                 };
-                payment = _paymentRepository.CreateAsync(payment).Result;
-                _orderRepository.AddToPaymentAsync(payment.Id, paymentModel.OrderId).Wait();
+                payment = await _paymentRepository.CreateAsync(payment);
+                await _orderRepository.AddToPaymentAsync(payment.Id, paymentModel.OrderId);
             }
         }
 
@@ -81,7 +72,7 @@ namespace Store.BuisnessLogic.Services
         {
             var filter = OrderRequestMapper.Map(filterModel);
             var orderResponse = await _orderRepository.FilterAsync(filter);
-            var orderResponseModel = OrderResponseFilterMapper.Map(orderResponse);
+            var orderResponseModel = OrderResponseMapper.Map(orderResponse);
             return orderResponseModel;
         }
 
@@ -100,18 +91,14 @@ namespace Store.BuisnessLogic.Services
             };
             order = await _orderRepository.CreateAsync(order);
             var orderModel = _orderModelMapper.Map(order);
-            foreach (var orderItemModel in cartModel.Order.OrderItems)
-            {
-                var orderItem = _orderItemMapper.Map(orderItemModel);
-                orderItem.OrderId = order.Id;
-                await _orderItemRepository.CreateAsync(orderItem);
-            }
+            var orderItems = OrderItemListMapper.Map(cartModel.Order.OrderItems, order.Id);
+            await _orderItemRepository.AddRangeAsync(orderItems);
             return orderModel;
         }
 
-        public Task RemoveAsync(Guid id)
+        public async Task RemoveAsync(Guid id)
         {
-            return _orderRepository.RemoveAsync(id);
+            await _orderRepository.RemoveAsync(id);
         }
     }
 }

@@ -5,9 +5,7 @@ using Store.BuisnessLogic.Models.Account;
 using Store.BuisnessLogic.Models.Token;
 using Store.BuisnessLogic.Models.Users;
 using Store.BuisnessLogic.Services.Interfaces;
-using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Store.Presentation.Controllers
@@ -16,12 +14,12 @@ namespace Store.Presentation.Controllers
     public class AccountController : Controller
     {
         private readonly IAccountService _accountService;
-        private readonly IJwtProvider _jwtHelper;
+        private readonly IJwtProvider _jwtProvider;
 
-        public AccountController(IAccountService accountService, IJwtProvider jwtHelper)
+        public AccountController(IAccountService accountService, IJwtProvider jwtProvider)
         {
             _accountService = accountService;
-            _jwtHelper = jwtHelper;
+            _jwtProvider = jwtProvider;
         }
 
         private void SetCookieTokenResponse(string accessToken, string refreshToken)
@@ -43,9 +41,9 @@ namespace Store.Presentation.Controllers
         public IActionResult RefreshToken([FromBody] JwtTokenModel refreshTokenModel)
         {
             var jwtToken = new JwtTokenModel();
-            var principal = _jwtHelper.GetPrincipalFromExpiredToken(refreshTokenModel.AccessToken);
-            jwtToken.AccessToken = _jwtHelper.GenerateJwtTokenWithClaims(principal.Claims);
-            jwtToken.RefreshToken = _jwtHelper.GenerateRefreshToken();
+            var principal = _jwtProvider.GetPrincipalFromExpiredToken(refreshTokenModel.AccessToken);
+            jwtToken.AccessToken = _jwtProvider.GenerateJwtTokenWithClaims(principal.Claims);
+            jwtToken.RefreshToken = _jwtProvider.GenerateRefreshToken();
             SetCookieTokenResponse(jwtToken.AccessToken, jwtToken.RefreshToken);
             return Ok(jwtToken);
         }
@@ -56,8 +54,8 @@ namespace Store.Presentation.Controllers
             var userModel = new UserModel();
             if (ModelState.IsValid)
             {
-                var _userModelMapper = new Mapper<RegisterModel, UserModel>();
-                userModel = _userModelMapper.Map(model);
+                var userModelMapper = new Mapper<RegisterModel, UserModel>();
+                userModel = userModelMapper.Map(model);
 
                 var result = await _accountService.RegisterAsync(userModel);
                 if (result.Succeeded)
@@ -66,12 +64,13 @@ namespace Store.Presentation.Controllers
                     string url = Url.Action("ConfirmEmail", "Account",
                         new { email = model.Email, token }, Request.Scheme);
                     await _accountService.SendConfirmUrlAsync(model.Email, url);
-                    return Ok();
+                    return Ok(null);
                 }
                 foreach (var error in result.Errors)
                 {
                     userModel.Errors.Add(error.Description);
                 }
+                return Ok(userModel);
             }
 
             var errors = ModelState.Values.SelectMany(v => v.Errors);
@@ -108,17 +107,17 @@ namespace Store.Presentation.Controllers
             userModel.Roles = await _accountService.GetRolesAsync(userModel.Email);
             var jwtTokenModel = new JwtTokenModel
             {
-                AccessToken = await _jwtHelper.GetTokenAsync(userModel),
-                RefreshToken = _jwtHelper.GenerateRefreshToken()
+                AccessToken = await _jwtProvider.GetTokenAsync(userModel),
+                RefreshToken = _jwtProvider.GenerateRefreshToken()
             };
             SetCookieTokenResponse(jwtTokenModel.AccessToken, jwtTokenModel.RefreshToken);
             return Ok(userModel);
         }
 
         [HttpPost]
-        public Task SignOut()
+        public async Task SignOut()
         {
-            return _accountService.LogoutAsync();
+            await _accountService.LogoutAsync();
         }
     }
 }

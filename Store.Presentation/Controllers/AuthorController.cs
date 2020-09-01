@@ -22,7 +22,8 @@ namespace Store.Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _authorService.GetAll());
+            var authors = await _authorService.GetAll();
+            return Ok(authors);
         }
 
         [HttpPost]

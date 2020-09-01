@@ -8,14 +8,21 @@ using System.Collections.Generic;
 
 namespace Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers
 {
-    public static class OrderResponseFilterMapper
+    public static class OrderResponseMapper
+
     {
-        private static readonly Mapper<Order, OrderModel> _orderModelMapper = new Mapper<Order, OrderModel>();
-        private static readonly Mapper<OrderItem, OrderItemModel> _orderItemModelMapper =
-            new Mapper<OrderItem, OrderItemModel>();
-        private static readonly Mapper<User, UserModel> _userModelMapper = new Mapper<User, UserModel>();
-        private static readonly Mapper<PrintingEdition, PrintingEditionModel> _printingEditionModelMapper =
-            new Mapper<PrintingEdition, PrintingEditionModel>();
+        private static readonly Mapper<Order, OrderModel> _orderModelMapper;
+        private static readonly Mapper<OrderItem, OrderItemModel> _orderItemModelMapper;
+        private static readonly Mapper<User, UserModel> _userModelMapper;
+        private static readonly Mapper<PrintingEdition, PrintingEditionModel> _printingEditionModelMapper;
+
+        static OrderResponseMapper()
+        {
+            _orderModelMapper = new Mapper<Order, OrderModel>();
+            _orderItemModelMapper = new Mapper<OrderItem, OrderItemModel>();
+            _userModelMapper = new Mapper<User, UserModel>();
+            _printingEditionModelMapper = new Mapper<PrintingEdition, PrintingEditionModel>();
+        }
 
         public static OrderResponseModel Map(OrderResponseDataModel responseFilter)
         {

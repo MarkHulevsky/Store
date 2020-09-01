@@ -7,11 +7,17 @@ using System.Collections.Generic;
 
 namespace Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers
 {
-    public static class PrintingEditionResponseFilterMapper
+    public static class PrintingEditionResponseMapper
     {
-        private static readonly Mapper<Author, AuthorModel> _authorModelMapper = new Mapper<Author, AuthorModel>();
-        private static readonly Mapper<PrintingEdition, PrintingEditionModel> _printingEditionModelMapper =
-            new Mapper<PrintingEdition, PrintingEditionModel>();
+        private static readonly Mapper<Author, AuthorModel> _authorModelMapper;
+        private static readonly Mapper<PrintingEdition, PrintingEditionModel> _printingEditionModelMapper;
+
+        static PrintingEditionResponseMapper()
+        {
+            _authorModelMapper = new Mapper<Author, AuthorModel>();
+            _printingEditionModelMapper = new Mapper<PrintingEdition, PrintingEditionModel>();
+        }
+
         public static PrintingEditionResponseModel Map(PrintingEditionResponseDataModel responseFilter)
         {
             var responseFilterModel = new PrintingEditionResponseModel

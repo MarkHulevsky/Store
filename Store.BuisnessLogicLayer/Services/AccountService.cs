@@ -6,9 +6,7 @@ using Store.BuisnessLogic.Models.Users;
 using Store.BuisnessLogic.Services.Interfaces;
 using Store.DataAccess.Entities;
 using Store.DataAccess.Repositories.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Store.BuisnessLogic.Services
@@ -24,7 +22,7 @@ namespace Store.BuisnessLogic.Services
         private const string INCORRECT_LOGIN_DATA_ERROR = "Icorrect password or email";
 
         private readonly IUserRepository _userRepository;
-        private readonly IEmailProvider _emailHalper;
+        private readonly IEmailProvider _emailProvider;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly Mapper<User, UserModel> _userModelMapper;
@@ -34,7 +32,7 @@ namespace Store.BuisnessLogic.Services
             UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _userRepository = userRepository;
-            _emailHalper = emailProvider;
+            _emailProvider = emailProvider;
             _userManager = userManager;
             _signInManager = signInManager;
             _userModelMapper = new Mapper<User, UserModel>();
@@ -63,24 +61,24 @@ namespace Store.BuisnessLogic.Services
             }
             var subject = RESET_PASSWORD_SUBJECT;
             var body = $"{RESET_PASSWORD_BODY} {newPassword}";
-            await _emailHalper.SendAsync(email, subject, body);
+            await _emailProvider.SendAsync(email, subject, body);
             return new BaseModel();
         }
 
         public async Task<string> GetForgotPasswordTokenAsync(string email)
         {
-            if (!string.IsNullOrWhiteSpace(email))
+            if (string.IsNullOrWhiteSpace(email))
             {
-                var user = await _userRepository.FindByEmailAsync(email);
-                var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
-                if (user == null || !isEmailConfirmed)
-                {
-                    return null;
-                }
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                return token;
+                return null;
             }
-            return null;
+            var user = await _userRepository.FindByEmailAsync(email);
+            var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
+            if (user == null || !isEmailConfirmed)
+            {
+                return null;
+            }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            return token;
         }
 
         public async Task<List<string>> GetRolesAsync(string email)
@@ -117,11 +115,11 @@ namespace Store.BuisnessLogic.Services
             return result;
         }
 
-        public Task SendConfirmUrlAsync(string email, string url)
+        public async Task SendConfirmUrlAsync(string email, string url)
         {
             var subject = CONFIRM_EMAIL_SUBJECT;
             var body = $"{CONFIRM_EMAIL_BODY} {url}";
-            return _emailHalper.SendAsync(email, subject, body);
+            await _emailProvider.SendAsync(email, subject, body);
         }
 
         public async Task<BaseModel> ConfirmEmail(string email, string token)
@@ -139,7 +137,7 @@ namespace Store.BuisnessLogic.Services
                 return new BaseModel();
             }
             var errors = new List<string>();
-            foreach(var error in result.Errors)
+            foreach (var error in result.Errors)
             {
                 errors.Add(error.Description);
             }
@@ -187,9 +185,9 @@ namespace Store.BuisnessLogic.Services
             return userModel;
         }
 
-        public Task LogoutAsync()
+        public async Task LogoutAsync()
         {
-            return _signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();
         }
     }
 }

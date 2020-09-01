@@ -41,7 +41,7 @@ namespace Store.BuisnessLogic.Services
         {
             var filter = UserRequestMapper.Map(filterModel);
             var userResponse = await _userRepository.FilterAsync(filter);
-            var userResponseModel = UserResponseFilterMapper.Map(userResponse);
+            var userResponseModel = UserResponseMapper.Map(userResponse);
             return userResponseModel;
         }
 
@@ -70,16 +70,16 @@ namespace Store.BuisnessLogic.Services
             {
                 return result;
             }
-            foreach(var error in updateResult.Errors)
+            foreach (var error in updateResult.Errors)
             {
                 result.Errors.Add(error.Description);
             }
             return result;
         }
 
-        public Task RemoveAsync(Guid userId)
+        public async Task RemoveAsync(Guid userId)
         {
-            return _userRepository.RemoveAsync(userId);
+            await _userRepository.RemoveAsync(userId);
         }
     }
 }

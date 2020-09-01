@@ -17,13 +17,13 @@ namespace Store.Presentation.Controllers
     {
         private readonly IPrintingEditionService _printingEditionService;
         private readonly IConfiguration _configuration;
-        private readonly IHttpProvider _http;
+        private readonly IHttpProvider _httpProvider;
         public PrintingEditionController(IPrintingEditionService printingEditionService,
-            IConfiguration configuration, IHttpProvider http)
+            IConfiguration configuration, IHttpProvider httpProvider)
         {
             _printingEditionService = printingEditionService;
             _configuration = configuration;
-            _http = http;
+            _httpProvider = httpProvider;
         }
 
         [HttpGet]
@@ -36,9 +36,9 @@ namespace Store.Presentation.Controllers
         [HttpGet("{currentCurrency}/{newCurrency}")]
         public async Task<IActionResult> ConvertCurrency(string currentCurrency, string newCurrency)
         {
-            var baseUrl = _configuration.GetSection("CurrencyOprion")["Url"];
+            var baseUrl = _configuration.GetSection("CurrencyOption")["Url"];
             var url = $@"{baseUrl}?base={currentCurrency}&symbols={newCurrency}";
-            var jsonResult = JObject.Parse(await _http.GetHttpContent(url));
+            var jsonResult = JObject.Parse(await _httpProvider.GetHttpContentAsync(url));
             var rate = jsonResult["rates"][newCurrency];
             var result = (float)rate;
             return Ok(result);

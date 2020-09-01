@@ -41,9 +41,9 @@ namespace Store.DataAccess.Repositories.EFRepositories
             return result;
         }
 
-        public Task<User> FindByEmailAsync(string email)
+        public async Task<User> FindByEmailAsync(string email)
         {
-            return DbSet.FirstOrDefaultAsync(u => u.Email == email);
+            return await DbSet.FirstOrDefaultAsync(u => u.Email == email);
         }
 
     }

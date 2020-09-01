@@ -11,7 +11,7 @@ namespace Store.BuisnessLogic.Models.Orders
         public DateTime CreationDate { get; set; }
         public OrderStatus Status { get; set; }
         public UserModel User { get; set; }
-        public IEnumerable<OrderItemModel> OrderItems { get; set; }
+        public List<OrderItemModel> OrderItems { get; set; }
         public OrderModel()
         {
             OrderItems = new List<OrderItemModel>();

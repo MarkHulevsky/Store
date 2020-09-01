@@ -37,15 +37,12 @@ namespace Store.DataAccess.Initialization
 
         private void InitRoles()
         {
-            if (_roleManager.FindByNameAsync(_adminRoleName).Result != null)
+            if (_roleManager.FindByNameAsync(_adminRoleName).Result != null ||
+                _roleManager.FindByNameAsync(_userRoleName).Result != null)
             {
                 return;
             }
             _roleManager.CreateAsync(new IdentityRole<Guid>(_adminRoleName)).Wait();
-            if (_roleManager.FindByNameAsync(_userRoleName).Result != null)
-            {
-                return;
-            }
             _roleManager.CreateAsync(new IdentityRole<Guid>(_userRoleName)).Wait();
         }
 

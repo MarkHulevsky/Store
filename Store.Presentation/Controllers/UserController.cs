@@ -13,13 +13,13 @@ namespace Store.Presentation.Controllers
     [Route("api/[controller]/[action]")]
     public class UserController : Controller
     {
-        private readonly Mapper<EditProfileModel, UserModel> _userModelMapper =
-            new Mapper<EditProfileModel, UserModel>();
+        private readonly Mapper<EditProfileModel, UserModel> _userModelMapper;
         private readonly IUserService _userService;
 
         public UserController(IUserService userService)
         {
             _userService = userService;
+            _userModelMapper = new Mapper<EditProfileModel, UserModel>();
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -42,7 +42,7 @@ namespace Store.Presentation.Controllers
         [HttpPut]
         public async Task<IActionResult> EditProfile([FromBody] EditProfileModel model)
         {
-            var userModel = _userModelMapper.Map(new UserModel(), model);
+            var userModel = _userModelMapper.Map(model);
             var result = await _userService.EditAsync(userModel);
             return Ok(result);
         }
