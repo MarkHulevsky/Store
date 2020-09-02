@@ -41,7 +41,7 @@ namespace Store.BuisnessLogic.Services
 
         public async Task<BaseModel> ResetPasswordAsync(string email, string token, string newPassword)
         {
-            var user = await _userRepository.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 return null;
@@ -71,7 +71,7 @@ namespace Store.BuisnessLogic.Services
             {
                 return null;
             }
-            var user = await _userRepository.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
             var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
             if (user == null || !isEmailConfirmed)
             {
@@ -83,7 +83,7 @@ namespace Store.BuisnessLogic.Services
 
         public async Task<List<string>> GetRolesAsync(string email)
         {
-            var user = await _userRepository.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 return null;
@@ -94,7 +94,7 @@ namespace Store.BuisnessLogic.Services
 
         public async Task<UserModel> FindByEmailAsync(string email)
         {
-            var user = await _userRepository.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 return null;
@@ -124,7 +124,7 @@ namespace Store.BuisnessLogic.Services
 
         public async Task<BaseModel> ConfirmEmail(string email, string token)
         {
-            var user = await _userRepository.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 return null;
@@ -156,7 +156,7 @@ namespace Store.BuisnessLogic.Services
 
         public async Task<BaseModel> LoginAsync(UserModel userModel)
         {
-            var user = await _userRepository.FindByEmailAsync(userModel.Email);
+            var user = await _userManager.FindByEmailAsync(userModel.Email);
             if (user == null)
             {
                 var errors = new List<string>

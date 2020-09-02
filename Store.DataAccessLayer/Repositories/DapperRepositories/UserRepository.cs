@@ -42,13 +42,6 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             return result;
         }
 
-        public async Task<User> FindByEmailAsync(string email)
-        {
-            var query = $"SELECT * FROM {tableName} WHERE Email = '{email}'";
-            var user = await _dbContext.QueryFirstOrDefaultAsync<User>(query, new { email });
-            return user;
-        }
-
         public override async Task<User> GetAsync(Guid id)
         {
             var query = $"SELECT * FROM {tableName} WHERE Id = '{id}' AND IsRemoved = 0";

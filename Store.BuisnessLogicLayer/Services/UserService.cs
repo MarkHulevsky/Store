@@ -47,7 +47,7 @@ namespace Store.BuisnessLogic.Services
 
         public async Task ChangeStatusAsync(UserModel userModel)
         {
-            var user = await _userRepository.FindByEmailAsync(userModel.Email);
+            var user = await _userManager.FindByEmailAsync(userModel.Email);
             user.IsActive = !user.IsActive;
             await _userManager.UpdateAsync(user);
         }

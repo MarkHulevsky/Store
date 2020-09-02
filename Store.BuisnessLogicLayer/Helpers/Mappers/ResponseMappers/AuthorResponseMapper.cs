@@ -27,8 +27,8 @@ namespace Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers
                 var authorModel = _authorModelMapper.Map(author);
                 foreach (var pe in author.PrintingEditions)
                 {
-                    var peModel = _printingEditionModelMapper.Map(pe);
-                    authorModel.PrintingEditions.Add(peModel);
+                    var printingEditionModel = _printingEditionModelMapper.Map(pe);
+                    authorModel.PrintingEditions.Add(printingEditionModel);
                 }
                 responseFilterModel.Authors.Add(authorModel);
             }
