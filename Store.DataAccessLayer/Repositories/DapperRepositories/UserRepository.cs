@@ -49,7 +49,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             return user;
         }
 
-        public new async Task<User> GetAsync(Guid id)
+        public override async Task<User> GetAsync(Guid id)
         {
             var query = $"SELECT * FROM {tableName} WHERE Id = '{id}' AND IsRemoved = 0";
             var user = await _dbContext.QueryFirstOrDefaultAsync<User>(query);

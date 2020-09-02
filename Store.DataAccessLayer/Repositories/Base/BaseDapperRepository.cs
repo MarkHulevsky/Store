@@ -48,7 +48,7 @@ namespace Store.DataAccess.Repositories.Base
             return result.ToList();
         }
 
-        public async Task<T> GetAsync(Guid id)
+        public virtual async Task<T> GetAsync(Guid id)
         {
             var entity = await _dbContext.GetAsync<T>(id);
             return entity;

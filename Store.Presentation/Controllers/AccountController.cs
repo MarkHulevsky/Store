@@ -40,10 +40,12 @@ namespace Store.Presentation.Controllers
         [HttpPost]
         public IActionResult RefreshToken([FromBody] JwtTokenModel refreshTokenModel)
         {
-            var jwtToken = new JwtTokenModel();
             var principal = _jwtProvider.GetPrincipalFromExpiredToken(refreshTokenModel.AccessToken);
-            jwtToken.AccessToken = _jwtProvider.GenerateJwtTokenWithClaims(principal.Claims);
-            jwtToken.RefreshToken = _jwtProvider.GenerateRefreshToken();
+            var jwtToken = new JwtTokenModel
+            {
+                AccessToken = _jwtProvider.GenerateJwtTokenWithClaims(principal.Claims),
+                RefreshToken = _jwtProvider.GenerateRefreshToken()
+            };
             SetCookieTokenResponse(jwtToken.AccessToken, jwtToken.RefreshToken);
             return Ok(jwtToken);
         }

@@ -16,8 +16,8 @@ namespace Store.DataAccess.Repositories.EFRepositories
 
         public override async Task<AuthorInPrintingEdition> CreateAsync(AuthorInPrintingEdition model)
         {
-            var entity = await DbSet.FirstOrDefaultAsync(ap => ap.AuthorId == model.AuthorId
-                && ap.PrintingEditionId == model.PrintingEditionId);
+            var entity = await DbSet.FirstOrDefaultAsync(authorInPrintingEdition => authorInPrintingEdition.AuthorId == model.AuthorId
+                && authorInPrintingEdition.PrintingEditionId == model.PrintingEditionId);
             if (entity == null)
             {
                 await DbSet.AddAsync(model);

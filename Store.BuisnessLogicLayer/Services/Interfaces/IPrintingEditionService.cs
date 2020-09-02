@@ -11,10 +11,10 @@ namespace Store.BuisnessLogic.Services.Interfaces
 {
     public interface IPrintingEditionService
     {
-        Task<PrintingEdition> CreateAsync(PrintingEditionModel peModel);
+        Task<PrintingEditionModel> CreateAsync(PrintingEditionModel printingEditionModel);
         Task RemoveAsync(Guid id);
-        Task EditAsync(PrintingEditionModel peModel);
-        Task<PrintingEditionResponseModel> FilterAsync(PrintingEditionsRequestModel filter);
+        Task EditAsync(PrintingEditionModel printigEditionModel);
+        Task<PrintingEditionResponseModel> FilterAsync(PrintingEditionsRequestModel filterModel);
         Task AddToAuthorAsync(PrintingEditionModel printingEditionModel, List<AuthorModel> authorModels);
         Task<PrintingEditionModel> GetByIdAsync(string id);
     }

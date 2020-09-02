@@ -66,7 +66,7 @@ namespace Store.DataAccess.Repositories.EFRepositories
             entity.Type = model.Type;
             entity.Description = model.Description;
             entity.Currency = entity.Currency;
-            entity = DbSet.Update(entity).Entity;
+            DbSet.Update(entity);
             await SaveChangesAsync();
             return entity;
         }

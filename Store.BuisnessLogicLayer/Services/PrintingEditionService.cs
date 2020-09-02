@@ -40,11 +40,12 @@ namespace Store.BuisnessLogic.Services
             return printingEditionModel;
         }
 
-        public async Task<PrintingEdition> CreateAsync(PrintingEditionModel peModel)
+        public async Task<PrintingEditionModel> CreateAsync(PrintingEditionModel printingEditionModel)
         {
-            var printingEdition = _printingEditionMapper.Map(peModel);
+            var printingEdition = _printingEditionMapper.Map(printingEditionModel);
             printingEdition = await _printingEditionRepository.CreateAsync(printingEdition);
-            return printingEdition;
+            printingEditionModel = _printingEditionModelMapper.Map(printingEdition);
+            return printingEditionModel;
         }
 
         public async Task RemoveAsync(Guid id)
@@ -75,12 +76,12 @@ namespace Store.BuisnessLogic.Services
             var authors = ListMapper<Author, AuthorModel>.Map(authorModels);
             foreach (var author in authors)
             {
-                var aInPe = new AuthorInPrintingEdition
+                var authorInPrintingEdition = new AuthorInPrintingEdition
                 {
                     AuthorId = author.Id,
                     PrintingEditionId = printingEditionModel.Id,
                 };
-                await _authorInPrintingEditionRepository.CreateAsync(aInPe);
+                await _authorInPrintingEditionRepository.CreateAsync(authorInPrintingEdition);
             }
         }
 

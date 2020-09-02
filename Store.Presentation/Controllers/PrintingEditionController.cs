@@ -53,11 +53,11 @@ namespace Store.Presentation.Controllers
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
-        public async Task Add([FromBody] PrintingEditionModel peModel)
+        public async Task Add([FromBody] PrintingEditionModel printingEdiotionModel)
         {
-            var pe = await _printingEditionService.CreateAsync(peModel);
-            peModel.Id = pe.Id;
-            await _printingEditionService.AddToAuthorAsync(peModel, peModel.Authors);
+            var pe = await _printingEditionService.CreateAsync(printingEdiotionModel);
+            printingEdiotionModel.Id = pe.Id;
+            await _printingEditionService.AddToAuthorAsync(printingEdiotionModel, printingEdiotionModel.Authors);
         }
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
