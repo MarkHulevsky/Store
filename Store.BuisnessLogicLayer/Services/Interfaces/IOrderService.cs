@@ -14,6 +14,6 @@ namespace Store.BuisnessLogic.Services.Interfaces
         Task<List<OrderModel>> GetUserOrdersAsync(Guid userId);
         Task<OrderModel> CreateAsync(CartModel cartModel);
         Task RemoveAsync(Guid id);
-        Task<OrderResponseModel> FilterAsync(OrderRequestModel filter);
+        Task<OrderResponseModel> FilterAsync(OrderRequestModel orderRequestModel);
     }
 }

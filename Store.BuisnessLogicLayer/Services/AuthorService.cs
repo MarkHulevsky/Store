@@ -58,11 +58,11 @@ namespace Store.BuisnessLogic.Services
             await _authorRepository.UpdateAsync(author);
         }
 
-        public async Task<AuthorResponseModel> FilterAsync(AuthorRequestModel filterModel)
+        public async Task<AuthorResponseModel> FilterAsync(AuthorRequestModel authorRequestModel)
         {
-            var filter = AuthorRequestMapper.Map(filterModel);
-            var authorResponse = await _authorRepository.FilterAsync(filter);
-            var authorResponseModel = AuthorResponseMapper.Map(authorResponse);
+            var authorRequestDataModel = AuthorRequestMapper.Map(authorRequestModel);
+            var authorResponseDataModel = await _authorRepository.FilterAsync(authorRequestDataModel);
+            var authorResponseModel = AuthorResponseMapper.Map(authorResponseDataModel);
             return authorResponseModel;
         }
     }

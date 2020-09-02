@@ -21,17 +21,15 @@ namespace Store.BuisnessLogic.Services
         private const string USER_NOT_FOUND_ERROR = "No user with such email";
         private const string INCORRECT_LOGIN_DATA_ERROR = "Icorrect password or email";
 
-        private readonly IUserRepository _userRepository;
         private readonly IEmailProvider _emailProvider;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly Mapper<User, UserModel> _userModelMapper;
         private readonly Mapper<UserModel, User> _userMapper;
 
-        public AccountService(IUserRepository userRepository, IEmailProvider emailProvider,
+        public AccountService(IEmailProvider emailProvider,
             UserManager<User> userManager, SignInManager<User> signInManager)
         {
-            _userRepository = userRepository;
             _emailProvider = emailProvider;
             _userManager = userManager;
             _signInManager = signInManager;

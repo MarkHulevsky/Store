@@ -63,11 +63,11 @@ namespace Store.BuisnessLogic.Services
             await _printingEditionRepository.UpdateAsync(printingEdition);
         }
 
-        public async Task<PrintingEditionResponseModel> FilterAsync(PrintingEditionsRequestModel filterModel)
+        public async Task<PrintingEditionResponseModel> FilterAsync(PrintingEditionsRequestModel printingEditionRequestModel)
         {
-            var printingEditionFilter = PrintingEditionRequestMapper.Map(filterModel);
-            var printingEditionsResponse = await _printingEditionRepository.FilterAsync(printingEditionFilter);
-            var printingEditionResponseModel = PrintingEditionResponseMapper.Map(printingEditionsResponse);
+            var printingEditionRequestDataModel = PrintingEditionRequestMapper.Map(printingEditionRequestModel);
+            var printingEditionResponseDataModel = await _printingEditionRepository.FilterAsync(printingEditionRequestDataModel);
+            var printingEditionResponseModel = PrintingEditionResponseMapper.Map(printingEditionResponseDataModel);
             return printingEditionResponseModel;
         }
 

@@ -13,6 +13,6 @@ namespace Store.BuisnessLogic.Services.Interfaces
         Task CreateAsync(AuthorModel authorModel);
         Task RemoveAsync(Guid id);
         Task EditAsync(AuthorModel authorModel);
-        Task<AuthorResponseModel> FilterAsync(AuthorRequestModel filterModel);
+        Task<AuthorResponseModel> FilterAsync(AuthorRequestModel authorRequestModel);
     }
 }
