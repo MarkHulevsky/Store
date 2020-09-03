@@ -11,7 +11,7 @@ namespace Store.BuisnessLogic.Services.Interfaces
     public interface IUserService
     {
         Task<UserResponseModel> FilterAsync(UserRequestModel userRequestModel);
-        Task<UserModel> GetCurrentAsync(ClaimsPrincipal user);
+        Task<UserModel> GetCurrentAsync(string name);
         Task<BaseModel> EditAsync(UserModel userModel);
         Task ChangeStatusAsync(UserModel userModel);
         Task RemoveAsync(Guid userId);

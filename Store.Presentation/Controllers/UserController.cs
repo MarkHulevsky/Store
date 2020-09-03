@@ -26,7 +26,8 @@ namespace Store.Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProfile()
         {
-            var userModel = await _userService.GetCurrentAsync(HttpContext.User);
+            var userName = User.Identity.Name;
+            var userModel = await _userService.GetCurrentAsync(userName);
             return Ok(userModel);
         }
 

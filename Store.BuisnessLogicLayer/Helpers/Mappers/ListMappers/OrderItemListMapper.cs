@@ -18,6 +18,7 @@ namespace Store.BuisnessLogic.Helpers.Mappers.ListMappers
             foreach (var orderItemModel in orderItemModels)
             {
                 var orderItem = _orderItemMapper.Map(orderItemModel);
+                orderItem.Id = Guid.NewGuid();
                 orderItem.OrderId = orderId;
                 orderItems.Add(orderItem);
             }

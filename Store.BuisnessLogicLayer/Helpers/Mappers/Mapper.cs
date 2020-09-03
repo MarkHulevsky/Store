@@ -29,6 +29,10 @@ namespace Store.BuisnessLogic.Helpers
 
         public TDestination Map(TSource source)
         {
+            if (source == null)
+            {
+                return Activator.CreateInstance<TDestination>();
+            }
             var destination = Activator.CreateInstance<TDestination>();
             Type _destination = typeof(TDestination);
             var sourcePropsInfo = source.GetType().GetProperties();

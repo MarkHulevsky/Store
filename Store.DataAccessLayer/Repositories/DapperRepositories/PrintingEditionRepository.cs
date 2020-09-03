@@ -41,7 +41,10 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                         printingEditionEntry = printingEdition;
                         printingEditionDictionary.Add(printingEditionEntry.Id, printingEditionEntry);
                     }
-                    printingEditionEntry.Authors.Add(author);
+                    if (author != null)
+                    {
+                        printingEditionEntry.Authors.Add(author);
+                    }
                     return printingEditionEntry;
                 });
             var queryblePrintingEditions = printingEditions.Distinct().AsQueryable();

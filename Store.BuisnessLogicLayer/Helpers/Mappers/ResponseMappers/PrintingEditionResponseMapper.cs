@@ -18,13 +18,13 @@ namespace Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers
             _printingEditionModelMapper = new Mapper<PrintingEdition, PrintingEditionModel>();
         }
 
-        public static PrintingEditionResponseModel Map(PrintingEditionResponseDataModel responseFilter)
+        public static PrintingEditionResponseModel Map(PrintingEditionResponseDataModel responseDataModel)
         {
             var responseFilterModel = new PrintingEditionResponseModel
             {
-                TotalCount = responseFilter.TotalCount
+                TotalCount = responseDataModel.TotalCount
             };
-            foreach (var printingEdition in responseFilter.PrintingEditions)
+            foreach (var printingEdition in responseDataModel.PrintingEditions)
             {
                 var authorModels = new List<AuthorModel>();
                 foreach (var author in printingEdition.Authors)

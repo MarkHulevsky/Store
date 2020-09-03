@@ -3,6 +3,7 @@ using Store.DataAccess.AppContext;
 using Store.DataAccess.Entities;
 using Store.DataAccess.Repositories.Base;
 using Store.DataAccess.Repositories.Interfaces;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Store.DataAccess.Repositories.EFRepositories
@@ -24,6 +25,12 @@ namespace Store.DataAccess.Repositories.EFRepositories
                 await SaveChangesAsync();
             }
             return model;
+        }
+
+        public async Task AddRangeAsync(List<AuthorInPrintingEdition> authorInPrintingEditions)
+        {
+            await DbSet.AddRangeAsync(authorInPrintingEditions);
+            await SaveChangesAsync();
         }
     }
 }

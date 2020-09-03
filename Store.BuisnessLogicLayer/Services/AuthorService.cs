@@ -35,11 +35,12 @@ namespace Store.BuisnessLogic.Services
         public async Task CreateAsync(AuthorModel authorModel)
         {
             var author = await _authorRepository.FindAuthorByNameAsync(authorModel.Name);
-            if (author == null)
+            if (author != null)
             {
-                author = _authorMapper.Map(authorModel);
-                await _authorRepository.CreateAsync(author);
+                return;
             }
+            author = _authorMapper.Map(authorModel);
+            await _authorRepository.CreateAsync(author);
         }
 
         public async Task RemoveAsync(Guid id)

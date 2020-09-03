@@ -16,9 +16,11 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             tableName = Constants.ORDER_ITEMS_TABLE_NAME;
         }
 
-        public Task AddRangeAsync(List<OrderItem> orderItems)
+        public async Task AddRangeAsync(List<OrderItem> orderItems)
         {
-            throw new System.NotImplementedException();
+            var query = $"INSERT INTO {tableName} (Id, Amount, PrintingEditionId, OrderId, Count, IsRemoved, CreationDate) " +
+                $"VALUES(@Id, @Amount, @PrintingEditionId, @OrderId, @Count, @IsRemoved, @CreationDate)";
+            await _dbContext.ExecuteAsync(query, orderItems);
         }
 
         public override async Task<OrderItem> CreateAsync(OrderItem model)

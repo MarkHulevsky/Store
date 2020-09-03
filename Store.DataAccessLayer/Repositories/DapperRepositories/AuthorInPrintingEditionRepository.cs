@@ -4,6 +4,7 @@ using Store.DataAccess.Entities;
 using Store.DataAccess.Models.Constants;
 using Store.DataAccess.Repositories.Base;
 using Store.DataAccess.Repositories.Interfaces;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Store.DataAccess.Repositories.DapperRepositories
@@ -14,6 +15,13 @@ namespace Store.DataAccess.Repositories.DapperRepositories
         public AuthorInPrintingEditionRepository(IConfiguration configuration) : base(configuration)
         {
             tableName = Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME;
+        }
+
+        public async Task AddRangeAsync(List<AuthorInPrintingEdition> authorInPrintingEditions)
+        {
+            var query = $"INSERT INTO {tableName} (Id, IsRemoved, CreationDate, AuthorId, PrintingEditionId) " +
+                $"VALUES(@Id, @IsRemoved, @CreationDate, @AuthorId, @PrintingEditionId)";
+            await _dbContext.ExecuteAsync(query, authorInPrintingEditions);
         }
 
         public override async Task<AuthorInPrintingEdition> CreateAsync(AuthorInPrintingEdition model)

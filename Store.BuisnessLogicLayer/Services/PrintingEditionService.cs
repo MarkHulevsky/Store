@@ -74,6 +74,7 @@ namespace Store.BuisnessLogic.Services
         public async Task AddToAuthorAsync(PrintingEditionModel printingEditionModel, List<AuthorModel> authorModels)
         {
             var authors = ListMapper<Author, AuthorModel>.Map(authorModels);
+            var authorInPrintingEditions = new List<AuthorInPrintingEdition>();
             foreach (var author in authors)
             {
                 var authorInPrintingEdition = new AuthorInPrintingEdition
@@ -81,8 +82,9 @@ namespace Store.BuisnessLogic.Services
                     AuthorId = author.Id,
                     PrintingEditionId = printingEditionModel.Id,
                 };
-                await _authorInPrintingEditionRepository.CreateAsync(authorInPrintingEdition);
+                authorInPrintingEditions.Add(authorInPrintingEdition);
             }
+            await _authorInPrintingEditionRepository.AddRangeAsync(authorInPrintingEditions);
         }
 
     }
