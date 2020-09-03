@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Store.BuisnessLogic.Helpers;
 using Store.BuisnessLogic.Helpers.Interfaces;
 using Store.BuisnessLogic.Models.Account;
@@ -15,11 +16,13 @@ namespace Store.Presentation.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly IJwtProvider _jwtProvider;
-
-        public AccountController(IAccountService accountService, IJwtProvider jwtProvider)
+        private readonly IConfiguration _configuration;
+        public AccountController(IAccountService accountService, IJwtProvider jwtProvider,
+            IConfiguration configuration)
         {
             _accountService = accountService;
             _jwtProvider = jwtProvider;
+            _configuration = configuration;
         }
 
         private void SetCookieTokenResponse(string accessToken, string refreshToken)
@@ -85,8 +88,9 @@ namespace Store.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> ConfirmEmail(string email, string token)
         {
-            var result = await _accountService.ConfirmEmail(email, token);
-            return Ok(result);
+            await _accountService.ConfirmEmail(email, token);
+            var redirectUrl = $"{_configuration.GetSection("ClientSideOptions")["Url"]}/account/email-confirmed";
+            return Redirect(redirectUrl);
         }
 
         [HttpPost]
