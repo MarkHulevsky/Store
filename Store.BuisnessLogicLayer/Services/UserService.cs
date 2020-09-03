@@ -53,12 +53,17 @@ namespace Store.BuisnessLogic.Services
 
         public async Task<BaseModel> EditAsync(UserModel userModel)
         {
-            var user = await _userRepository.GetAsync(userModel.Id);
+            var user = await _userManager.FindByIdAsync(userModel.Id.ToString());
             if (user == null)
             {
                 var baseModel = new BaseModel();
                 baseModel.Errors.Add("No such user");
                 return baseModel;
+            }
+            if (userModel.Password != string.Empty || userModel.Password != null)
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                await _userManager.ResetPasswordAsync(user, token, userModel.Password);
             }
             user.FirstName = userModel.FirstName;
             user.LastName = userModel.LastName;
