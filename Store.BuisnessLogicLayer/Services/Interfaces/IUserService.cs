@@ -3,7 +3,6 @@ using Store.BuisnessLogic.Models.Filters;
 using Store.BuisnessLogic.Models.Filters.ResponseFilters;
 using Store.BuisnessLogic.Models.Users;
 using System;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Store.BuisnessLogic.Services.Interfaces

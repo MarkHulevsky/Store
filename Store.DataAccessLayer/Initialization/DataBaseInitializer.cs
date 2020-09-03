@@ -3,7 +3,6 @@ using Store.DataAccess.AppContext;
 using Store.DataAccess.Entities;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using static Shared.Enums.Enums;
 
 namespace Store.DataAccess.Initialization

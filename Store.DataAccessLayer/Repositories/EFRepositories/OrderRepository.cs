@@ -73,7 +73,8 @@ namespace Store.DataAccess.Repositories.EFRepositories
         {
             var orders = await DbSet.Include(order => order.OrderItems)
                 .ThenInclude(orderItem => orderItem.PrintingEdition)
-                .Where(order => order.UserId == userId).ToListAsync();
+                .Where(order => order.UserId == userId)
+                .ToListAsync();
             return orders;
         }
 

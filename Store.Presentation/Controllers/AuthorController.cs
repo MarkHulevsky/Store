@@ -27,9 +27,9 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetFiltred([FromBody] AuthorRequestModel filterModel)
+        public async Task<IActionResult> GetFiltred([FromBody] AuthorRequestModel authorRequestModel)
         {
-            var authorsResponse = await _authorService.FilterAsync(filterModel);
+            var authorsResponse = await _authorService.FilterAsync(authorRequestModel);
             return Ok(authorsResponse);
         }
 
