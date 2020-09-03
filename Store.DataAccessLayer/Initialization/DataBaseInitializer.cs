@@ -30,27 +30,27 @@ namespace Store.DataAccess.Initialization
 
         public void InitializeDb()
         {
-            InitRoles().GetAwaiter().GetResult();
-            InitUsers().GetAwaiter().GetResult();
-            InitPrintingEditions().GetAwaiter().GetResult();
-            InitAuthos().GetAwaiter().GetResult();
+            InitRoles();
+            InitUsers();
+            InitPrintingEditions();
+            InitAuthos();
         }
 
-        private async Task InitRoles()
+        private void InitRoles()
         {
-            var isCreated = await _roleManager.FindByNameAsync(_adminRoleName) != null ||
-                _roleManager.FindByNameAsync(_userRoleName)!= null;
+            var isCreated = _roleManager.FindByNameAsync(_adminRoleName).Result != null ||
+                _roleManager.FindByNameAsync(_userRoleName).Result != null;
             if (isCreated)
             {
                 return;
             }
-            await _roleManager.CreateAsync(new IdentityRole<Guid>(_adminRoleName));
-            await _roleManager.CreateAsync(new IdentityRole<Guid>(_userRoleName));
+            _roleManager.CreateAsync(new IdentityRole<Guid>(_adminRoleName)).Wait();
+            _roleManager.CreateAsync(new IdentityRole<Guid>(_userRoleName)).Wait();
         }
 
-        private async Task InitUsers()
+        private void InitUsers()
         {
-            if (await _userManager.FindByNameAsync(_adminEmail) != null)
+            if (_userManager.FindByNameAsync(_adminEmail).Result != null)
             {
                 return;
             }
@@ -62,14 +62,14 @@ namespace Store.DataAccess.Initialization
                 LastName = _adminLastName,
                 EmailConfirmed = true
             };
-            var result = await _userManager.CreateAsync(admin, _adminPassword);
+            var result = _userManager.CreateAsync(admin, _adminPassword).Result;
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(admin, _adminRoleName);
+                _userManager.AddToRoleAsync(admin, _adminRoleName).Wait();
             }
         }
 
-        private async Task InitPrintingEditions()
+        private void InitPrintingEditions()
         {
             if (_dbContext.PrintingEditions.Any())
             {
@@ -106,13 +106,13 @@ namespace Store.DataAccess.Initialization
                 Type = PrintingEditionType.Newspaper
             };
 
-            await _dbContext.AddAsync(book);
-            await _dbContext.AddAsync(magazine);
-            await _dbContext.AddAsync(newspaper);
-            await _dbContext.SaveChangesAsync();
+            _dbContext.Add(book);
+            _dbContext.Add(magazine);
+            _dbContext.Add(newspaper);
+            _dbContext.SaveChanges();
         }
 
-        private async Task InitAuthos()
+        private void InitAuthos()
         {
             if (_dbContext.Authors.Any())
             {
@@ -125,8 +125,8 @@ namespace Store.DataAccess.Initialization
                 IsRemoved = false,
             };
 
-            await _dbContext.Authors.AddAsync(author);
-            await _dbContext.SaveChangesAsync();
+            _dbContext.Authors.Add(author);
+            _dbContext.SaveChanges();
         }
     }
 }

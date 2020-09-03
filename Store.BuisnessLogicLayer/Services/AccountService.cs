@@ -5,7 +5,6 @@ using Store.BuisnessLogic.Models.Base;
 using Store.BuisnessLogic.Models.Users;
 using Store.BuisnessLogic.Services.Interfaces;
 using Store.DataAccess.Entities;
-using Store.DataAccess.Repositories.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

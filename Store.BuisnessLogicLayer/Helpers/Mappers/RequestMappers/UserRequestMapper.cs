@@ -9,7 +9,7 @@ namespace Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers
         static UserRequestMapper()
         {
             _pagingMapper = new Mapper<PagingModel, Paging>();
-        } 
+        }
         public static UserRequestDataModel Map(UserRequestModel filterModel)
         {
             var filter = new UserRequestDataModel

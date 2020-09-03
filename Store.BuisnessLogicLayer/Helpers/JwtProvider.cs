@@ -64,13 +64,12 @@ namespace Store.BuisnessLogic.Helpers
         public async Task<string> GetTokenAsync(UserModel userModel)
         {
             var user = await _accountService.FindByEmailAsync(userModel.Email);
-            var roles = _accountService.GetRolesAsync(user.Email).Result;
 
             var accessClaims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, roles[0]),
+                new Claim(ClaimTypes.Role, userModel.Roles[0]),
                 new Claim(ClaimTypes.Name, user.Email),
             };
 
