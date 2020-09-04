@@ -129,9 +129,7 @@ namespace Store.BuisnessLogic.Services
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (result.Succeeded)
             {
-                var userModel = _userModelMapper.Map(user);
-                await LoginAsync(userModel);
-                return new BaseModel();
+                return null;
             }
             var errors = new List<string>();
             foreach (var error in result.Errors)

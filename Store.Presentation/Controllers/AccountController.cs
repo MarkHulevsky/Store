@@ -85,7 +85,7 @@ namespace Store.Presentation.Controllers
             return Ok(userModel);
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> ConfirmEmail(string email, string token)
         {
             await _accountService.ConfirmEmail(email, token);
