@@ -105,7 +105,7 @@ namespace Store.Presentation.Controllers
 
             if (result.Errors.Count != 0)
             {
-                return Unauthorized(userModel);
+                return Ok(result);
             }
             userModel = await _accountService.FindByEmailAsync(userModel.Email);
             userModel.Roles = await _accountService.GetRolesAsync(userModel.Email);
