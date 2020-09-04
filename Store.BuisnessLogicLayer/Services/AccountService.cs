@@ -17,6 +17,7 @@ namespace Store.BuisnessLogic.Services
         private const string CONFIRM_EMAIL_SUBJECT = "Confirm regestration";
         private const string CONFIRM_EMAIL_BODY = "To complete registration follow the link:";
         private const string USER_ROLE_NAME = "user";
+        private const string EMAIL_IS_NOT_CONFIRMED_ERROR = "Email is not confirmed";
         private const string USER_NOT_FOUND_ERROR = "No user with such email";
         private const string INCORRECT_LOGIN_DATA_ERROR = "Icorrect password or email";
 
@@ -163,6 +164,17 @@ namespace Store.BuisnessLogic.Services
                     Errors = errors
                 };
 
+            }
+            if (!user.EmailConfirmed)
+            {
+                var errors = new List<string>
+                {
+                    EMAIL_IS_NOT_CONFIRMED_ERROR
+                };
+                return new BaseModel
+                {
+                    Errors = errors
+                };
             }
             user.Password = userModel.Password;
             var result = await _signInManager.PasswordSignInAsync(user, user.Password, false, false);
