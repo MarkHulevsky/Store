@@ -17,6 +17,10 @@ namespace Store.BuisnessLogic.Common
 
         public async Task LogAsync(string message)
         {
+            if (!File.Exists(_writePath))
+            {
+                using var fileCreationStream = File.Create(_writePath);
+            }
             using var fileStream = new FileStream(_writePath, FileMode.Append);
             message = $"\n Error #{++_count} \n {message}";
             var input = Encoding.Default.GetBytes(message);
