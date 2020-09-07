@@ -81,7 +81,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                 $"(Id, Title, Description, Price, Currency, Type, IsRemoved, CreationDate) " +
                 $"OUTPUT INSERTED.Id " +
                 $"VALUES ('{printingEdition.Id}', '{printingEdition.Title}', '{printingEdition.Description}', " +
-                $"{printingEdition.Price}, {(int)printingEdition.Currency}, {(int)printingEdition.Type}, 0, '{printingEdition.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}' )";
+                $"{printingEdition.Price}, {(int)printingEdition.Currency}, {(int)printingEdition.Type}, 0, '{printingEdition.CreationDate.ToUniversalTime():yyyyMMdd}' )";
 
             printingEdition.Id = await _dbContext.QueryFirstOrDefaultAsync<Guid>(query);
             return printingEdition;

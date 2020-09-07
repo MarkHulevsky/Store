@@ -35,7 +35,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             }
             query = $"INSERT INTO {tableName} (Id, AuthorId, PrintingEditionId, CreationDate, IsRemoved) " +
                 $"VALUES ('{authorInPrintingEdition.Id}' ,'{authorInPrintingEdition.AuthorId}', '{authorInPrintingEdition.PrintingEditionId}'," +
-                $" '{entity.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}', 0)";
+                $" '{entity.CreationDate.ToUniversalTime():yyyyMMdd}', 0)";
             await _dbContext.QueryAsync<AuthorInPrintingEdition>(query);
             return authorInPrintingEdition;
         }

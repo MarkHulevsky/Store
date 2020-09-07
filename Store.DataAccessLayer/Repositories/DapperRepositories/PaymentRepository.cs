@@ -19,7 +19,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
         {
             var query = $"INSERT INTO {tableName} " +
                 $"(Id, IsRemoved, CreationDate, TransactionId) " +
-                $"VALUES ('{payment.Id}', 0, '{payment.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}', '{payment.TransactionId}' )";
+                $"VALUES ('{payment.Id}', 0, '{payment.CreationDate.ToUniversalTime():yyyyMMdd}', '{payment.TransactionId}' )";
             await _dbContext.QueryFirstOrDefaultAsync(query);
             return payment;
         }

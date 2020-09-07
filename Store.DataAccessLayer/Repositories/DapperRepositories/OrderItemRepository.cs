@@ -28,7 +28,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             var query = $"INSERT INTO {tableName} (Id, Amount, PrintingEditionId, OrderId, Count," +
                 $" IsRemoved, CreationDate) " +
                 $"VALUES ('{orderItem.Id}', {orderItem.Amount}, '{orderItem.PrintingEditionId}', '{orderItem.OrderId}', " +
-                $"{orderItem.Count}, 0, '{orderItem.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}')";
+                $"{orderItem.Count}, 0, '{orderItem.CreationDate.ToUniversalTime():yyyyMMdd}')";
             var result = await _dbContext.QueryFirstOrDefaultAsync<OrderItem>(query);
             return result;
         }

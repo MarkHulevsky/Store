@@ -47,7 +47,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                 $"(Id, Description, UserId, PaymentId, Status, CreationDate, IsRemoved) " +
                 $"OUTPUT INSERTED.Id " +
                 $"VALUES ('{order.Id}' ,'{order.Description}', '{order.UserId}', '{order.PaymentId}', " +
-                $"{(int)order.Status}, '{order.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}', 0)";
+                $"{(int)order.Status}, '{order.CreationDate.ToUniversalTime():yyyyMMdd}', 0)";
 
             order.Id = await _dbContext.QueryFirstOrDefaultAsync<Guid>(query);
             return order;

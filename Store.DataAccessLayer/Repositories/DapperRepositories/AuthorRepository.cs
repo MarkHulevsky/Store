@@ -25,7 +25,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
         {
             var query = $"INSERT INTO {tableName} (Id, CreationDate, IsRemoved, Name) " +
                 $"OUTPUT INSERTED.Id " +
-                $"VALUES ('{author.Id}', '{author.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}', " +
+                $"VALUES ('{author.Id}', '{author.CreationDate.ToUniversalTime():yyyyMMdd}', " +
                 $"{Convert.ToInt32(author.IsRemoved)}, '{author.Name}')";
             author.Id = await _dbContext.QueryFirstOrDefaultAsync<Guid>(query);
             return author;
