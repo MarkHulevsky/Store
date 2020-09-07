@@ -27,14 +27,15 @@ namespace Store.DataAccess.Repositories.DapperRepositories
         {
             var order = await _dbContext.GetAsync<Order>(orderId);
             var payment = await _dbContext.GetAsync<Payment>(paymentId);
-            if (order != null && payment != null)
+            if (order == null || payment == null)
             {
-                order.PaymentId = paymentId;
-                order.Status = OrderStatus.Paid;
-                var query = $"UPDATE {tableName} SET PaymentId = '{order.PaymentId}', Status = {(int)order.Status}" +
-                    $"WHERE Id = '{order.Id}'";
-                await _dbContext.ExecuteAsync(query);
+                return;
             }
+            order.PaymentId = paymentId;
+            order.Status = OrderStatus.Paid;
+            var query = $"UPDATE {tableName} SET PaymentId = '{order.PaymentId}', Status = {(int)order.Status}" +
+                $"WHERE Id = '{order.Id}'";
+            await _dbContext.ExecuteAsync(query);
         }
 
         public override async Task<Order> CreateAsync(Order order)
@@ -87,9 +88,10 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             }
 
             querybaleOrders = subquery;
-            querybaleOrders = querybaleOrders.Skip(orderRequestDataModel.Paging.CurrentPage * orderRequestDataModel.Paging.ItemsCount)
-                .Take(orderRequestDataModel.Paging.ItemsCount)
-                .OrderBy(orderRequestDataModel.SortPropertyName, $"{orderRequestDataModel.SortType}");
+            querybaleOrders = querybaleOrders
+                .OrderBy(orderRequestDataModel.SortPropertyName, $"{orderRequestDataModel.SortType}")
+                .Skip(orderRequestDataModel.Paging.CurrentPage * orderRequestDataModel.Paging.ItemsCount)
+                .Take(orderRequestDataModel.Paging.ItemsCount);
 
             orders = querybaleOrders.ToList();
 

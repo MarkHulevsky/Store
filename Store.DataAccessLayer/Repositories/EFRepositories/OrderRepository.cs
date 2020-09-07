@@ -44,7 +44,7 @@ namespace Store.DataAccess.Repositories.EFRepositories
             return order;
         }
 
-        public Task<OrderResponseDataModel> FilterAsync(OrderRequestDataModel orderRequestDataModel)
+        public async Task<OrderResponseDataModel> FilterAsync(OrderRequestDataModel orderRequestDataModel)
         {
             var query = DbSet.Include(order => order.User)
                 .Include(order => order.OrderItems)
@@ -57,16 +57,18 @@ namespace Store.DataAccess.Repositories.EFRepositories
                 subquery = subquery.Concat(query.Where(o => o.Status == status));
             }
             query = subquery;
-            query = query.Skip(orderRequestDataModel.Paging.CurrentPage * orderRequestDataModel.Paging.ItemsCount)
-                .Take(orderRequestDataModel.Paging.ItemsCount)
-                .OrderBy(orderRequestDataModel.SortPropertyName, $"{orderRequestDataModel.SortType}");
+            query = query
+                .OrderBy(orderRequestDataModel.SortPropertyName, $"{orderRequestDataModel.SortType}")
+                .Skip(orderRequestDataModel.Paging.CurrentPage * orderRequestDataModel.Paging.ItemsCount)
+                .Take(orderRequestDataModel.Paging.ItemsCount);
             var orders = query.ToList();
+            var totalCount = await DbSet.Where(o => !o.IsRemoved).CountAsync();
             var result = new OrderResponseDataModel
             {
                 Orders = orders,
-                TotalCount = DbSet.Where(o => !o.IsRemoved).Count()
+                TotalCount = totalCount
             };
-            return Task.FromResult(result);
+            return result;
         }
 
         public async Task<List<Order>> GetUserOrdersAsync(Guid userId)

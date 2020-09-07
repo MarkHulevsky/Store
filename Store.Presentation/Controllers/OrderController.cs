@@ -59,7 +59,8 @@ namespace Store.Presentation.Controllers
         [HttpDelete]
         public async Task Remove([FromBody] string orderId)
         {
-            await _orderService.RemoveAsync(Guid.Parse(orderId));
+            var id = Guid.Parse(orderId);
+            await _orderService.RemoveAsync(id);
         }
     }
 }

@@ -26,9 +26,9 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             var queryableUsers = users.AsQueryable();
 
             queryableUsers = queryableUsers
+                .OrderBy($"{userRequestDataModel.SortPropertyName}", $"{userRequestDataModel.SortType}")
                 .Skip(userRequestDataModel.Paging.CurrentPage * userRequestDataModel.Paging.ItemsCount)
-                .Take(userRequestDataModel.Paging.ItemsCount)
-                .OrderBy($"{userRequestDataModel.SortPropertyName}", $"{userRequestDataModel.SortType}");
+                .Take(userRequestDataModel.Paging.ItemsCount);
 
             users = queryableUsers.ToList();
             query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";

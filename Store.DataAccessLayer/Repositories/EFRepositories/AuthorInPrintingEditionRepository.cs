@@ -19,12 +19,13 @@ namespace Store.DataAccess.Repositories.EFRepositories
         {
             var entity = await DbSet
                 .FirstOrDefaultAsync(authorInPrintingEdition => authorInPrintingEdition.AuthorId == authorInPrintingEditon.AuthorId
-                && authorInPrintingEdition.PrintingEditionId == authorInPrintingEditon.PrintingEditionId);
-            if (entity == null)
+                    && authorInPrintingEdition.PrintingEditionId == authorInPrintingEditon.PrintingEditionId);
+            if (entity != null)
             {
-                await DbSet.AddAsync(authorInPrintingEditon);
-                await SaveChangesAsync();
+                return entity;
             }
+            await DbSet.AddAsync(authorInPrintingEditon);
+            await SaveChangesAsync();
             return authorInPrintingEditon;
         }
 

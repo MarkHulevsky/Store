@@ -61,9 +61,9 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                     && pe.Price >= printingEditionRequestDataModel.MinPrice);
             }
             queryblePrintingEditions = queryblePrintingEditions
+                .OrderBy("Price", $"{printingEditionRequestDataModel.SortType}")
                 .Skip(printingEditionRequestDataModel.Paging.CurrentPage * printingEditionRequestDataModel.Paging.ItemsCount)
-                .Take(printingEditionRequestDataModel.Paging.ItemsCount)
-                .OrderBy("Price", $"{printingEditionRequestDataModel.SortType}");
+                .Take(printingEditionRequestDataModel.Paging.ItemsCount);
             printingEditions = queryblePrintingEditions.ToList();
             query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";
             var totalCount = await _dbContext.QueryFirstOrDefaultAsync<int>(query);

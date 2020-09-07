@@ -70,13 +70,13 @@ namespace Store.BuisnessLogic.Services
             user.Email = userModel.Email;
             var updateResult = await _userManager.UpdateAsync(user);
             var result = new BaseModel();
-            if (updateResult.Succeeded)
+            if (!updateResult.Succeeded)
             {
+                foreach (var error in updateResult.Errors)
+                {
+                    result.Errors.Add(error.Description);
+                }
                 return result;
-            }
-            foreach (var error in updateResult.Errors)
-            {
-                result.Errors.Add(error.Description);
             }
             return result;
         }

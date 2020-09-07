@@ -28,16 +28,16 @@ namespace Store.DataAccess.Repositories.EFRepositories
         {
             var users = await DbSet
                 .Where(u => !u.IsRemoved && EF.Functions.Like(u.LastName + u.FirstName, $"%{userRequestDataModel.SearchString}%"))
+                .OrderBy($"{userRequestDataModel.SortPropertyName}", $"{userRequestDataModel.SortType}")
                 .Skip(userRequestDataModel.Paging.CurrentPage * userRequestDataModel.Paging.ItemsCount)
                 .Take(userRequestDataModel.Paging.ItemsCount)
-                .OrderBy($"{userRequestDataModel.SortPropertyName}", $"{userRequestDataModel.SortType}")
                 .ToListAsync();
+            var totalCount = await DbSet.Where(u => !u.IsRemoved).CountAsync();
             var result = new UserResponseDataModel
             {
                 Users = users,
-                TotalCount = DbSet.Where(u => !u.IsRemoved).Count()
+                TotalCount = totalCount
             };
-
             return result;
         }
     }

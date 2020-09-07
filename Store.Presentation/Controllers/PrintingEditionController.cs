@@ -29,8 +29,8 @@ namespace Store.Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> GetById(string id)
         {
-            var pe = await _printingEditionService.GetByIdAsync(id);
-            return Ok(pe);
+            var printingEdition = await _printingEditionService.GetByIdAsync(id);
+            return Ok(printingEdition);
         }
 
         [HttpGet("{currentCurrency}/{newCurrency}")]
@@ -47,24 +47,24 @@ namespace Store.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> GetFiltred([FromBody] PrintingEditionsRequestModel printingEditionRequestModel)
         {
-            var peResponse = await _printingEditionService.FilterAsync(printingEditionRequestModel);
-            return Ok(peResponse);
+            var printingEditionResponseModel = await _printingEditionService.FilterAsync(printingEditionRequestModel);
+            return Ok(printingEditionResponseModel);
         }
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         public async Task Add([FromBody] PrintingEditionModel printingEdiotionModel)
         {
-            var pe = await _printingEditionService.CreateAsync(printingEdiotionModel);
-            printingEdiotionModel.Id = pe.Id;
+            printingEdiotionModel = await _printingEditionService.CreateAsync(printingEdiotionModel);
             await _printingEditionService.AddToAuthorAsync(printingEdiotionModel, printingEdiotionModel.Authors);
         }
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete]
-        public async Task Delete(string id)
+        public async Task Delete(string printingEditionId)
         {
-            await _printingEditionService.RemoveAsync(Guid.Parse(id));
+            var id = Guid.Parse(printingEditionId);
+            await _printingEditionService.RemoveAsync(id);
         }
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

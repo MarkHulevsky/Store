@@ -18,7 +18,7 @@ namespace Store.DataAccess.Repositories.EFRepositories
         {
         }
 
-        public Task<PrintingEditionResponseDataModel> FilterAsync(PrintingEditionsRequestDataModel printingEditionRequestDataModel)
+        public async Task<PrintingEditionResponseDataModel> FilterAsync(PrintingEditionsRequestDataModel printingEditionRequestDataModel)
         {
             var query = DbSet
                 .Include(printingEdition => printingEdition.AuthorInPrintingEditions)
@@ -41,9 +41,10 @@ namespace Store.DataAccess.Repositories.EFRepositories
                     && pe.Price >= printingEditionRequestDataModel.MinPrice);
             }
 
-            query = query.Skip(printingEditionRequestDataModel.Paging.CurrentPage * printingEditionRequestDataModel.Paging.ItemsCount)
-                .Take(printingEditionRequestDataModel.Paging.ItemsCount)
-                .OrderBy("Price", $"{printingEditionRequestDataModel.SortType}");
+            query = query
+                .OrderBy("Price", $"{printingEditionRequestDataModel.SortType}")
+                .Skip(printingEditionRequestDataModel.Paging.CurrentPage * printingEditionRequestDataModel.Paging.ItemsCount)
+                .Take(printingEditionRequestDataModel.Paging.ItemsCount);
             foreach (var printingEdition in query)
             {
                 var authors = printingEdition.AuthorInPrintingEditions
@@ -52,12 +53,13 @@ namespace Store.DataAccess.Repositories.EFRepositories
                 printingEdition.Authors = authors;
             }
             var printingEditions = query.ToList();
+            var totalCount = await DbSet.Where(pe => !pe.IsRemoved).CountAsync();
             var result = new PrintingEditionResponseDataModel
             {
                 PrintingEditions = printingEditions,
-                TotalCount = DbSet.Where(pe => !pe.IsRemoved).Count(),
+                TotalCount = totalCount
             };
-            return Task.FromResult(result);
+            return result;
         }
 
         public override async Task<PrintingEdition> UpdateAsync(PrintingEdition model)

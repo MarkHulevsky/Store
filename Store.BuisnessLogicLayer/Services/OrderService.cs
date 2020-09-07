@@ -57,15 +57,16 @@ namespace Store.BuisnessLogic.Services
 
             var charge = await chargeService.CreateAsync(chargeOptions);
 
-            if (charge.Status == CHARGE_SUCCEEDED)
+            if (charge.Status != CHARGE_SUCCEEDED)
             {
-                var payment = new Payment()
-                {
-                    TransactionId = charge.BalanceTransactionId
-                };
-                payment = await _paymentRepository.CreateAsync(payment);
-                await _orderRepository.AddToPaymentAsync(payment.Id, paymentModel.OrderId);
+                return;
             }
+            var payment = new Payment()
+            {
+                TransactionId = charge.BalanceTransactionId
+            };
+            payment = await _paymentRepository.CreateAsync(payment);
+            await _orderRepository.AddToPaymentAsync(payment.Id, paymentModel.OrderId);
         }
 
         public async Task<OrderResponseModel> FilterAsync(OrderRequestModel orderRequestModel)

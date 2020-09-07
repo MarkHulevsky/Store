@@ -33,11 +33,11 @@ namespace Store.DataAccess.Repositories.EFRepositories
                     .ToList();
                 author.PrintingEditions = printingEditions;
             }
-
+            var totalCount = await DbSet.Where(a => !a.IsRemoved).CountAsync();
             var result = new AuthorResponseDataModel
             {
                 Authors = authors,
-                TotalCount = DbSet.Where(a => !a.IsRemoved).Count()
+                TotalCount = totalCount
             };
 
             return result;
