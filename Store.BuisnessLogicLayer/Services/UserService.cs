@@ -60,7 +60,7 @@ namespace Store.BuisnessLogic.Services
                 baseModel.Errors.Add("No such user");
                 return baseModel;
             }
-            if (userModel.Password != string.Empty || userModel.Password != null)
+            if (userModel.Password != string.Empty && userModel.Password != null)
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 await _userManager.ResetPasswordAsync(user, token, userModel.Password);

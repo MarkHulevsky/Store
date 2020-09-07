@@ -12,7 +12,7 @@ namespace Store.DataAccess.Entities
         public string LastName { get; set; }
         public bool IsRemoved { get; set; }
         public DateTime CreationDate { get; set; }
-        public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; }
         public virtual List<Order> Order { get; set; }
         [NotMapped]
         public string Password { get; set; }
@@ -20,6 +20,7 @@ namespace Store.DataAccess.Entities
         public ICollection<string> Errors { get; set; }
         public User()
         {
+            IsActive = true;
             Order = new List<Order>();
             Errors = new List<string>();
         }

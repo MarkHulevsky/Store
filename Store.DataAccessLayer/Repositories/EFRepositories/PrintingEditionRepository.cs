@@ -34,10 +34,10 @@ namespace Store.DataAccess.Repositories.EFRepositories
 
             query = subquery;
 
-            if (printingEditionRequestDataModel.MaxPrice > printingEditionRequestDataModel.MinPrice 
+            if (printingEditionRequestDataModel.MaxPrice > printingEditionRequestDataModel.MinPrice
                     && printingEditionRequestDataModel.MaxPrice != printingEditionRequestDataModel.MinPrice)
             {
-                query = query.Where(pe => pe.Price <= printingEditionRequestDataModel.MaxPrice 
+                query = query.Where(pe => pe.Price <= printingEditionRequestDataModel.MaxPrice
                     && pe.Price >= printingEditionRequestDataModel.MinPrice);
             }
 

@@ -54,10 +54,10 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                 subquery = subquery.Concat(queryblePrintingEditions.Where(pe => pe.Type == type));
             }
             queryblePrintingEditions = subquery;
-            if (printingEditionRequestDataModel.MaxPrice > printingEditionRequestDataModel.MinPrice 
+            if (printingEditionRequestDataModel.MaxPrice > printingEditionRequestDataModel.MinPrice
                     && printingEditionRequestDataModel.MaxPrice != printingEditionRequestDataModel.MinPrice)
             {
-                queryblePrintingEditions = queryblePrintingEditions.Where(pe => pe.Price <= printingEditionRequestDataModel.MaxPrice 
+                queryblePrintingEditions = queryblePrintingEditions.Where(pe => pe.Price <= printingEditionRequestDataModel.MaxPrice
                     && pe.Price >= printingEditionRequestDataModel.MinPrice);
             }
             queryblePrintingEditions = queryblePrintingEditions

@@ -55,12 +55,12 @@ namespace Store.BuisnessLogic.Services
 
         public async Task EditAsync(PrintingEditionModel printingEditionModel)
         {
-            if (printingEditionModel.Authors != null)
-            {
-                await AddToAuthorAsync(printingEditionModel, printingEditionModel.Authors);
-            }
             var printingEdition = _printingEditionMapper.Map(printingEditionModel);
             await _printingEditionRepository.UpdateAsync(printingEdition);
+            if (printingEditionModel.Authors != null)
+            {
+                await AddToAuthorsAsync(printingEditionModel, printingEditionModel.Authors);
+            }
         }
 
         public async Task<PrintingEditionResponseModel> FilterAsync(PrintingEditionsRequestModel printingEditionRequestModel)
@@ -71,7 +71,7 @@ namespace Store.BuisnessLogic.Services
             return printingEditionResponseModel;
         }
 
-        public async Task AddToAuthorAsync(PrintingEditionModel printingEditionModel, List<AuthorModel> authorModels)
+        public async Task AddToAuthorsAsync(PrintingEditionModel printingEditionModel, List<AuthorModel> authorModels)
         {
             var authors = ListMapper<Author, AuthorModel>.Map(authorModels);
             var authorInPrintingEditions = new List<AuthorInPrintingEdition>();
@@ -86,6 +86,5 @@ namespace Store.BuisnessLogic.Services
             }
             await _authorInPrintingEditionRepository.AddRangeAsync(authorInPrintingEditions);
         }
-
     }
 }

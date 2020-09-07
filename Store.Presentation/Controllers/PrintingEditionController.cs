@@ -55,8 +55,9 @@ namespace Store.Presentation.Controllers
         [HttpPost]
         public async Task Add([FromBody] PrintingEditionModel printingEdiotionModel)
         {
-            printingEdiotionModel = await _printingEditionService.CreateAsync(printingEdiotionModel);
-            await _printingEditionService.AddToAuthorAsync(printingEdiotionModel, printingEdiotionModel.Authors);
+            var createdPrintingEdition = await _printingEditionService.CreateAsync(printingEdiotionModel);
+            printingEdiotionModel.Id = createdPrintingEdition.Id;
+            await _printingEditionService.AddToAuthorsAsync(printingEdiotionModel, printingEdiotionModel.Authors);
         }
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

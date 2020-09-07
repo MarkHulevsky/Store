@@ -21,6 +21,7 @@ namespace Store.BuisnessLogic.Services
         private const string USER_NOT_FOUND_ERROR = "No user with such email";
         private const string INCORRECT_LOGIN_DATA_ERROR = "Icorrect password or email";
         private const string USER_IS_BLOCKED_ERROR = "Your account was blocked by administrator";
+        private const string USER_IS_REMOVED_ERROR = "Your account was removed";
 
         private readonly IEmailProvider _emailProvider;
         private readonly UserManager<User> _userManager;
@@ -156,50 +157,29 @@ namespace Store.BuisnessLogic.Services
             var user = await _userManager.FindByEmailAsync(userModel.Email);
             if (user == null)
             {
-                var errors = new List<string>
-                {
-                    USER_NOT_FOUND_ERROR
-                };
-                return new BaseModel
-                {
-                    Errors = errors
-                };
-
+                userModel.Errors.Add(USER_NOT_FOUND_ERROR);
             }
             if (!user.IsActive)
             {
-                var errors = new List<string>
-                {
-                    USER_IS_BLOCKED_ERROR
-                };
-                return new BaseModel
-                {
-                    Errors = errors
-                };
+                userModel.Errors.Add(USER_IS_BLOCKED_ERROR);
             }
             if (!user.EmailConfirmed)
             {
-                var errors = new List<string>
-                {
-                    EMAIL_IS_NOT_CONFIRMED_ERROR
-                };
-                return new BaseModel
-                {
-                    Errors = errors
-                };
+                userModel.Errors.Add(EMAIL_IS_NOT_CONFIRMED_ERROR);
+            }
+            if (user.IsRemoved)
+            {
+                userModel.Errors.Add(USER_IS_REMOVED_ERROR);
+            }
+            if (userModel.Errors.Count != 0)
+            {
+                return userModel;
             }
             user.Password = userModel.Password;
             var result = await _signInManager.PasswordSignInAsync(user, user.Password, false, false);
             if (!result.Succeeded)
             {
-                var errors = new List<string>
-                {
-                    INCORRECT_LOGIN_DATA_ERROR
-                };
-                return new BaseModel
-                {
-                    Errors = errors
-                };
+                userModel.Errors.Add(INCORRECT_LOGIN_DATA_ERROR);
             }
             return userModel;
         }
