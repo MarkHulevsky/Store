@@ -15,13 +15,13 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             tableName = PAYMENTS_TABLE_NAME;
         }
 
-        public override async Task<Payment> CreateAsync(Payment model)
+        public override async Task<Payment> CreateAsync(Payment payment)
         {
             var query = $"INSERT INTO {tableName} " +
                 $"(Id, IsRemoved, CreationDate, TransactionId) " +
-                $"VALUES ('{model.Id}', 0, '{model.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}', '{model.TransactionId}' )";
+                $"VALUES ('{payment.Id}', 0, '{payment.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}', '{payment.TransactionId}' )";
             await _dbContext.QueryFirstOrDefaultAsync(query);
-            return model;
+            return payment;
         }
     }
 }

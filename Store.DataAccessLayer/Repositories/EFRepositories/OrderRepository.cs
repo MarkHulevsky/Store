@@ -31,20 +31,20 @@ namespace Store.DataAccess.Repositories.EFRepositories
             await UpdateAsync(order);
         }
 
-        public override async Task<Order> CreateAsync(Order model)
+        public override async Task<Order> CreateAsync(Order order)
         {
-            var entity = await DbSet.FirstOrDefaultAsync(entity => entity.Id == model.Id);
+            var entity = await DbSet.FirstOrDefaultAsync(entity => entity.Id == order.Id);
             if (entity != null)
             {
                 return entity;
             }
-            model.Status = OrderStatus.Unpaid;
-            var result = await DbSet.AddAsync(model);
+            order.Status = OrderStatus.Unpaid;
+            var result = await DbSet.AddAsync(order);
             await SaveChangesAsync();
-            return model;
+            return order;
         }
 
-        public Task<OrderResponseDataModel> FilterAsync(OrderRequestDataModel filter)
+        public Task<OrderResponseDataModel> FilterAsync(OrderRequestDataModel orderRequestDataModel)
         {
             var query = DbSet.Include(order => order.User)
                 .Include(order => order.OrderItems)
@@ -52,14 +52,14 @@ namespace Store.DataAccess.Repositories.EFRepositories
                 .Where(o => !o.IsRemoved);
 
             var subquery = new List<Order>().AsQueryable();
-            foreach (var status in filter.OrderStatuses)
+            foreach (var status in orderRequestDataModel.OrderStatuses)
             {
                 subquery = subquery.Concat(query.Where(o => o.Status == status));
             }
             query = subquery;
-            query = query.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
-                .Take(filter.Paging.ItemsCount)
-                .OrderBy(filter.SortPropertyName, $"{filter.SortType}");
+            query = query.Skip(orderRequestDataModel.Paging.CurrentPage * orderRequestDataModel.Paging.ItemsCount)
+                .Take(orderRequestDataModel.Paging.ItemsCount)
+                .OrderBy(orderRequestDataModel.SortPropertyName, $"{orderRequestDataModel.SortType}");
             var orders = query.ToList();
             var result = new OrderResponseDataModel
             {

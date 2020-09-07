@@ -24,13 +24,13 @@ namespace Store.DataAccess.Repositories.EFRepositories
             return user;
         }
 
-        public async Task<UserResponseDataModel> FilterAsync(UserRequestDataModel filter)
+        public async Task<UserResponseDataModel> FilterAsync(UserRequestDataModel userRequestDataModel)
         {
             var users = await DbSet
-                .Where(u => !u.IsRemoved && EF.Functions.Like(u.LastName + u.FirstName, $"%{filter.SearchString}%"))
-                .Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
-                .Take(filter.Paging.ItemsCount)
-                .OrderBy($"{filter.SortPropertyName}", $"{filter.SortType}")
+                .Where(u => !u.IsRemoved && EF.Functions.Like(u.LastName + u.FirstName, $"%{userRequestDataModel.SearchString}%"))
+                .Skip(userRequestDataModel.Paging.CurrentPage * userRequestDataModel.Paging.ItemsCount)
+                .Take(userRequestDataModel.Paging.ItemsCount)
+                .OrderBy($"{userRequestDataModel.SortPropertyName}", $"{userRequestDataModel.SortType}")
                 .ToListAsync();
             var result = new UserResponseDataModel
             {

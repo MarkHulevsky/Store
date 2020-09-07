@@ -37,22 +37,22 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             }
         }
 
-        public override async Task<Order> CreateAsync(Order model)
+        public override async Task<Order> CreateAsync(Order order)
         {
-            model.PaymentId = Guid.Empty;
-            model.Description = string.Empty;
-            model.Status = OrderStatus.Unpaid;
+            order.PaymentId = Guid.Empty;
+            order.Description = string.Empty;
+            order.Status = OrderStatus.Unpaid;
             var query = $"INSERT INTO {tableName} " +
                 $"(Id, Description, UserId, PaymentId, Status, CreationDate, IsRemoved) " +
                 $"OUTPUT INSERTED.Id " +
-                $"VALUES ('{model.Id}' ,'{model.Description}', '{model.UserId}', '{model.PaymentId}', " +
-                $"{(int)model.Status}, '{model.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}', 0)";
+                $"VALUES ('{order.Id}' ,'{order.Description}', '{order.UserId}', '{order.PaymentId}', " +
+                $"{(int)order.Status}, '{order.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}', 0)";
 
-            model.Id = await _dbContext.QueryFirstOrDefaultAsync<Guid>(query);
-            return model;
+            order.Id = await _dbContext.QueryFirstOrDefaultAsync<Guid>(query);
+            return order;
         }
 
-        public async Task<OrderResponseDataModel> FilterAsync(OrderRequestDataModel filter)
+        public async Task<OrderResponseDataModel> FilterAsync(OrderRequestDataModel orderRequestDataModel)
         {
             var query = $"SELECT * FROM {tableName} " +
                 $"LEFT JOIN {Constants.USERS_TABLE_NAME} ON {tableName}.UserId = {Constants.USERS_TABLE_NAME}.Id " +
@@ -81,15 +81,15 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             var querybaleOrders = orders.Distinct().AsQueryable();
 
             var subquery = new List<Order>().AsQueryable();
-            foreach (var status in filter.OrderStatuses)
+            foreach (var status in orderRequestDataModel.OrderStatuses)
             {
                 subquery = subquery.Concat(querybaleOrders.Where(o => o.Status == status));
             }
 
             querybaleOrders = subquery;
-            querybaleOrders = querybaleOrders.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
-                .Take(filter.Paging.ItemsCount)
-                .OrderBy(filter.SortPropertyName, $"{filter.SortType}");
+            querybaleOrders = querybaleOrders.Skip(orderRequestDataModel.Paging.CurrentPage * orderRequestDataModel.Paging.ItemsCount)
+                .Take(orderRequestDataModel.Paging.ItemsCount)
+                .OrderBy(orderRequestDataModel.SortPropertyName, $"{orderRequestDataModel.SortType}");
 
             orders = querybaleOrders.ToList();
 

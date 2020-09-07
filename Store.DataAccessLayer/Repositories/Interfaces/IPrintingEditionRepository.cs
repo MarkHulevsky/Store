@@ -7,6 +7,6 @@ namespace Store.DataAccess.Repositories.Interfaces
 {
     public interface IPrintingEditionRepository : IRepository<PrintingEdition>
     {
-        Task<PrintingEditionResponseDataModel> FilterAsync(PrintingEditionsRequestDataModel filter);
+        Task<PrintingEditionResponseDataModel> FilterAsync(PrintingEditionsRequestDataModel printingEditionRequsetDataModel);
     }
 }

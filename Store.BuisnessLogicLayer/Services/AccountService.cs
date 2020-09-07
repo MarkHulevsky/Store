@@ -20,6 +20,7 @@ namespace Store.BuisnessLogic.Services
         private const string EMAIL_IS_NOT_CONFIRMED_ERROR = "Email is not confirmed";
         private const string USER_NOT_FOUND_ERROR = "No user with such email";
         private const string INCORRECT_LOGIN_DATA_ERROR = "Icorrect password or email";
+        private const string USER_IS_BLOCKED_ERROR = "Your account was blocked by administrator";
 
         private readonly IEmailProvider _emailProvider;
         private readonly UserManager<User> _userManager;
@@ -164,6 +165,17 @@ namespace Store.BuisnessLogic.Services
                     Errors = errors
                 };
 
+            }
+            if (!user.IsActive)
+            {
+                var errors = new List<string>
+                {
+                    USER_IS_BLOCKED_ERROR
+                };
+                return new BaseModel
+                {
+                    Errors = errors
+                };
             }
             if (!user.EmailConfirmed)
             {

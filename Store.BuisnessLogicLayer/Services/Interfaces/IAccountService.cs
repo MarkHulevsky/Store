@@ -13,10 +13,10 @@ namespace Store.BuisnessLogic.Services.Interfaces
         Task<List<string>> GetRolesAsync(string email);
         Task<UserModel> FindByEmailAsync(string email);
         Task<string> GenerateEmailConfirmationTokenAsync(string email);
-        Task<IdentityResult> RegisterAsync(UserModel user);
+        Task<IdentityResult> RegisterAsync(UserModel userModel);
         Task SendConfirmUrlAsync(string email, string url);
         Task<BaseModel> ConfirmEmail(string userEmail, string token);
-        Task<BaseModel> LoginAsync(UserModel user);
+        Task<BaseModel> LoginAsync(UserModel userModel);
         Task LogoutAsync();
     }
 }

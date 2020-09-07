@@ -18,17 +18,17 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             tableName = Constants.USERS_TABLE_NAME;
         }
 
-        public async Task<UserResponseDataModel> FilterAsync(UserRequestDataModel filter)
+        public async Task<UserResponseDataModel> FilterAsync(UserRequestDataModel userRequestDataModel)
         {
-            var query = $"SELECT * FROM {tableName} WHERE (FirstName LIKE '%{filter.SearchString}%'" +
-                $"OR LastName LIKE '%{filter.SearchString}%') AND IsRemoved = 0";
+            var query = $"SELECT * FROM {tableName} WHERE (FirstName LIKE '%{userRequestDataModel.SearchString}%'" +
+                $"OR LastName LIKE '%{userRequestDataModel.SearchString}%') AND IsRemoved = 0";
             var users = await _dbContext.QueryAsync<User>(query);
             var queryableUsers = users.AsQueryable();
 
             queryableUsers = queryableUsers
-                .Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
-                .Take(filter.Paging.ItemsCount)
-                .OrderBy($"{filter.SortPropertyName}", $"{filter.SortType}");
+                .Skip(userRequestDataModel.Paging.CurrentPage * userRequestDataModel.Paging.ItemsCount)
+                .Take(userRequestDataModel.Paging.ItemsCount)
+                .OrderBy($"{userRequestDataModel.SortPropertyName}", $"{userRequestDataModel.SortType}");
 
             users = queryableUsers.ToList();
             query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";

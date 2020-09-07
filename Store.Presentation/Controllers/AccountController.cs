@@ -32,11 +32,11 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordModel model)
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordModel forgotPasswordModel)
         {
-            var token = await _accountService.GetForgotPasswordTokenAsync(model.Email);
+            var token = await _accountService.GetForgotPasswordTokenAsync(forgotPasswordModel.Email);
             string newPassword = PasswordGenerator.GeneratePassword();
-            var baseModel = await _accountService.ResetPasswordAsync(model.Email, token, newPassword);
+            var baseModel = await _accountService.ResetPasswordAsync(forgotPasswordModel.Email, token, newPassword);
             return Ok(baseModel);
         }
 
@@ -54,7 +54,7 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignUp([FromBody] RegisterModel model)
+        public async Task<IActionResult> SignUp([FromBody] RegisterModel registerModel)
         {
             var userModel = new UserModel();
             if (!ModelState.IsValid)
@@ -67,7 +67,7 @@ namespace Store.Presentation.Controllers
                 return Ok(userModel);
             }
             var userModelMapper = new Mapper<RegisterModel, UserModel>();
-            userModel = userModelMapper.Map(model);
+            userModel = userModelMapper.Map(registerModel);
 
             var result = await _accountService.RegisterAsync(userModel);
             if (!result.Succeeded)
@@ -78,10 +78,10 @@ namespace Store.Presentation.Controllers
                 }
                 return Ok(userModel);
             }
-            var token = await _accountService.GenerateEmailConfirmationTokenAsync(model.Email);
+            var token = await _accountService.GenerateEmailConfirmationTokenAsync(registerModel.Email);
             string url = Url.Action("ConfirmEmail", "Account",
-                new { email = model.Email, token }, Request.Scheme);
-            await _accountService.SendConfirmUrlAsync(model.Email, url);
+                new { email = registerModel.Email, token }, Request.Scheme);
+            await _accountService.SendConfirmUrlAsync(registerModel.Email, url);
             return Ok(userModel);
         }
 
@@ -94,12 +94,12 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignIn([FromBody] LoginModel model)
+        public async Task<IActionResult> SignIn([FromBody] LoginModel loginModel)
         {
             var userModel = new UserModel
             {
-                Email = model.Email,
-                Password = model.Password
+                Email = loginModel.Email,
+                Password = loginModel.Password
             };
             var result = await _accountService.LoginAsync(userModel);
 

@@ -33,17 +33,17 @@ namespace Store.Presentation.Controllers
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
-        public async Task<IActionResult> GetFiltred([FromBody] UserRequestModel filter)
+        public async Task<IActionResult> GetFiltred([FromBody] UserRequestModel userRequestModel)
         {
-            var usersResponse = await _userService.FilterAsync(filter);
+            var usersResponse = await _userService.FilterAsync(userRequestModel);
             return Ok(usersResponse);
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPut]
-        public async Task<IActionResult> EditProfile([FromBody] EditProfileModel model)
+        public async Task<IActionResult> EditProfile([FromBody] EditProfileModel editProfileModel)
         {
-            var userModel = _userModelMapper.Map(model);
+            var userModel = _userModelMapper.Map(editProfileModel);
             var result = await _userService.EditAsync(userModel);
             return Ok(result);
         }

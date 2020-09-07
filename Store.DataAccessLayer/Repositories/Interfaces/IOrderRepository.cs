@@ -11,6 +11,6 @@ namespace Store.DataAccess.Repositories.Interfaces
     {
         Task AddToPaymentAsync(Guid paymentId, Guid orderId);
         Task<List<Order>> GetUserOrdersAsync(Guid userId);
-        Task<OrderResponseDataModel> FilterAsync(OrderRequestDataModel filter);
+        Task<OrderResponseDataModel> FilterAsync(OrderRequestDataModel orderRequestDataModel);
     }
 }

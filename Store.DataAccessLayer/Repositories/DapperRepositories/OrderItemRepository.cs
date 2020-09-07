@@ -23,12 +23,12 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             await _dbContext.ExecuteAsync(query, orderItems);
         }
 
-        public override async Task<OrderItem> CreateAsync(OrderItem model)
+        public override async Task<OrderItem> CreateAsync(OrderItem orderItem)
         {
             var query = $"INSERT INTO {tableName} (Id, Amount, PrintingEditionId, OrderId, Count," +
                 $" IsRemoved, CreationDate) " +
-                $"VALUES ('{model.Id}', {model.Amount}, '{model.PrintingEditionId}', '{model.OrderId}', " +
-                $"{model.Count}, 0, '{model.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}')";
+                $"VALUES ('{orderItem.Id}', {orderItem.Amount}, '{orderItem.PrintingEditionId}', '{orderItem.OrderId}', " +
+                $"{orderItem.Count}, 0, '{orderItem.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}')";
             var result = await _dbContext.QueryFirstOrDefaultAsync<OrderItem>(query);
             return result;
         }

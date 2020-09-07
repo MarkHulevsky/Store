@@ -24,20 +24,20 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             await _dbContext.ExecuteAsync(query, authorInPrintingEditions);
         }
 
-        public override async Task<AuthorInPrintingEdition> CreateAsync(AuthorInPrintingEdition model)
+        public override async Task<AuthorInPrintingEdition> CreateAsync(AuthorInPrintingEdition authorInPrintingEdition)
         {
             var query = $"SELECT * FROM {tableName} " +
-                $"WHERE AuthorId = '{model.AuthorId}' AND PrintingEditionId = '{model.PrintingEditionId}'";
+                $"WHERE AuthorId = '{authorInPrintingEdition.AuthorId}' AND PrintingEditionId = '{authorInPrintingEdition.PrintingEditionId}'";
             var entity = await _dbContext.QueryFirstOrDefaultAsync<AuthorInPrintingEdition>(query);
             if (entity != null)
             {
-                return model;
+                return authorInPrintingEdition;
             }
             query = $"INSERT INTO {tableName} (Id, AuthorId, PrintingEditionId, CreationDate, IsRemoved) " +
-                $"VALUES ('{model.Id}' ,'{model.AuthorId}', '{model.PrintingEditionId}'," +
+                $"VALUES ('{authorInPrintingEdition.Id}' ,'{authorInPrintingEdition.AuthorId}', '{authorInPrintingEdition.PrintingEditionId}'," +
                 $" '{entity.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}', 0)";
             await _dbContext.QueryAsync<AuthorInPrintingEdition>(query);
-            return model;
+            return authorInPrintingEdition;
         }
     }
 }

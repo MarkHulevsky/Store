@@ -18,30 +18,32 @@ namespace Store.DataAccess.Repositories.EFRepositories
         {
         }
 
-        public Task<PrintingEditionResponseDataModel> FilterAsync(PrintingEditionsRequestDataModel filter)
+        public Task<PrintingEditionResponseDataModel> FilterAsync(PrintingEditionsRequestDataModel printingEditionRequestDataModel)
         {
             var query = DbSet
                 .Include(printingEdition => printingEdition.AuthorInPrintingEditions)
                 .ThenInclude(authorInPrintingEdition => authorInPrintingEdition.Author)
-                .Where(pe => !pe.IsRemoved && EF.Functions.Like(pe.Title, $"%{filter.SearchString}%"));
+                .Where(pe => !pe.IsRemoved && EF.Functions.Like(pe.Title, $"%{printingEditionRequestDataModel.SearchString}%"));
 
             var subquery = new List<PrintingEdition>().AsQueryable();
 
-            foreach (var type in filter.Types)
+            foreach (var type in printingEditionRequestDataModel.Types)
             {
                 subquery = subquery.Concat(query.Where(pe => pe.Type == type));
             }
 
             query = subquery;
 
-            if (filter.MaxPrice > filter.MinPrice && filter.MaxPrice != filter.MinPrice)
+            if (printingEditionRequestDataModel.MaxPrice > printingEditionRequestDataModel.MinPrice 
+                    && printingEditionRequestDataModel.MaxPrice != printingEditionRequestDataModel.MinPrice)
             {
-                query = query.Where(pe => pe.Price <= filter.MaxPrice && pe.Price >= filter.MinPrice);
+                query = query.Where(pe => pe.Price <= printingEditionRequestDataModel.MaxPrice 
+                    && pe.Price >= printingEditionRequestDataModel.MinPrice);
             }
 
-            query = query.Skip(filter.Paging.CurrentPage * filter.Paging.ItemsCount)
-                .Take(filter.Paging.ItemsCount)
-                .OrderBy("Price", $"{filter.SortType}");
+            query = query.Skip(printingEditionRequestDataModel.Paging.CurrentPage * printingEditionRequestDataModel.Paging.ItemsCount)
+                .Take(printingEditionRequestDataModel.Paging.ItemsCount)
+                .OrderBy("Price", $"{printingEditionRequestDataModel.SortType}");
             foreach (var printingEdition in query)
             {
                 var authors = printingEdition.AuthorInPrintingEditions

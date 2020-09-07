@@ -7,7 +7,7 @@ namespace Store.DataAccess.Repositories.Interfaces
 {
     public interface IAuthorRepository : IRepository<Author>
     {
-        Task<AuthorResponseDataModel> FilterAsync(AuthorRequestDataModel filter);
+        Task<AuthorResponseDataModel> FilterAsync(AuthorRequestDataModel authorRequestDataModel);
         Task<Author> FindAuthorByNameAsync(string name);
     }
 }

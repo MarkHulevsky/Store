@@ -40,7 +40,7 @@ namespace Store.Presentation.Controllers
             var url = $@"{baseUrl}?base={currentCurrency}&symbols={newCurrency}";
             var jsonResult = JObject.Parse(await _httpProvider.GetHttpContentAsync(url));
             var rate = jsonResult["rates"][newCurrency];
-            var result = (float)rate;
+            var result = (decimal)rate;
             return Ok(result);
         }
 
@@ -69,9 +69,9 @@ namespace Store.Presentation.Controllers
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPut]
-        public async Task Edit([FromBody] PrintingEditionModel pe)
+        public async Task Edit([FromBody] PrintingEditionModel printingEdition)
         {
-            await _printingEditionService.EditAsync(pe);
+            await _printingEditionService.EditAsync(printingEdition);
         }
 
 

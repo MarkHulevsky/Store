@@ -15,16 +15,17 @@ namespace Store.DataAccess.Repositories.EFRepositories
         {
         }
 
-        public override async Task<AuthorInPrintingEdition> CreateAsync(AuthorInPrintingEdition model)
+        public override async Task<AuthorInPrintingEdition> CreateAsync(AuthorInPrintingEdition authorInPrintingEditon)
         {
-            var entity = await DbSet.FirstOrDefaultAsync(authorInPrintingEdition => authorInPrintingEdition.AuthorId == model.AuthorId
-                && authorInPrintingEdition.PrintingEditionId == model.PrintingEditionId);
+            var entity = await DbSet
+                .FirstOrDefaultAsync(authorInPrintingEdition => authorInPrintingEdition.AuthorId == authorInPrintingEditon.AuthorId
+                && authorInPrintingEdition.PrintingEditionId == authorInPrintingEditon.PrintingEditionId);
             if (entity == null)
             {
-                await DbSet.AddAsync(model);
+                await DbSet.AddAsync(authorInPrintingEditon);
                 await SaveChangesAsync();
             }
-            return model;
+            return authorInPrintingEditon;
         }
 
         public async Task AddRangeAsync(List<AuthorInPrintingEdition> authorInPrintingEditions)

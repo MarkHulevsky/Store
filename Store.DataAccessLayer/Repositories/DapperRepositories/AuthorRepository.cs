@@ -21,17 +21,17 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             tableName = Constants.AUTHORS_TABLE_NAME;
         }
 
-        public override async Task<Author> CreateAsync(Author model)
+        public override async Task<Author> CreateAsync(Author author)
         {
             var query = $"INSERT INTO {tableName} (Id, CreationDate, IsRemoved, Name) " +
                 $"OUTPUT INSERTED.Id " +
-                $"VALUES ('{model.Id}', '{model.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}', " +
-                $"{Convert.ToInt32(model.IsRemoved)}, '{model.Name}')";
-            model.Id = await _dbContext.QueryFirstOrDefaultAsync<Guid>(query);
-            return model;
+                $"VALUES ('{author.Id}', '{author.CreationDate.ToUniversalTime().ToString("yyyyMMdd")}', " +
+                $"{Convert.ToInt32(author.IsRemoved)}, '{author.Name}')";
+            author.Id = await _dbContext.QueryFirstOrDefaultAsync<Guid>(query);
+            return author;
         }
 
-        public async Task<AuthorResponseDataModel> FilterAsync(AuthorRequestDataModel filter)
+        public async Task<AuthorResponseDataModel> FilterAsync(AuthorRequestDataModel authorRequestDataModel)
         {
             var query = $"SELECT * FROM {tableName} LEFT JOIN (" +
                 $"SELECT {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.AuthorId, " +
@@ -58,9 +58,9 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             authors = authors
                 .Distinct()
                 .AsQueryable()
-                .OrderBy(filter.SortPropertyName, filter.SortType.ToString())
-                .Skip(filter.Paging.ItemsCount * filter.Paging.CurrentPage)
-                .Take(filter.Paging.ItemsCount)
+                .OrderBy(authorRequestDataModel.SortPropertyName, authorRequestDataModel.SortType.ToString())
+                .Skip(authorRequestDataModel.Paging.ItemsCount * authorRequestDataModel.Paging.CurrentPage)
+                .Take(authorRequestDataModel.Paging.ItemsCount)
                 .ToList();
 
             query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved != 1";
@@ -80,11 +80,11 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             return author;
         }
 
-        public override async Task<Author> UpdateAsync(Author model)
+        public override async Task<Author> UpdateAsync(Author author)
         {
-            var query = $"UPDATE {tableName} SET Name = '{model.Name}' WHERE Id = '{model.Id}'";
-            var author = await _dbContext.QueryFirstOrDefaultAsync<Author>(query);
-            return author;
+            var query = $"UPDATE {tableName} SET Name = '{author.Name}' WHERE Id = '{author.Id}'";
+            var authorEntry = await _dbContext.QueryFirstOrDefaultAsync<Author>(query);
+            return authorEntry;
         }
     }
 }
