@@ -80,7 +80,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             var query = $"INSERT INTO {tableName} " +
                 $"(Id, Title, Description, Price, Currency, Type, IsRemoved, CreationDate) " +
                 $"OUTPUT INSERTED.Id " +
-                $"VALUES ('{printingEdition.Id}', '{printingEdition.Title}', '{printingEdition.Description}', " +
+                $"VALUES ('{Guid.NewGuid()}', '{printingEdition.Title}', '{printingEdition.Description}', " +
                 $"{printingEdition.Price}, {(int)printingEdition.Currency}, {(int)printingEdition.Type}, 0, '{printingEdition.CreationDate.ToUniversalTime():yyyyMMdd}' )";
 
             printingEdition.Id = await _dbContext.QueryFirstOrDefaultAsync<Guid>(query);
