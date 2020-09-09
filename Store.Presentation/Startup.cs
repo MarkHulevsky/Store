@@ -61,7 +61,7 @@ namespace Store.Presentation
 
             services.AddIdentity<User, IdentityRole<Guid>>()
                .AddEntityFrameworkStores<ApplicationContext>()
-                 .AddDefaultTokenProviders();
+               .AddDefaultTokenProviders();
 
             StripeConfiguration.ApiKey = Configuration.GetSection("Stripe")["SecretKey"];
 
@@ -139,18 +139,12 @@ namespace Store.Presentation
             });
 
             app.UseCors();
-
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthorization();
             app.UseAuthentication();
-
             app.UseMiddleware<LoggerMiddleware>();
-
             var dataBaseInitializer = new DataBaseInitializer(userManager, roleManager, dbContext);
-
             dataBaseInitializer.InitializeDb();
 
             app.UseEndpoints(endpoints =>

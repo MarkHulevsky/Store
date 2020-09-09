@@ -15,7 +15,7 @@ namespace Store.BuisnessLogic.Services
         private const string RESET_PASSWORD_SUBJECT = "Reset password";
         private const string RESET_PASSWORD_BODY = "Your new password:";
         private const string CONFIRM_EMAIL_SUBJECT = "Confirm regestration";
-        private const string CONFIRM_EMAIL_BODY = "To complete registration follow the link:";
+        private const string CONFIRM_EMAIL_BODY = "To complete registration follow the ";
         private const string USER_ROLE_NAME = "user";
         private const string EMAIL_IS_NOT_CONFIRMED_ERROR = "Email is not confirmed";
         private const string USER_NOT_FOUND_ERROR = "No user with such email";
@@ -118,7 +118,7 @@ namespace Store.BuisnessLogic.Services
         public async Task SendConfirmUrlAsync(string email, string url)
         {
             var subject = CONFIRM_EMAIL_SUBJECT;
-            var body = $"{CONFIRM_EMAIL_BODY} {url}";
+            var body = $"{CONFIRM_EMAIL_BODY} <a href='{url}'>link</a>.";
             await _emailProvider.SendAsync(email, subject, body);
         }
 
