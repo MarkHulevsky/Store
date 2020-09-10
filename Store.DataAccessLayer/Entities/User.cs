@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Dapper.Contrib.Extensions;
+using Microsoft.AspNetCore.Identity;
 using Store.DataAccess.Entities.Base;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace Store.DataAccess.Entities
         public bool IsRemoved { get; set; }
         public DateTime CreationDate { get; set; }
         public bool IsActive { get; set; }
+        [Computed]
         public virtual List<Order> Order { get; set; }
         [NotMapped]
         public string Password { get; set; }

@@ -33,34 +33,21 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             }
             order.PaymentId = paymentId;
             order.Status = OrderStatus.Paid;
-            var query = $"UPDATE {tableName} SET PaymentId = '{order.PaymentId}', Status = {(int)order.Status}" +
-                $"WHERE Id = '{order.Id}'";
-            await _dbContext.ExecuteAsync(query);
-        }
-
-        public override async Task<Order> CreateAsync(Order order)
-        {
-            order.PaymentId = Guid.Empty;
-            order.Description = string.Empty;
-            order.Status = OrderStatus.Unpaid;
-            var query = $"INSERT INTO {tableName} " +
-                $"(Id, Description, UserId, PaymentId, Status, CreationDate, IsRemoved) " +
-                $"OUTPUT INSERTED.Id " +
-                $"VALUES ('{order.Id}' ,'{order.Description}', '{order.UserId}', '{order.PaymentId}', " +
-                $"{(int)order.Status}, '{order.CreationDate.ToUniversalTime():yyyyMMdd}', 0)";
-
-            order.Id = await _dbContext.QueryFirstOrDefaultAsync<Guid>(query);
-            return order;
+            await _dbContext.UpdateAsync(order);
         }
 
         public async Task<OrderResponseDataModel> FilterAsync(OrderRequestDataModel orderRequestDataModel)
         {
-            var query = $"SELECT * FROM {tableName} " +
-                $"LEFT JOIN {Constants.USERS_TABLE_NAME} ON {tableName}.UserId = {Constants.USERS_TABLE_NAME}.Id " +
-                $"LEFT JOIN {Constants.ORDER_ITEMS_TABLE_NAME} ON {Constants.ORDER_ITEMS_TABLE_NAME}.OrderId = Orders.Id " +
-                $"LEFT JOIN {Constants.PRINTING_EDITIONS_TABLE_NAME} " +
-                $"ON {Constants.ORDER_ITEMS_TABLE_NAME}.PrintingEditionId = {Constants.PRINTING_EDITIONS_TABLE_NAME}.Id " +
-                $"WHERE {tableName}.IsRemoved != 1";
+            var query = $@"SELECT * FROM (
+                        	SELECT * FROM {tableName} WHERE {tableName}.IsRemoved != 1
+                        	ORDER BY {tableName}.CreationDate
+                        	OFFSET {orderRequestDataModel.Paging.ItemsCount * orderRequestDataModel.Paging.CurrentPage} ROWS 
+                            FETCH NEXT {orderRequestDataModel.Paging.ItemsCount} ROWS ONLY
+                        ) AS {tableName}
+                        LEFT JOIN {Constants.USERS_TABLE_NAME} ON {tableName}.UserId = {Constants.USERS_TABLE_NAME}.Id
+                        LEFT JOIN {Constants.ORDER_ITEMS_TABLE_NAME} ON {Constants.ORDER_ITEMS_TABLE_NAME}.OrderId = {tableName}.Id
+                        LEFT JOIN {Constants.PRINTING_EDITIONS_TABLE_NAME} ON {Constants.ORDER_ITEMS_TABLE_NAME}.PrintingEditionId 
+                            = {Constants.PRINTING_EDITIONS_TABLE_NAME}.Id";
 
             var orderDictionary = new Dictionary<Guid, Order>();
             var orders = await _dbContext.QueryAsync<Order, User, OrderItem, PrintingEdition, Order>(
@@ -73,9 +60,15 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                         order.OrderItems = new List<OrderItem>();
                         orderDictionary.Add(order.Id, orderEntry);
                     }
+                    if (printingEdition != null)
+                    {
+                        orderItem.PrintingEdition = printingEdition;
+                    }
                     orderEntry.User = user;
-                    orderItem.PrintingEdition = printingEdition;
-                    orderEntry.OrderItems.Add(orderItem);
+                    if (orderItem != null)
+                    {
+                        orderEntry.OrderItems.Add(orderItem);
+                    }
                     return orderEntry;
                 });
 
@@ -86,15 +79,8 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             {
                 subquery = subquery.Concat(querybaleOrders.Where(o => o.Status == status));
             }
-
             querybaleOrders = subquery;
-            querybaleOrders = querybaleOrders
-                .OrderBy(orderRequestDataModel.SortPropertyName, $"{orderRequestDataModel.SortType}")
-                .Skip(orderRequestDataModel.Paging.CurrentPage * orderRequestDataModel.Paging.ItemsCount)
-                .Take(orderRequestDataModel.Paging.ItemsCount);
-
             orders = querybaleOrders.ToList();
-
             query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";
             var totalCount = await _dbContext.QueryFirstOrDefaultAsync<int>(query);
             var result = new OrderResponseDataModel

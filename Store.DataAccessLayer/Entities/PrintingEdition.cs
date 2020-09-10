@@ -1,4 +1,5 @@
-﻿using Store.DataAccess.Entities.Base;
+﻿using Dapper.Contrib.Extensions;
+using Store.DataAccess.Entities.Base;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using static Shared.Enums.Enums;
@@ -12,8 +13,9 @@ namespace Store.DataAccess.Entities
         public float Price { get; set; }
         public CurrencyType Currency { get; set; }
         public PrintingEditionType Type { get; set; }
+        [Computed]
         public virtual List<AuthorInPrintingEdition> AuthorInPrintingEditions { get; set; }
-        [NotMapped]
+        [Computed]
         public virtual List<Author> Authors { get; set; }
         public PrintingEdition()
         {

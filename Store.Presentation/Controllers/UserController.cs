@@ -13,21 +13,18 @@ namespace Store.Presentation.Controllers
     [Route("api/[controller]/[action]")]
     public class UserController : Controller
     {
-        private readonly Mapper<EditProfileModel, UserModel> _userModelMapper;
         private readonly IUserService _userService;
 
         public UserController(IUserService userService)
         {
             _userService = userService;
-            _userModelMapper = new Mapper<EditProfileModel, UserModel>();
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
         public async Task<IActionResult> GetProfile()
         {
-            var userName = User.Identity.Name;
-            var userModel = await _userService.GetCurrentAsync(userName);
+            var userModel = await _userService.GetCurrentAsync();
             return Ok(userModel);
         }
 
@@ -43,8 +40,7 @@ namespace Store.Presentation.Controllers
         [HttpPut]
         public async Task<IActionResult> EditProfile([FromBody] EditProfileModel editProfileModel)
         {
-            var userModel = _userModelMapper.Map(editProfileModel);
-            var result = await _userService.EditAsync(userModel);
+            var result = await _userService.EditAsync(editProfileModel);
             return Ok(result);
         }
 
@@ -52,7 +48,8 @@ namespace Store.Presentation.Controllers
         [HttpDelete]
         public async Task Delete(string userId)
         {
-            await _userService.RemoveAsync(Guid.Parse(userId));
+            var id = Guid.Parse(userId);
+            await _userService.RemoveAsync(id);
         }
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

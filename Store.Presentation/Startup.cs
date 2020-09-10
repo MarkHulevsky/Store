@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +20,7 @@ using Store.BuisnessLogic.Services.Interfaces;
 using Store.DataAccess.AppContext;
 using Store.DataAccess.Entities;
 using Store.DataAccess.Initialization;
-using Store.DataAccess.Repositories.EFRepositories;
+using Store.DataAccess.Repositories.DapperRepositories;
 using Store.DataAccess.Repositories.Interfaces;
 using Store.Presentation.Middlewares;
 using System;
@@ -38,6 +41,13 @@ namespace Store.Presentation
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddScoped(serviceProvider => {
+                var actionContext = serviceProvider.GetRequiredService<IActionContextAccessor>().ActionContext;
+                var factory = serviceProvider.GetRequiredService<IUrlHelperFactory>();
+                return factory.GetUrlHelper(actionContext);
+            });
+            services.AddHttpContextAccessor();
             services.AddSingleton<ILogger, Logger>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAuthorRepository, AuthorRepository>();

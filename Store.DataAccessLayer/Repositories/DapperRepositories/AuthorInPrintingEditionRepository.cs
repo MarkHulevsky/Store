@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Dapper.Contrib.Extensions;
 using Microsoft.Extensions.Configuration;
 using Store.DataAccess.Entities;
 using Store.DataAccess.Models.Constants;
@@ -19,9 +20,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public async Task AddRangeAsync(List<AuthorInPrintingEdition> authorInPrintingEditions)
         {
-            var query = $"INSERT INTO {tableName} (Id, IsRemoved, CreationDate, AuthorId, PrintingEditionId) " +
-                $"VALUES(@Id, @IsRemoved, @CreationDate, @AuthorId, @PrintingEditionId)";
-            await _dbContext.ExecuteAsync(query, authorInPrintingEditions);
+            await _dbContext.InsertAsync(authorInPrintingEditions);
         }
 
         public override async Task<AuthorInPrintingEdition> CreateAsync(AuthorInPrintingEdition authorInPrintingEdition)
@@ -33,10 +32,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             {
                 return authorInPrintingEdition;
             }
-            query = $"INSERT INTO {tableName} (Id, AuthorId, PrintingEditionId, CreationDate, IsRemoved) " +
-                $"VALUES ('{authorInPrintingEdition.Id}' ,'{authorInPrintingEdition.AuthorId}', '{authorInPrintingEdition.PrintingEditionId}'," +
-                $" '{entity.CreationDate.ToUniversalTime():yyyyMMdd}', 0)";
-            await _dbContext.QueryAsync<AuthorInPrintingEdition>(query);
+            await _dbContext.InsertAsync(authorInPrintingEdition);
             return authorInPrintingEdition;
         }
     }

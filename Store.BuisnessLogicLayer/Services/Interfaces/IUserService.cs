@@ -10,8 +10,8 @@ namespace Store.BuisnessLogic.Services.Interfaces
     public interface IUserService
     {
         Task<UserResponseModel> FilterAsync(UserRequestModel userRequestModel);
-        Task<UserModel> GetCurrentAsync(string name);
-        Task<BaseModel> EditAsync(UserModel userModel);
+        Task<UserModel> GetCurrentAsync();
+        Task<BaseModel> EditAsync(EditProfileModel editProfileModel);
         Task ChangeStatusAsync(UserModel userModel);
         Task RemoveAsync(Guid userId);
     }

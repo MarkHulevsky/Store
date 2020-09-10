@@ -84,11 +84,11 @@ namespace Store.BuisnessLogic.Services
             return orderModels;
         }
 
-        public async Task<OrderModel> CreateAsync(CartModel cartModel)
+        public async Task<OrderModel> CreateAsync(CartModel cartModel, Guid userId)
         {
             var order = new Order
             {
-                UserId = cartModel.UserId
+                UserId = userId
             };
             order = await _orderRepository.CreateAsync(order);
             var orderModel = _orderModelMapper.Map(order);

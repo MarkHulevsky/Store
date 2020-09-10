@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Store.BuisnessLogic.Helpers.Interfaces;
+using Store.BuisnessLogic.Models.Token;
 using Store.BuisnessLogic.Models.Users;
 using Store.BuisnessLogic.Services.Interfaces;
 using System;
@@ -16,12 +18,24 @@ namespace Store.BuisnessLogic.Helpers
 {
     public class JwtProvider : IJwtProvider
     {
+        private const string ACCESS_TOKEN_NAME = "accessToken";
+        private const string REFRESH_TOKEN_NAME = "refreshToken";
+
         private readonly IAccountService _accountService;
         private readonly IConfiguration _configuration;
-        public JwtProvider(IAccountService accountService, IConfiguration configuration)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public JwtProvider(IAccountService accountService, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _accountService = accountService;
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        public void SetCookieTokenResponse(JwtTokenModel jwtToken)
+        {
+            _httpContextAccessor.HttpContext.Response.Cookies.Append(ACCESS_TOKEN_NAME, jwtToken.AccessToken);
+            _httpContextAccessor.HttpContext.Response.Cookies.Append(REFRESH_TOKEN_NAME, jwtToken.RefreshToken);
         }
 
         public string GenerateRefreshToken()

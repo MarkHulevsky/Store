@@ -12,7 +12,7 @@ namespace Store.BuisnessLogic.Services.Interfaces
     {
         Task PayOrderAsync(PaymentModel paymentModel);
         Task<List<OrderModel>> GetUserOrdersAsync(Guid userId);
-        Task<OrderModel> CreateAsync(CartModel cartModel);
+        Task<OrderModel> CreateAsync(CartModel cartModel, Guid userId);
         Task RemoveAsync(Guid id);
         Task<OrderResponseModel> FilterAsync(OrderRequestModel orderRequestModel);
     }

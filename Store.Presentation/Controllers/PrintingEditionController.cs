@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
 using Store.BuisnessLogic.Helpers.Interfaces;
 using Store.BuisnessLogic.Models.Filters;
 using Store.BuisnessLogic.Models.PrintingEditions;
@@ -16,14 +15,9 @@ namespace Store.Presentation.Controllers
     public class PrintingEditionController : Controller
     {
         private readonly IPrintingEditionService _printingEditionService;
-        private readonly IConfiguration _configuration;
-        private readonly IHttpProvider _httpProvider;
-        public PrintingEditionController(IPrintingEditionService printingEditionService,
-            IConfiguration configuration, IHttpProvider httpProvider)
+        public PrintingEditionController(IPrintingEditionService printingEditionService)
         {
             _printingEditionService = printingEditionService;
-            _configuration = configuration;
-            _httpProvider = httpProvider;
         }
 
         [HttpGet]
@@ -36,12 +30,8 @@ namespace Store.Presentation.Controllers
         [HttpGet("{currentCurrency}/{newCurrency}")]
         public async Task<IActionResult> ConvertCurrency(string currentCurrency, string newCurrency)
         {
-            var baseUrl = _configuration.GetSection("CurrencyOption")["Url"];
-            var url = $@"{baseUrl}?base={currentCurrency}&symbols={newCurrency}";
-            var jsonResult = JObject.Parse(await _httpProvider.GetHttpContentAsync(url));
-            var rate = jsonResult["rates"][newCurrency];
-            var result = (decimal)rate;
-            return Ok(result);
+            var rate = await _printingEditionService.GetConvertRateAsync(currentCurrency, newCurrency);
+            return Ok(rate);
         }
 
         [HttpPost]
@@ -56,8 +46,7 @@ namespace Store.Presentation.Controllers
         public async Task Add([FromBody] PrintingEditionModel printingEdiotionModel)
         {
             var createdPrintingEdition = await _printingEditionService.CreateAsync(printingEdiotionModel);
-            printingEdiotionModel.Id = createdPrintingEdition.Id;
-            await _printingEditionService.AddToAuthorsAsync(printingEdiotionModel, printingEdiotionModel.Authors);
+            await _printingEditionService.AddToAuthorsAsync(createdPrintingEdition, printingEdiotionModel.Authors);
         }
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

@@ -9,7 +9,9 @@ using Store.DataAccess.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using static Shared.Enums.Enums;
 
 namespace Store.DataAccess.Repositories.DapperRepositories
 {
@@ -22,18 +24,59 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public async Task<PrintingEditionResponseDataModel> FilterAsync(PrintingEditionsRequestDataModel printingEditionRequestDataModel)
         {
-            var query = $"SELECT * FROM {tableName} LEFT JOIN (" +
-                $"SELECT {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.PrintingEditionId, " +
-                $"{Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.AuthorId FROM {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME} " +
-                $") AS {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME} " +
-                $"ON {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.PrintingEditionId = {tableName}.Id " +
-                $"LEFT JOIN {Constants.AUTHORS_TABLE_NAME} " +
-                $"ON {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME}.AuthorId = {Constants.AUTHORS_TABLE_NAME}.Id " +
-                $"WHERE {tableName}.Title LIKE '%{printingEditionRequestDataModel.SearchString}%' AND {tableName}.IsRemoved = 0";
-
+            var sortTypeString = string.Empty;
+            if (printingEditionRequestDataModel.SortType == SortType.Ascending)
+            {
+                sortTypeString = "ASC";
+            }
+            if (printingEditionRequestDataModel.SortType == SortType.Descending)
+            {
+                sortTypeString = "DESC";
+            }
+            var query = new StringBuilder();
+            query.Append($@"SELECT PrintingEditions.Id, PrintingEditions.Currency, PrintingEditions.Description, PrintingEditions.IsRemoved,
+	                        PrintingEditions.Price, PrintingEditions.CreationDate, PrintingEditions.Title, PrintingEditions.Type,
+	                        AuthorInPrintingEditions.Id, AuthorInPrintingEditions.AuthorId, AuthorInPrintingEditions.PrintingEditionId,
+	                        AuthorInPrintingEditions.AuthorId, AuthorInPrintingEditions.Name, AuthorInPrintingEditions.IsRemoved
+	                        FROM (
+	                        	SELECT PrintingEditions.Id, PrintingEditions.Currency, PrintingEditions.Description, PrintingEditions.IsRemoved,
+	                        		PrintingEditions.Price, PrintingEditions.CreationDate, PrintingEditions.Title, PrintingEditions.Type
+	                        	FROM PrintingEditions WHERE (PrintingEditions.Title LIKE '%{printingEditionRequestDataModel.SearchString}%'
+                                    AND PrintingEditions.IsRemoved != 1) ");
+            
+            if (printingEditionRequestDataModel.MaxPrice > printingEditionRequestDataModel.MinPrice
+                    && printingEditionRequestDataModel.MaxPrice != printingEditionRequestDataModel.MinPrice)
+            {
+                query.Append($@"AND (PrintingEditions.Price < {printingEditionRequestDataModel.MaxPrice} 
+                                AND PrintingEditions.Price > {printingEditionRequestDataModel.MinPrice}) ");
+                
+            }
+            if (printingEditionRequestDataModel.Types.Count != 0)
+            {
+                query.Append("AND (");
+            }
+            foreach (var type in printingEditionRequestDataModel.Types)
+            {
+                query.Append($@"PrintingEditions.Type = {(int)type} OR ");
+            }
+            if (printingEditionRequestDataModel.Types.Count != 0)
+            {
+                query.Remove(query.Length - 3, 3);
+                query.Append(")");
+            }
+            query.Append($@"ORDER BY Price {sortTypeString}
+	                        OFFSET {printingEditionRequestDataModel.Paging.ItemsCount * printingEditionRequestDataModel.Paging.CurrentPage} ROWS
+                            FETCH NEXT {printingEditionRequestDataModel.Paging.ItemsCount} ROWS ONLY
+	                        ) AS PrintingEditions
+	                        LEFT JOIN (
+	                        	 SELECT AuthorInPrintingEditions.AuthorId, AuthorInPrintingEditions.PrintingEditionId,
+	                        	 Authors.Id, Authors.Name, Authors.IsRemoved
+	                        	 FROM AuthorInPrintingEditions
+	                        	 LEFT JOIN Authors ON AuthorInPrintingEditions.AuthorId = Authors.Id
+	                        ) AS AuthorInPrintingEditions ON PrintingEditions.Id = AuthorInPrintingEditions.PrintingEditionId");
             var printingEditionDictionary = new Dictionary<Guid, PrintingEdition>();
             var printingEditions = await _dbContext.QueryAsync<PrintingEdition, Author, PrintingEdition>(
-                query, (printingEdition, author) =>
+                query.ToString(), (printingEdition, author) =>
                 {
                     var printingEditionEntry = new PrintingEdition();
                     if (!printingEditionDictionary.TryGetValue(printingEdition.Id, out printingEditionEntry))
@@ -47,52 +90,15 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                     }
                     return printingEditionEntry;
                 });
-            var queryblePrintingEditions = printingEditions.Distinct().AsQueryable();
-            var subquery = new List<PrintingEdition>().AsQueryable();
-            foreach (var type in printingEditionRequestDataModel.Types)
-            {
-                subquery = subquery.Concat(queryblePrintingEditions.Where(pe => pe.Type == type));
-            }
-            queryblePrintingEditions = subquery;
-            if (printingEditionRequestDataModel.MaxPrice > printingEditionRequestDataModel.MinPrice
-                    && printingEditionRequestDataModel.MaxPrice != printingEditionRequestDataModel.MinPrice)
-            {
-                queryblePrintingEditions = queryblePrintingEditions.Where(pe => pe.Price <= printingEditionRequestDataModel.MaxPrice
-                    && pe.Price >= printingEditionRequestDataModel.MinPrice);
-            }
-            queryblePrintingEditions = queryblePrintingEditions
-                .OrderBy("Price", $"{printingEditionRequestDataModel.SortType}")
-                .Skip(printingEditionRequestDataModel.Paging.CurrentPage * printingEditionRequestDataModel.Paging.ItemsCount)
-                .Take(printingEditionRequestDataModel.Paging.ItemsCount);
-            printingEditions = queryblePrintingEditions.ToList();
-            query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";
-            var totalCount = await _dbContext.QueryFirstOrDefaultAsync<int>(query);
+            printingEditions = printingEditions.Distinct().ToList();
+            query.Clear();
+            query.Append($"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0");
+            var totalCount = await _dbContext.QueryFirstOrDefaultAsync<int>(query.ToString());
             var result = new PrintingEditionResponseDataModel
             {
                 PrintingEditions = printingEditions,
                 TotalCount = totalCount
             };
-            return result;
-        }
-
-        public override async Task<PrintingEdition> CreateAsync(PrintingEdition printingEdition)
-        {
-            var query = $"INSERT INTO {tableName} " +
-                $"(Id, Title, Description, Price, Currency, Type, IsRemoved, CreationDate) " +
-                $"OUTPUT INSERTED.Id " +
-                $"VALUES ('{Guid.NewGuid()}', '{printingEdition.Title}', '{printingEdition.Description}', " +
-                $"{printingEdition.Price}, {(int)printingEdition.Currency}, {(int)printingEdition.Type}, 0, '{printingEdition.CreationDate.ToUniversalTime():yyyyMMdd}' )";
-
-            printingEdition.Id = await _dbContext.QueryFirstOrDefaultAsync<Guid>(query);
-            return printingEdition;
-        }
-
-        public override async Task<PrintingEdition> UpdateAsync(PrintingEdition printingEdition)
-        {
-            var query = $"UPDATE {tableName} SET Title = '{printingEdition.Title}', Price = '{printingEdition.Price}'," +
-                $"Type = {(int)printingEdition.Type}, Description = '{printingEdition.Description}', Currency = {(int)printingEdition.Currency} " +
-                $"WHERE Id = '{printingEdition.Id}'";
-            var result = await _dbContext.QueryFirstOrDefaultAsync<PrintingEdition>(query);
             return result;
         }
     }

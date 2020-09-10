@@ -28,7 +28,7 @@ namespace Store.DataAccess.Repositories.Base
 
         public virtual async Task<T> CreateAsync(T model)
         {
-            await _dbContext.InsertAsync(model);
+            await _dbContext.InsertAsync<T>(model);
             return model;
         }
 
@@ -56,9 +56,10 @@ namespace Store.DataAccess.Repositories.Base
 
         public async Task<T> RemoveAsync(Guid id)
         {
-            var query = $"UPDATE {tableName} SET IsRemoved = 1 WHERE Id = '{id}'";
-            var result = await _dbContext.QueryFirstOrDefaultAsync<T>(query);
-            return result;
+            var entity = await _dbContext.GetAsync<T>(id);
+            entity.IsRemoved = true;
+            await _dbContext.UpdateAsync(entity);
+            return entity;
         }
 
         ~BaseDapperRepository()

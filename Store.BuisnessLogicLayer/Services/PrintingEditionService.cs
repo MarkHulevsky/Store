@@ -1,4 +1,7 @@
-﻿using Store.BuisnessLogic.Helpers;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
+using Store.BuisnessLogic.Helpers;
+using Store.BuisnessLogic.Helpers.Interfaces;
 using Store.BuisnessLogic.Helpers.Mappers.ListMappers;
 using Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers;
 using Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers;
@@ -19,17 +22,32 @@ namespace Store.BuisnessLogic.Services
     {
         private readonly IPrintingEditionRepository _printingEditionRepository;
         private readonly IAuthorInPrintingEditionRepository _authorInPrintingEditionRepository;
+        private readonly IConfiguration _configuration;
+        private readonly IHttpProvider _httpProvider;
 
         private readonly Mapper<PrintingEditionModel, PrintingEdition> _printingEditionMapper;
         private readonly Mapper<PrintingEdition, PrintingEditionModel> _printingEditionModelMapper;
 
         public PrintingEditionService(IPrintingEditionRepository printingEditionRepository,
-            IAuthorInPrintingEditionRepository authorInPrintingEditionRepository)
+            IAuthorInPrintingEditionRepository authorInPrintingEditionRepository, IConfiguration configuration,
+            IHttpProvider httpProvider)
         {
             _printingEditionRepository = printingEditionRepository;
             _authorInPrintingEditionRepository = authorInPrintingEditionRepository;
             _printingEditionMapper = new Mapper<PrintingEditionModel, PrintingEdition>();
             _printingEditionModelMapper = new Mapper<PrintingEdition, PrintingEditionModel>();
+            _configuration = configuration;
+            _httpProvider = httpProvider;
+        }
+
+        public async Task<decimal> GetConvertRateAsync(string currentCurrency, string newCurrency)
+        {
+            var baseUrl = _configuration.GetSection("CurrencyOption")["Url"];
+            var url = $@"{baseUrl}?base={currentCurrency}&symbols={newCurrency}";
+            var jsonResult = JObject.Parse(await _httpProvider.GetHttpContentAsync(url));
+            var jTokenRate = jsonResult["rates"][newCurrency];
+            var rate = (decimal)jTokenRate;
+            return rate;
         }
 
         public async Task<PrintingEditionModel> GetByIdAsync(string id)

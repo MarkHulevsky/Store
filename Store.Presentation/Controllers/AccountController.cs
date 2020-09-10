@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Store.BuisnessLogic.Helpers;
 using Store.BuisnessLogic.Helpers.Interfaces;
 using Store.BuisnessLogic.Models.Account;
 using Store.BuisnessLogic.Models.Token;
@@ -17,6 +16,7 @@ namespace Store.Presentation.Controllers
         private readonly IAccountService _accountService;
         private readonly IJwtProvider _jwtProvider;
         private readonly IConfiguration _configuration;
+
         public AccountController(IAccountService accountService, IJwtProvider jwtProvider,
             IConfiguration configuration)
         {
@@ -25,18 +25,10 @@ namespace Store.Presentation.Controllers
             _configuration = configuration;
         }
 
-        private void SetCookieTokenResponse(string accessToken, string refreshToken)
-        {
-            Response.Cookies.Append("accessToken", accessToken);
-            Response.Cookies.Append("refreshToken", refreshToken);
-        }
-
         [HttpPost]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordModel forgotPasswordModel)
         {
-            var token = await _accountService.GetForgotPasswordTokenAsync(forgotPasswordModel.Email);
-            string newPassword = PasswordGenerator.GeneratePassword();
-            var baseModel = await _accountService.ResetPasswordAsync(forgotPasswordModel.Email, token, newPassword);
+            var baseModel = await _accountService.ResetPasswordAsync(forgotPasswordModel.Email);
             return Ok(baseModel);
         }
 
@@ -49,7 +41,7 @@ namespace Store.Presentation.Controllers
                 AccessToken = _jwtProvider.GenerateJwtTokenWithClaims(principal.Claims),
                 RefreshToken = _jwtProvider.GenerateRefreshToken()
             };
-            SetCookieTokenResponse(jwtToken.AccessToken, jwtToken.RefreshToken);
+            _jwtProvider.SetCookieTokenResponse(jwtToken);
             return Ok(jwtToken);
         }
 
@@ -66,10 +58,7 @@ namespace Store.Presentation.Controllers
                 }
                 return Ok(userModel);
             }
-            var userModelMapper = new Mapper<RegisterModel, UserModel>();
-            userModel = userModelMapper.Map(registerModel);
-
-            var result = await _accountService.RegisterAsync(userModel);
+            var result = await _accountService.RegisterAsync(registerModel);
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -78,10 +67,7 @@ namespace Store.Presentation.Controllers
                 }
                 return Ok(userModel);
             }
-            var token = await _accountService.GenerateEmailConfirmationTokenAsync(registerModel.Email);
-            string url = Url.Action("ConfirmEmail", "Account",
-                new { email = registerModel.Email, token }, Request.Scheme);
-            await _accountService.SendConfirmUrlAsync(registerModel.Email, url);
+            await _accountService.SendConfirmUrlAsync(registerModel.Email);
             return Ok(userModel);
         }
 
@@ -109,12 +95,12 @@ namespace Store.Presentation.Controllers
             }
             userModel = await _accountService.FindByEmailAsync(userModel.Email);
             userModel.Roles = await _accountService.GetRolesAsync(userModel.Email);
-            var jwtTokenModel = new JwtTokenModel
+            var jwtToken = new JwtTokenModel
             {
                 AccessToken = await _jwtProvider.GetTokenAsync(userModel),
                 RefreshToken = _jwtProvider.GenerateRefreshToken()
             };
-            SetCookieTokenResponse(jwtTokenModel.AccessToken, jwtTokenModel.RefreshToken);
+            _jwtProvider.SetCookieTokenResponse(jwtToken);
             return Ok(userModel);
         }
 

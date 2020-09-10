@@ -7,7 +7,7 @@ namespace Store.BuisnessLogic.Helpers
     {
         public TDestination Map(TDestination destination, TSource source)
         {
-            Type _destination = typeof(TDestination);
+            var _destination = typeof(TDestination);
             var sourcePropsInfo = source.GetType().GetProperties();
             var destinationPropsInfo = _destination.GetProperties();
 
@@ -34,21 +34,22 @@ namespace Store.BuisnessLogic.Helpers
                 return Activator.CreateInstance<TDestination>();
             }
             var destination = Activator.CreateInstance<TDestination>();
-            Type _destination = typeof(TDestination);
+            var _destination = typeof(TDestination);
             var sourcePropsInfo = source.GetType().GetProperties();
             var destinationPropsInfo = _destination.GetProperties();
 
             foreach (var srcPropInfo in sourcePropsInfo)
             {
-                var destInfo = destinationPropsInfo.FirstOrDefault(dip => dip.Name == srcPropInfo.Name);
-                if (destInfo != null && destInfo.CanWrite)
+                try
                 {
-                    try
+                    var destInfo = destinationPropsInfo.FirstOrDefault(dip => dip.Name == srcPropInfo.Name);
+                    if (!(destInfo != null && destInfo.CanWrite))
                     {
-                        destInfo.SetValue(destination, srcPropInfo.GetValue(source));
+                        continue;
                     }
-                    catch { }
+                    destInfo.SetValue(destination, srcPropInfo.GetValue(source));
                 }
+                catch { }
             }
 
             return destination;

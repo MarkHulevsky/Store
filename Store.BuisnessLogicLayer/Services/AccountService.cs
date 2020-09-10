@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Store.BuisnessLogic.Helpers;
 using Store.BuisnessLogic.Helpers.Interfaces;
+using Store.BuisnessLogic.Models.Account;
 using Store.BuisnessLogic.Models.Base;
 using Store.BuisnessLogic.Models.Users;
 using Store.BuisnessLogic.Services.Interfaces;
@@ -24,28 +27,36 @@ namespace Store.BuisnessLogic.Services
         private const string USER_IS_REMOVED_ERROR = "Your account was removed";
 
         private readonly IEmailProvider _emailProvider;
+        private readonly IUrlHelper _urlHelper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly Mapper<User, UserModel> _userModelMapper;
-        private readonly Mapper<UserModel, User> _userMapper;
+        private readonly Mapper<RegisterModel, User> _userMapper;
 
         public AccountService(IEmailProvider emailProvider,
-            UserManager<User> userManager, SignInManager<User> signInManager)
+            UserManager<User> userManager, SignInManager<User> signInManager, IUrlHelper urlHelper, 
+            IHttpContextAccessor httpContextAccessor)
         {
             _emailProvider = emailProvider;
             _userManager = userManager;
             _signInManager = signInManager;
+            _urlHelper = urlHelper;
+            _httpContextAccessor = httpContextAccessor;
             _userModelMapper = new Mapper<User, UserModel>();
-            _userMapper = new Mapper<UserModel, User>();
+            _userMapper = new Mapper<RegisterModel, User>();
         }
 
-        public async Task<BaseModel> ResetPasswordAsync(string email, string token, string newPassword)
+        public async Task<BaseModel> ResetPasswordAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+            var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
+            if (user == null || !isEmailConfirmed)
             {
                 return null;
             }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            string newPassword = PasswordGenerator.GeneratePassword();
             var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
             if (!result.Succeeded)
             {
@@ -63,22 +74,6 @@ namespace Store.BuisnessLogic.Services
             var body = $"{RESET_PASSWORD_BODY} {newPassword}";
             await _emailProvider.SendAsync(email, subject, body);
             return new BaseModel();
-        }
-
-        public async Task<string> GetForgotPasswordTokenAsync(string email)
-        {
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                return null;
-            }
-            var user = await _userManager.FindByEmailAsync(email);
-            var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
-            if (user == null || !isEmailConfirmed)
-            {
-                return null;
-            }
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            return token;
         }
 
         public async Task<List<string>> GetRolesAsync(string email)
@@ -103,10 +98,10 @@ namespace Store.BuisnessLogic.Services
             return userModel;
         }
 
-        public async Task<IdentityResult> RegisterAsync(UserModel userModel)
+        public async Task<IdentityResult> RegisterAsync(RegisterModel registerModel)
         {
-            var user = _userMapper.Map(userModel);
-            user.UserName = userModel.Email;
+            var user = _userMapper.Map(registerModel);
+            user.UserName = registerModel.Email;
             var result = await _userManager.CreateAsync(user, user.Password);
             if (result.Succeeded)
             {
@@ -115,8 +110,12 @@ namespace Store.BuisnessLogic.Services
             return result;
         }
 
-        public async Task SendConfirmUrlAsync(string email, string url)
+        public async Task SendConfirmUrlAsync(string email)
         {
+            var user = await _userManager.FindByEmailAsync(email);
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var url = _urlHelper.Action("ConfirmEmail", "Account",
+                new { email, token }, _httpContextAccessor.HttpContext.Request.Scheme);
             var subject = CONFIRM_EMAIL_SUBJECT;
             var body = $"{CONFIRM_EMAIL_BODY} <a href='{url}'>link</a>.";
             await _emailProvider.SendAsync(email, subject, body);
@@ -143,13 +142,6 @@ namespace Store.BuisnessLogic.Services
             {
                 Errors = errors
             };
-        }
-
-        public async Task<string> GenerateEmailConfirmationTokenAsync(string email)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            return token;
         }
 
         public async Task<BaseModel> LoginAsync(UserModel userModel)

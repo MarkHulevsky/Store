@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Store.BuisnessLogic.Helpers;
 using Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers;
 using Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers;
@@ -20,16 +21,19 @@ namespace Store.BuisnessLogic.Services
         private readonly IUserRepository _userRepository;
         private readonly UserManager<User> _userManager;
         private readonly Mapper<User, UserModel> _userModelMapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(IUserRepository userRepository, UserManager<User> userManager)
+        public UserService(IUserRepository userRepository, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _userRepository = userRepository;
             _userManager = userManager;
             _userModelMapper = new Mapper<User, UserModel>();
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<UserModel> GetCurrentAsync(string name)
+        public async Task<UserModel> GetCurrentAsync()
         {
+            var name = _httpContextAccessor.HttpContext.User.Identity.Name;
             var user = await _userManager.FindByNameAsync(name);
             var userModel = _userModelMapper.Map(user);
             userModel.Roles = await _userManager.GetRolesAsync(user) as List<string>;
@@ -51,23 +55,23 @@ namespace Store.BuisnessLogic.Services
             await _userManager.UpdateAsync(user);
         }
 
-        public async Task<BaseModel> EditAsync(UserModel userModel)
+        public async Task<BaseModel> EditAsync(EditProfileModel editProfileModel)
         {
-            var user = await _userManager.FindByIdAsync(userModel.Id.ToString());
+            var user = await _userManager.FindByIdAsync(editProfileModel.Id.ToString());
             if (user == null)
             {
                 var baseModel = new BaseModel();
                 baseModel.Errors.Add("No such user");
                 return baseModel;
             }
-            if (userModel.Password != string.Empty && userModel.Password != null)
+            if (editProfileModel.Password != string.Empty && editProfileModel.Password != null)
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                await _userManager.ResetPasswordAsync(user, token, userModel.Password);
+                await _userManager.ResetPasswordAsync(user, token, editProfileModel.Password);
             }
-            user.FirstName = userModel.FirstName;
-            user.LastName = userModel.LastName;
-            user.Email = userModel.Email;
+            user.FirstName = editProfileModel.FirstName;
+            user.LastName = editProfileModel.LastName;
+            user.Email = editProfileModel.Email;
             var updateResult = await _userManager.UpdateAsync(user);
             var result = new BaseModel();
             if (!updateResult.Succeeded)
@@ -83,7 +87,13 @@ namespace Store.BuisnessLogic.Services
 
         public async Task RemoveAsync(Guid userId)
         {
-            await _userRepository.RemoveAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                return;
+            }
+            user.IsRemoved = true;
+            await _userManager.UpdateAsync(user);
         }
     }
 }

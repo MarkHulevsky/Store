@@ -25,8 +25,7 @@ namespace Store.Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUserOrders()
         {
-            var userName = User.Identity.Name;
-            var currentUser = await _userService.GetCurrentAsync(userName);
+            var currentUser = await _userService.GetCurrentAsync();
             var orders = await _orderService.GetUserOrdersAsync(currentUser.Id);
             return Ok(orders);
         }
@@ -41,10 +40,8 @@ namespace Store.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CartModel cartModel)
         {
-            var userName = User.Identity.Name;
-            var userModel = await _userService.GetCurrentAsync(userName);
-            cartModel.UserId = userModel.Id;
-            var orderModel = await _orderService.CreateAsync(cartModel);
+            var userModel = await _userService.GetCurrentAsync();
+            var orderModel = await _orderService.CreateAsync(cartModel, userModel.Id);
             return Ok(orderModel);
         }
 

@@ -10,6 +10,7 @@ namespace Store.BuisnessLogic.Services.Interfaces
 {
     public interface IPrintingEditionService
     {
+        Task<decimal> GetConvertRateAsync(string currentCurrency, string newCurrency);
         Task<PrintingEditionModel> CreateAsync(PrintingEditionModel printingEditionModel);
         Task RemoveAsync(Guid id);
         Task EditAsync(PrintingEditionModel printigEditionModel);
