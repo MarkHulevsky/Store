@@ -6,7 +6,7 @@ namespace Store.DataAccess.Entities.Base
     public class BaseEntity : IBaseEntity
     {
         private Guid _id;
-        [Key]
+        [ExplicitKey]
         [Computed]
         public Guid Id
         {
