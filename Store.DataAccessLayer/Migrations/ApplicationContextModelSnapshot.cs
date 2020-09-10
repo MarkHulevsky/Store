@@ -163,7 +163,12 @@ namespace Store.DataAccess.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("PrintingEditionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("PrintingEditionId");
 
                     b.ToTable("Authors");
                 });
@@ -438,6 +443,13 @@ namespace Store.DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Store.DataAccess.Entities.Author", b =>
+                {
+                    b.HasOne("Store.DataAccess.Entities.PrintingEdition", null)
+                        .WithMany("Authors")
+                        .HasForeignKey("PrintingEditionId");
                 });
 
             modelBuilder.Entity("Store.DataAccess.Entities.AuthorInPrintingEdition", b =>

@@ -10,8 +10,8 @@ using Store.DataAccess.AppContext;
 namespace Store.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20200903073610_init")]
-    partial class init
+    [Migration("20200910125114_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -165,7 +165,12 @@ namespace Store.DataAccess.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("PrintingEditionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("PrintingEditionId");
 
                     b.ToTable("Authors");
                 });
@@ -440,6 +445,13 @@ namespace Store.DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Store.DataAccess.Entities.Author", b =>
+                {
+                    b.HasOne("Store.DataAccess.Entities.PrintingEdition", null)
+                        .WithMany("Authors")
+                        .HasForeignKey("PrintingEditionId");
                 });
 
             modelBuilder.Entity("Store.DataAccess.Entities.AuthorInPrintingEdition", b =>
