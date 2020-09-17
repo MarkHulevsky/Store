@@ -27,11 +27,11 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             var sortTypeString = string.Empty;
             if (printingEditionRequestDataModel.SortType == SortType.Ascending)
             {
-                sortTypeString = "ASC";
+                sortTypeString = Constants.ASCENDING_SORT_TYPE;
             }
             if (printingEditionRequestDataModel.SortType == SortType.Descending)
             {
-                sortTypeString = "DESC";
+                sortTypeString = Constants.DESCENDING_SORT_TYPE;
             }
             var query = new StringBuilder();
             query.Append($@"SELECT PrintingEditions.Id, PrintingEditions.Currency, PrintingEditions.Description, PrintingEditions.IsRemoved,

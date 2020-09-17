@@ -28,11 +28,11 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             var sortTypeString = string.Empty;
             if (authorRequestDataModel.SortType == SortType.Ascending)
             {
-                sortTypeString = "ASC";
+                sortTypeString = Constants.ASCENDING_SORT_TYPE;
             }
             if (authorRequestDataModel.SortType == SortType.Descending)
             {
-                sortTypeString = "DESC";
+                sortTypeString = Constants.DESCENDING_SORT_TYPE;
             }
 
             var query = $@"SELECT t.Id, t.Name, t.IsRemoved, authorInPrintingEdition.Id,

@@ -24,11 +24,11 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             var sortTypeString = string.Empty;
             if (userRequestDataModel.SortType == SortType.Ascending)
             {
-                sortTypeString = "ASC";
+                sortTypeString = Constants.ASCENDING_SORT_TYPE;
             }
             if (userRequestDataModel.SortType == SortType.Descending)
             {
-                sortTypeString = "DESC";
+                sortTypeString = Constants.DESCENDING_SORT_TYPE;
             }
             var query = new StringBuilder();
             query.Append($@"SELECT * FROM {tableName} WHERE (FirstName LIKE '%{userRequestDataModel.SearchString}%'
