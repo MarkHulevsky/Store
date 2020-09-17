@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Dapper.Contrib.Extensions;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Store.DataAccess.Entities;
 using Store.DataAccess.Filters;
@@ -49,30 +50,26 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                         LEFT JOIN {Constants.PRINTING_EDITIONS_TABLE_NAME} ON {Constants.ORDER_ITEMS_TABLE_NAME}.PrintingEditionId 
                             = {Constants.PRINTING_EDITIONS_TABLE_NAME}.Id";
 
-            var orderDictionary = new Dictionary<Guid, Order>();
             var orders = await _dbContext.QueryAsync<Order, User, OrderItem, PrintingEdition, Order>(
                 query, (order, user, orderItem, printingEdition) =>
                 {
-                    var orderEntry = new Order();
-                    if (!orderDictionary.TryGetValue(order.Id, out orderEntry))
-                    {
-                        orderEntry = order;
-                        order.OrderItems = new List<OrderItem>();
-                        orderDictionary.Add(order.Id, orderEntry);
-                    }
-                    if (printingEdition != null)
+                    order.User = user;
+                    if (orderItem != null)
                     {
                         orderItem.PrintingEdition = printingEdition;
                     }
-                    orderEntry.User = user;
-                    if (orderItem != null)
-                    {
-                        orderEntry.OrderItems.Add(orderItem);
-                    }
-                    return orderEntry;
+                    order.OrderItems.Add(orderItem);
+                    return order;
                 });
 
-            var querybaleOrders = orders.Distinct().AsQueryable();
+            var querybaleOrders = orders
+                .GroupBy(order => order.Id)
+                .Select(group =>
+                {
+                    var result = group.FirstOrDefault();
+                    result.OrderItems = group.Select(order => order.OrderItems.SingleOrDefault()).ToList();
+                    return result;
+                });
 
             var subquery = new List<Order>().AsQueryable();
             foreach (var status in orderRequestDataModel.OrderStatuses)

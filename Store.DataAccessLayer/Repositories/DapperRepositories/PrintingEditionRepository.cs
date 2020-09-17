@@ -74,23 +74,23 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 	                        	 FROM AuthorInPrintingEditions
 	                        	 LEFT JOIN Authors ON AuthorInPrintingEditions.AuthorId = Authors.Id
 	                        ) AS AuthorInPrintingEditions ON PrintingEditions.Id = AuthorInPrintingEditions.PrintingEditionId");
-            var printingEditionDictionary = new Dictionary<Guid, PrintingEdition>();
             var printingEditions = await _dbContext.QueryAsync<PrintingEdition, Author, PrintingEdition>(
                 query.ToString(), (printingEdition, author) =>
                 {
-                    var printingEditionEntry = new PrintingEdition();
-                    if (!printingEditionDictionary.TryGetValue(printingEdition.Id, out printingEditionEntry))
-                    {
-                        printingEditionEntry = printingEdition;
-                        printingEditionDictionary.Add(printingEditionEntry.Id, printingEditionEntry);
-                    }
                     if (author != null)
                     {
-                        printingEditionEntry.Authors.Add(author);
+                        printingEdition.Authors.Add(author);
                     }
-                    return printingEditionEntry;
+                    return printingEdition;
                 });
-            printingEditions = printingEditions.Distinct().ToList();
+            printingEditions = printingEditions
+                .GroupBy(printingEdition => printingEdition.Id)
+                .Select(group =>
+                {
+                    var result = group.FirstOrDefault();
+                    result.Authors = group.Select(printingEdition => printingEdition.Authors.SingleOrDefault()).ToList();
+                    return result;
+                });
             query.Clear();
             query.Append($"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0");
             var totalCount = await _dbContext.QueryFirstOrDefaultAsync<int>(query.ToString());

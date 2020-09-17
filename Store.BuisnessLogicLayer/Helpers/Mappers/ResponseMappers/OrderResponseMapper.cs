@@ -35,6 +35,10 @@ namespace Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers
                 var orderItemModels = new List<OrderItemModel>();
                 foreach (var orderItem in order.OrderItems)
                 {
+                    if (orderItem == null)
+                    {
+                        continue;
+                    }
                     var orderItemModel = _orderItemModelMapper.Map(orderItem);
                     orderItemModel.PrintingEdition = _printingEditionModelMapper.Map(orderItem.PrintingEdition);
                     orderItemModels.Add(orderItemModel);

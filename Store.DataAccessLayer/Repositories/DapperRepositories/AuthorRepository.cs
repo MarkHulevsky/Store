@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Store.DataAccess.Entities;
 using Store.DataAccess.Filters;
@@ -56,24 +57,23 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 	                          ) AS authorInPrintingEdition ON t.Id = authorInPrintingEdition.AuthorId
 	                        ORDER BY t.Id {sortTypeString}, authorInPrintingEdition.Id";
 
-            var authorsDictionary = new Dictionary<Guid, Author>();
-            var authors = await _dbContext.QueryAsync<Author, AuthorInPrintingEdition, PrintingEdition, Author>(
-                query, (author, authorInPrintingEdition, printingEdition) =>
+            var authors = await _dbContext.QueryAsync<Author, PrintingEdition, Author>(
+                query, (author, printingEdition) =>
                 {
-                    var authorEntry = new Author();
-                    if (!authorsDictionary.TryGetValue(author.Id, out authorEntry))
-                    {
-                        authorEntry = author;
-                        authorsDictionary.Add(authorEntry.Id, authorEntry);
-                    }
                     if (printingEdition != null)
                     {
-                        authorEntry.PrintingEditions.Add(printingEdition);
+                        author.PrintingEditions.Add(printingEdition);
                     }
-                    return authorEntry;
-                },
-                splitOn: "Id, Id, aInPeId");
-            authors = authors.Distinct();
+                    return author;
+                });
+            authors = authors
+                .GroupBy(author => author.Id)
+                .Select(group =>
+                {
+                    var result = group.FirstOrDefault();
+                    result.PrintingEditions = group.Select(author => author.PrintingEditions.SingleOrDefault()).ToList();
+                    return result;
+                });
             query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved != 1";
             var totalCount = await _dbContext.QueryFirstOrDefaultAsync<int>(query.ToString());
             var result = new AuthorResponseDataModel

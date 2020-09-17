@@ -62,6 +62,10 @@ namespace Store.BuisnessLogic.Services
         {
             var printingEdition = _printingEditionMapper.Map(printingEditionModel);
             printingEdition = await _printingEditionRepository.CreateAsync(printingEdition);
+            if (printingEditionModel?.Authors.Count != 0)
+            {
+                await AddToAuthorsAsync(printingEdition.Id, printingEditionModel.Authors);
+            }
             printingEditionModel = _printingEditionModelMapper.Map(printingEdition);
             return printingEditionModel;
         }
@@ -77,7 +81,7 @@ namespace Store.BuisnessLogic.Services
             await _printingEditionRepository.UpdateAsync(printingEdition);
             if (printingEditionModel.Authors != null)
             {
-                await AddToAuthorsAsync(printingEditionModel, printingEditionModel.Authors);
+                await AddToAuthorsAsync(printingEdition.Id, printingEditionModel.Authors);
             }
         }
 
@@ -89,7 +93,7 @@ namespace Store.BuisnessLogic.Services
             return printingEditionResponseModel;
         }
 
-        public async Task AddToAuthorsAsync(PrintingEditionModel printingEditionModel, List<AuthorModel> authorModels)
+        private async Task AddToAuthorsAsync(Guid printingEditionId, List<AuthorModel> authorModels)
         {
             var authors = ListMapper<Author, AuthorModel>.Map(authorModels);
             var authorInPrintingEditions = new List<AuthorInPrintingEdition>();
@@ -98,7 +102,7 @@ namespace Store.BuisnessLogic.Services
                 var authorInPrintingEdition = new AuthorInPrintingEdition
                 {
                     AuthorId = author.Id,
-                    PrintingEditionId = printingEditionModel.Id,
+                    PrintingEditionId = printingEditionId,
                 };
                 authorInPrintingEditions.Add(authorInPrintingEdition);
             }

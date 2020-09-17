@@ -28,7 +28,7 @@ namespace Store.DataAccess.Repositories.Base
 
         public virtual async Task<T> CreateAsync(T model)
         {
-            await _dbContext.InsertAsync<T>(model);
+            await _dbContext.InsertAsync(model);
             return model;
         }
 
