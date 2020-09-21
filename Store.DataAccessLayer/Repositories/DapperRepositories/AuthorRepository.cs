@@ -21,16 +21,6 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public async Task<AuthorResponseDataModel> FilterAsync(AuthorRequestDataModel authorRequestDataModel)
         {
-            var sortTypeString = string.Empty;
-            if (authorRequestDataModel.SortType == SortType.Ascending)
-            {
-                sortTypeString = Constants.ASCENDING_SORT_TYPE;
-            }
-            if (authorRequestDataModel.SortType == SortType.Descending)
-            {
-                sortTypeString = Constants.DESCENDING_SORT_TYPE;
-            }
-
             var query = $@"SELECT t.Id, t.Name, t.IsRemoved, authorInPrintingEdition.Id,
 	                        authorInPrintingEdition.AuthorId, authorInPrintingEdition.PrintingEditionId,
 	                        authorInPrintingEdition.aInPEId, authorInPrintingEdition.Currency,
@@ -41,7 +31,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 	                        	  SELECT a.Id, a.IsRemoved, a.Name
 	                        	  FROM {tableName} AS a
 	                        	  WHERE a.IsRemoved != 1
-	                        	  ORDER BY a.Id {sortTypeString}
+	                        	  ORDER BY a.Id {authorRequestDataModel.SortType.ToString().ToUpper()}
 	                        	  OFFSET {authorRequestDataModel.Paging.CurrentPage * authorRequestDataModel.Paging.ItemsCount} ROWS 
                                   FETCH NEXT {authorRequestDataModel.Paging.ItemsCount} ROWS ONLY
 	                          ) AS t
@@ -51,7 +41,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 	                        	  FROM {Constants.AUTHOR_IN_PRINTING_EDITIONS_TABLE_NAME} AS aInPe
 	                        	  LEFT JOIN {Constants.PRINTING_EDITIONS_TABLE_NAME} AS p ON aInPe.PrintingEditionId = p.Id
 	                          ) AS authorInPrintingEdition ON t.Id = authorInPrintingEdition.AuthorId
-	                        ORDER BY t.Id {sortTypeString}, authorInPrintingEdition.Id";
+	                        ORDER BY t.Id {authorRequestDataModel.SortType.ToString().ToUpper()}, authorInPrintingEdition.Id";
 
             var authors = await _dbContext.QueryAsync<Author, PrintingEdition, Author>(
                 query, (author, printingEdition) =>

@@ -21,15 +21,6 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public async Task<UserResponseDataModel> FilterAsync(UserRequestDataModel userRequestDataModel)
         {
-            var sortTypeString = string.Empty;
-            if (userRequestDataModel.SortType == SortType.Ascending)
-            {
-                sortTypeString = Constants.ASCENDING_SORT_TYPE;
-            }
-            if (userRequestDataModel.SortType == SortType.Descending)
-            {
-                sortTypeString = Constants.DESCENDING_SORT_TYPE;
-            }
             var query = new StringBuilder();
             query.Append($@"SELECT * FROM {tableName} WHERE (FirstName LIKE '%{userRequestDataModel.SearchString}%'
                             OR LastName LIKE '%{userRequestDataModel.SearchString}%') AND IsRemoved = 0 ");
@@ -37,7 +28,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             {
                 userRequestDataModel.SortPropertyName = "Email";
             }
-            query.Append($"ORDER BY {userRequestDataModel.SortPropertyName} {sortTypeString} ");
+            query.Append($"ORDER BY {userRequestDataModel.SortPropertyName} {userRequestDataModel.SortType.ToString().ToUpper()} ");
             query.Append($@"OFFSET {userRequestDataModel.Paging.CurrentPage * userRequestDataModel.Paging.ItemsCount} ROWS 
                             FETCH NEXT {userRequestDataModel.Paging.ItemsCount} ROWS ONLY");
             var users = await _dbContext.QueryAsync<User>(query.ToString());

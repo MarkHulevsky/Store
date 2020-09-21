@@ -6,7 +6,7 @@ namespace Store.DataAccess.Filters
 {
     static class OrderByExtention
     {
-        private const string DESCENDING_SORT_TYPE = "Descending";
+        private const string DESCENDING_SORT_TYPE = "Desc";
         public static IQueryable<TSource> OrderBy<TSource>(this IQueryable<TSource> query, string key, string sortType)
         {
             if (string.IsNullOrWhiteSpace(key))

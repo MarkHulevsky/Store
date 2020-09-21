@@ -2,6 +2,7 @@
 using Store.BuisnessLogic.Helpers.Mappers.ListMappers;
 using Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers;
 using Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers;
+using Store.BuisnessLogic.Models.Base;
 using Store.BuisnessLogic.Models.Filters;
 using Store.BuisnessLogic.Models.Filters.ResponseFilters;
 using Store.BuisnessLogic.Models.Orders;
@@ -25,6 +26,7 @@ namespace Store.BuisnessLogic.Services
         private readonly Mapper<Order, OrderModel> _orderModelMapper;
 
         private const string CHARGE_SUCCEEDED = "succeeded";
+        private const string CHARGE_IS_NOT_SUCCEEDED_ERROR = "Charge isn't succeeded";
 
         public OrderService(IPaymentRepository paymentRepository,
             IOrderItemRepository orderItemRepository, IOrderRepository orderRepository)
@@ -35,7 +37,7 @@ namespace Store.BuisnessLogic.Services
             _orderModelMapper = new Mapper<Order, OrderModel>();
         }
 
-        public async Task PayOrderAsync(PaymentModel paymentModel)
+        public async Task<BaseModel> PayOrderAsync(PaymentModel paymentModel)
         {
             var customerService = new CustomerService();
             var chargeService = new ChargeService();
@@ -59,7 +61,13 @@ namespace Store.BuisnessLogic.Services
 
             if (charge.Status != CHARGE_SUCCEEDED)
             {
-                return;
+                return new BaseModel
+                {
+                    Errors = new List<string>
+                    {
+                        CHARGE_IS_NOT_SUCCEEDED_ERROR
+                    }
+                };
             }
             var payment = new Payment()
             {
@@ -67,6 +75,7 @@ namespace Store.BuisnessLogic.Services
             };
             payment = await _paymentRepository.CreateAsync(payment);
             await _orderRepository.AddToPaymentAsync(payment.Id, paymentModel.OrderId);
+            return new BaseModel();
         }
 
         public async Task<OrderResponseModel> FilterAsync(OrderRequestModel orderRequestModel)

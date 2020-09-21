@@ -21,8 +21,8 @@
         public enum SortType
         {
             None = 0,
-            Ascending = 1,
-            Descending = 2
+            Asc = 1,
+            Desc = 2
         }
         public enum PrintingEditionType
         {

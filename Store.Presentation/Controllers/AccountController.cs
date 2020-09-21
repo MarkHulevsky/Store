@@ -59,13 +59,9 @@ namespace Store.Presentation.Controllers
                 return Ok(userModel);
             }
             var result = await _accountService.RegisterAsync(registerModel);
-            if (!result.Succeeded)
+            if (result.Errors.Count != 0)
             {
-                foreach (var error in result.Errors)
-                {
-                    userModel.Errors.Add(error.Description);
-                }
-                return Ok(userModel);
+                return Ok(result);
             }
             await _accountService.SendConfirmUrlAsync(registerModel.Email);
             return Ok(userModel);

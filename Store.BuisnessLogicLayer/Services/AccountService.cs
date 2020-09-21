@@ -9,6 +9,7 @@ using Store.BuisnessLogic.Models.Users;
 using Store.BuisnessLogic.Services.Interfaces;
 using Store.DataAccess.Entities;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Store.BuisnessLogic.Services
@@ -56,19 +57,16 @@ namespace Store.BuisnessLogic.Services
                 return null;
             }
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            string newPassword = PasswordGenerator.GeneratePassword();
+            var newPassword = PasswordGenerator.GeneratePassword();
             var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
             if (!result.Succeeded)
             {
-                var errors = new List<string>();
+                var baseModel = new BaseModel();
                 foreach (var error in result.Errors)
                 {
-                    errors.Add(error.Description);
+                    baseModel.Errors.Add(error.Description);
                 }
-                return new BaseModel
-                {
-                    Errors = errors
-                };
+                return baseModel;
             }
             var subject = RESET_PASSWORD_SUBJECT;
             var body = $"{RESET_PASSWORD_BODY} {newPassword}";
@@ -84,7 +82,7 @@ namespace Store.BuisnessLogic.Services
                 return null;
             }
             var roles = await _userManager.GetRolesAsync(user);
-            return roles as List<string>;
+            return roles.ToList();
         }
 
         public async Task<UserModel> FindByEmailAsync(string email)
@@ -98,16 +96,21 @@ namespace Store.BuisnessLogic.Services
             return userModel;
         }
 
-        public async Task<IdentityResult> RegisterAsync(RegisterModel registerModel)
+        public async Task<BaseModel> RegisterAsync(RegisterModel registerModel)
         {
             var user = _userMapper.Map(registerModel);
             user.UserName = registerModel.Email;
             var result = await _userManager.CreateAsync(user, user.Password);
-            if (result.Succeeded)
+            var baseModel = new BaseModel();
+            if (!result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, USER_ROLE_NAME);
+                foreach (var error in result.Errors)
+                {
+                    baseModel.Errors.Add(error.Description);
+                }
             }
-            return result;
+            await _userManager.AddToRoleAsync(user, USER_ROLE_NAME);
+            return baseModel;
         }
 
         public async Task SendConfirmUrlAsync(string email)
@@ -123,25 +126,23 @@ namespace Store.BuisnessLogic.Services
 
         public async Task<BaseModel> ConfirmEmail(string email, string token)
         {
+            var baseModel = new BaseModel();
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                return null;
+                baseModel.Errors.Add(USER_NOT_FOUND_ERROR);
+                return baseModel;
             }
             var result = await _userManager.ConfirmEmailAsync(user, token);
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                return null;
+                foreach (var error in result.Errors)
+                {
+                    baseModel.Errors.Add(error.Description);
+                }
+                return baseModel;
             }
-            var errors = new List<string>();
-            foreach (var error in result.Errors)
-            {
-                errors.Add(error.Description);
-            }
-            return new BaseModel
-            {
-                Errors = errors
-            };
+            return baseModel;
         }
 
         public async Task<BaseModel> LoginAsync(LoginModel loginModel)

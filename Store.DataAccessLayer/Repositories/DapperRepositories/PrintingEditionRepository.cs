@@ -22,15 +22,6 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public async Task<PrintingEditionResponseDataModel> FilterAsync(PrintingEditionsRequestDataModel printingEditionRequestDataModel)
         {
-            var sortTypeString = string.Empty;
-            if (printingEditionRequestDataModel.SortType == SortType.Ascending)
-            {
-                sortTypeString = Constants.ASCENDING_SORT_TYPE;
-            }
-            if (printingEditionRequestDataModel.SortType == SortType.Descending)
-            {
-                sortTypeString = Constants.DESCENDING_SORT_TYPE;
-            }
             var query = new StringBuilder();
             query.Append($@"SELECT PrintingEditions.Id, PrintingEditions.Currency, PrintingEditions.Description, PrintingEditions.IsRemoved,
 	                        PrintingEditions.Price, PrintingEditions.CreationDate, PrintingEditions.Title, PrintingEditions.Type,
@@ -62,7 +53,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                 query.Remove(query.Length - 3, 3);
                 query.Append(")");
             }
-            query.Append($@"ORDER BY Price {sortTypeString}
+            query.Append($@"ORDER BY Price {printingEditionRequestDataModel.SortType.ToString().ToUpper()}
 	                        OFFSET {printingEditionRequestDataModel.Paging.ItemsCount * printingEditionRequestDataModel.Paging.CurrentPage} ROWS
                             FETCH NEXT {printingEditionRequestDataModel.Paging.ItemsCount} ROWS ONLY
 	                        ) AS PrintingEditions

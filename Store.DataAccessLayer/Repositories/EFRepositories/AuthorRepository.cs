@@ -54,7 +54,8 @@ namespace Store.DataAccess.Repositories.EFRepositories
 
         public async Task<Author> FindAuthorByNameAsync(string name)
         {
-            return await DbSet.FirstOrDefaultAsync(a => a.Name == name);
+            var author = await DbSet.FirstOrDefaultAsync(a => a.Name == name);
+            return author;
         }
     }
 }

@@ -10,7 +10,7 @@ using Store.BuisnessLogic.Models.Users;
 using Store.BuisnessLogic.Services.Interfaces;
 using Store.DataAccess.Entities;
 using Store.DataAccess.Repositories.Interfaces;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Store.BuisnessLogic.Services
@@ -35,7 +35,8 @@ namespace Store.BuisnessLogic.Services
             var name = _httpContextAccessor.HttpContext.User.Identity.Name;
             var user = await _userManager.FindByNameAsync(name);
             var userModel = _userModelMapper.Map(user);
-            userModel.Roles = await _userManager.GetRolesAsync(user) as List<string>;
+            var roles = await _userManager.GetRolesAsync(user);
+            userModel.Roles = roles.ToList();
             return userModel;
         }
 
