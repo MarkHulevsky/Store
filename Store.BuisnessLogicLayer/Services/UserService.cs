@@ -10,7 +10,6 @@ using Store.BuisnessLogic.Models.Users;
 using Store.BuisnessLogic.Services.Interfaces;
 using Store.DataAccess.Entities;
 using Store.DataAccess.Repositories.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -85,9 +84,9 @@ namespace Store.BuisnessLogic.Services
             return result;
         }
 
-        public async Task RemoveAsync(Guid userId)
+        public async Task RemoveAsync(string userId)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return;

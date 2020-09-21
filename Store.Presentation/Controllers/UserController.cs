@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Store.BuisnessLogic.Helpers;
 using Store.BuisnessLogic.Models.Filters;
 using Store.BuisnessLogic.Models.Users;
 using Store.BuisnessLogic.Services.Interfaces;
-using System;
 using System.Threading.Tasks;
 
 namespace Store.Presentation.Controllers
@@ -48,8 +46,7 @@ namespace Store.Presentation.Controllers
         [HttpDelete]
         public async Task Delete(string userId)
         {
-            var id = Guid.Parse(userId);
-            await _userService.RemoveAsync(id);
+            await _userService.RemoveAsync(userId);
         }
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

@@ -82,19 +82,13 @@ namespace Store.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> SignIn([FromBody] LoginModel loginModel)
         {
-            var userModel = new UserModel
-            {
-                Email = loginModel.Email,
-                Password = loginModel.Password
-            };
-            var result = await _accountService.LoginAsync(userModel);
-
+            var result = await _accountService.LoginAsync(loginModel);
             if (result.Errors.Count != 0)
             {
                 return Ok(result);
             }
-            userModel = await _accountService.FindByEmailAsync(userModel.Email);
-            userModel.Roles = await _accountService.GetRolesAsync(userModel.Email);
+            var userModel = await _accountService.FindByEmailAsync(loginModel.Email);
+            userModel.Roles = await _accountService.GetRolesAsync(loginModel.Email);
             var jwtToken = new JwtTokenModel
             {
                 AccessToken = await _jwtProvider.GetTokenAsync(userModel),

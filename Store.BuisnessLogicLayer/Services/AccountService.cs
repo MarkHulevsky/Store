@@ -35,7 +35,7 @@ namespace Store.BuisnessLogic.Services
         private readonly Mapper<RegisterModel, User> _userMapper;
 
         public AccountService(IEmailProvider emailProvider,
-            UserManager<User> userManager, SignInManager<User> signInManager, IUrlHelper urlHelper, 
+            UserManager<User> userManager, SignInManager<User> signInManager, IUrlHelper urlHelper,
             IHttpContextAccessor httpContextAccessor)
         {
             _emailProvider = emailProvider;
@@ -144,9 +144,10 @@ namespace Store.BuisnessLogic.Services
             };
         }
 
-        public async Task<BaseModel> LoginAsync(UserModel userModel)
+        public async Task<BaseModel> LoginAsync(LoginModel loginModel)
         {
-            var user = await _userManager.FindByEmailAsync(userModel.Email);
+            var userModel = new UserModel();
+            var user = await _userManager.FindByEmailAsync(loginModel.Email);
             if (user == null)
             {
                 userModel.Errors.Add(USER_NOT_FOUND_ERROR);
@@ -167,7 +168,7 @@ namespace Store.BuisnessLogic.Services
             {
                 return userModel;
             }
-            user.Password = userModel.Password;
+            user.Password = loginModel.Password;
             var result = await _signInManager.PasswordSignInAsync(user, user.Password, false, false);
             if (!result.Succeeded)
             {

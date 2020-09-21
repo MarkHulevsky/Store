@@ -7,7 +7,6 @@ namespace Store.DataAccess.Entities.Base
     {
         private Guid _id;
         [ExplicitKey]
-        [Computed]
         public Guid Id
         {
             get

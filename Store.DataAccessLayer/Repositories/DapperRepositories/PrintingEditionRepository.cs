@@ -6,8 +6,6 @@ using Store.DataAccess.Filters.ResponseFulters;
 using Store.DataAccess.Models.Constants;
 using Store.DataAccess.Repositories.Base;
 using Store.DataAccess.Repositories.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,13 +41,13 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 	                        		PrintingEditions.Price, PrintingEditions.CreationDate, PrintingEditions.Title, PrintingEditions.Type
 	                        	FROM PrintingEditions WHERE (PrintingEditions.Title LIKE '%{printingEditionRequestDataModel.SearchString}%'
                                     AND PrintingEditions.IsRemoved != 1) ");
-            
+
             if (printingEditionRequestDataModel.MaxPrice > printingEditionRequestDataModel.MinPrice
                     && printingEditionRequestDataModel.MaxPrice != printingEditionRequestDataModel.MinPrice)
             {
                 query.Append($@"AND (PrintingEditions.Price < {printingEditionRequestDataModel.MaxPrice} 
                                 AND PrintingEditions.Price > {printingEditionRequestDataModel.MinPrice}) ");
-                
+
             }
             if (printingEditionRequestDataModel.Types.Count != 0)
             {

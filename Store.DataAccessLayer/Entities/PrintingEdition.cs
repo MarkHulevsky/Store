@@ -1,7 +1,6 @@
 ﻿using Dapper.Contrib.Extensions;
 using Store.DataAccess.Entities.Base;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using static Shared.Enums.Enums;
 
 namespace Store.DataAccess.Entities

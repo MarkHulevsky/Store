@@ -41,7 +41,8 @@ namespace Store.Presentation
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-            services.AddScoped(serviceProvider => {
+            services.AddScoped(serviceProvider =>
+            {
                 var actionContext = serviceProvider.GetRequiredService<IActionContextAccessor>().ActionContext;
                 var factory = serviceProvider.GetRequiredService<IUrlHelperFactory>();
                 return factory.GetUrlHelper(actionContext);

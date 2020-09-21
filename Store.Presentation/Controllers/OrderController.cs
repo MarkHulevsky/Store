@@ -5,7 +5,6 @@ using Store.BuisnessLogic.Models.Filters;
 using Store.BuisnessLogic.Models.Orders;
 using Store.BuisnessLogic.Models.Payments;
 using Store.BuisnessLogic.Services.Interfaces;
-using System;
 using System.Threading.Tasks;
 
 namespace Store.Presentation.Controllers
@@ -56,8 +55,7 @@ namespace Store.Presentation.Controllers
         [HttpDelete]
         public async Task Remove([FromBody] string orderId)
         {
-            var id = Guid.Parse(orderId);
-            await _orderService.RemoveAsync(id);
+            await _orderService.RemoveAsync(orderId);
         }
     }
 }

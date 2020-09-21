@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Store.BuisnessLogic.Models.Authors;
 using Store.BuisnessLogic.Models.Filters;
 using Store.BuisnessLogic.Services.Interfaces;
-using System;
 using System.Threading.Tasks;
 
 namespace Store.Presentation.Controllers
@@ -48,7 +47,7 @@ namespace Store.Presentation.Controllers
         [HttpDelete]
         public async Task Delete(string id)
         {
-            await _authorService.RemoveAsync(Guid.Parse(id));
+            await _authorService.RemoveAsync(id);
         }
 
 

@@ -43,8 +43,9 @@ namespace Store.BuisnessLogic.Services
             await _authorRepository.CreateAsync(author);
         }
 
-        public async Task RemoveAsync(Guid id)
+        public async Task RemoveAsync(string authorId)
         {
+            var id = Guid.Parse(authorId);
             await _authorRepository.RemoveAsync(id);
         }
 

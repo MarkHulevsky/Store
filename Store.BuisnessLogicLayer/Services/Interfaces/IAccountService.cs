@@ -15,7 +15,7 @@ namespace Store.BuisnessLogic.Services.Interfaces
         Task<IdentityResult> RegisterAsync(RegisterModel userModel);
         Task SendConfirmUrlAsync(string email);
         Task<BaseModel> ConfirmEmail(string userEmail, string token);
-        Task<BaseModel> LoginAsync(UserModel userModel);
+        Task<BaseModel> LoginAsync(LoginModel userModel);
         Task LogoutAsync();
     }
 }
