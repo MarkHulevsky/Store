@@ -96,24 +96,25 @@ namespace Store.BuisnessLogic.Services
             return userModel;
         }
 
-        public async Task<BaseModel> RegisterAsync(RegisterModel registerModel)
+        public async Task<UserModel> RegisterAsync(RegisterModel registerModel)
         {
             var user = _userMapper.Map(registerModel);
             user.UserName = registerModel.Email;
             var result = await _userManager.CreateAsync(user, user.Password);
-            var baseModel = new BaseModel();
+            var userModel = new UserModel();
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
                 {
-                    baseModel.Errors.Add(error.Description);
+                    userModel.Errors.Add(error.Description);
                 }
             }
             await _userManager.AddToRoleAsync(user, USER_ROLE_NAME);
-            return baseModel;
+            await SendConfirmUrlAsync(registerModel.Email);
+            return userModel;
         }
 
-        public async Task SendConfirmUrlAsync(string email)
+        private async Task SendConfirmUrlAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -145,7 +146,7 @@ namespace Store.BuisnessLogic.Services
             return baseModel;
         }
 
-        public async Task<BaseModel> LoginAsync(LoginModel loginModel)
+        public async Task<UserModel> LoginAsync(LoginModel loginModel)
         {
             var userModel = new UserModel();
             var user = await _userManager.FindByEmailAsync(loginModel.Email);
@@ -175,6 +176,8 @@ namespace Store.BuisnessLogic.Services
             {
                 userModel.Errors.Add(INCORRECT_LOGIN_DATA_ERROR);
             }
+            userModel = _userModelMapper.Map(user);
+            userModel.Roles = await GetRolesAsync(userModel.Email);
             return userModel;
         }
 

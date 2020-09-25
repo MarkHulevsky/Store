@@ -35,13 +35,7 @@ namespace Store.Presentation.Controllers
         [HttpPost]
         public IActionResult RefreshToken([FromBody] JwtTokenModel refreshTokenModel)
         {
-            var principal = _jwtProvider.GetPrincipalFromExpiredToken(refreshTokenModel.AccessToken);
-            var jwtToken = new JwtTokenModel
-            {
-                AccessToken = _jwtProvider.GenerateJwtTokenWithClaims(principal.Claims),
-                RefreshToken = _jwtProvider.GenerateRefreshToken()
-            };
-            _jwtProvider.SetCookieTokenResponse(jwtToken);
+            var jwtToken = _jwtProvider.RefreshToken(refreshTokenModel);
             return Ok(jwtToken);
         }
 
@@ -59,12 +53,7 @@ namespace Store.Presentation.Controllers
                 return Ok(userModel);
             }
             var result = await _accountService.RegisterAsync(registerModel);
-            if (result.Errors.Count != 0)
-            {
-                return Ok(result);
-            }
-            await _accountService.SendConfirmUrlAsync(registerModel.Email);
-            return Ok(userModel);
+            return Ok(result);
         }
 
         [HttpGet]
@@ -78,19 +67,12 @@ namespace Store.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> SignIn([FromBody] LoginModel loginModel)
         {
-            var result = await _accountService.LoginAsync(loginModel);
-            if (result.Errors.Count != 0)
+            var userModel = await _accountService.LoginAsync(loginModel);
+            if (userModel.Errors.Count != 0)
             {
-                return Ok(result);
+                return Ok(userModel);
             }
-            var userModel = await _accountService.FindByEmailAsync(loginModel.Email);
-            userModel.Roles = await _accountService.GetRolesAsync(loginModel.Email);
-            var jwtToken = new JwtTokenModel
-            {
-                AccessToken = await _jwtProvider.GetTokenAsync(userModel),
-                RefreshToken = _jwtProvider.GenerateRefreshToken()
-            };
-            _jwtProvider.SetCookieTokenResponse(jwtToken);
+            await _jwtProvider.SetTokenAsync(userModel);
             return Ok(userModel);
         }
 

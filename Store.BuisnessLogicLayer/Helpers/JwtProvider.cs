@@ -32,13 +32,35 @@ namespace Store.BuisnessLogic.Helpers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public void SetCookieTokenResponse(JwtTokenModel jwtToken)
+        private void SetCookieTokenResponse(JwtTokenModel jwtToken)
         {
             _httpContextAccessor.HttpContext.Response.Cookies.Append(ACCESS_TOKEN_NAME, jwtToken.AccessToken);
             _httpContextAccessor.HttpContext.Response.Cookies.Append(REFRESH_TOKEN_NAME, jwtToken.RefreshToken);
         }
 
-        public string GenerateRefreshToken()
+        public async Task SetTokenAsync(UserModel userModel)
+        {
+            var jwtTokenModel = new JwtTokenModel
+            {
+                AccessToken = await GetTokenAsync(userModel),
+                RefreshToken = GenerateRefreshToken()
+            };
+            SetCookieTokenResponse(jwtTokenModel);
+        }
+
+        public JwtTokenModel RefreshToken(JwtTokenModel refreshTokenModel)
+        {
+            var principal = GetPrincipalFromExpiredToken(refreshTokenModel.AccessToken);
+            var jwtToken = new JwtTokenModel
+            {
+                AccessToken = GenerateJwtTokenWithClaims(principal.Claims),
+                RefreshToken = GenerateRefreshToken()
+            };
+            SetCookieTokenResponse(jwtToken);
+            return jwtToken;
+        }
+
+        private string GenerateRefreshToken()
         {
             string refreshToken = string.Empty;
             var randomNumber = new byte[32];
@@ -50,7 +72,7 @@ namespace Store.BuisnessLogic.Helpers
             return refreshToken;
         }
 
-        public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
         {
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -75,7 +97,7 @@ namespace Store.BuisnessLogic.Helpers
             return principal;
         }
 
-        public async Task<string> GetTokenAsync(UserModel userModel)
+        private async Task<string> GetTokenAsync(UserModel userModel)
         {
             var user = await _accountService.FindByEmailAsync(userModel.Email);
 
@@ -105,7 +127,7 @@ namespace Store.BuisnessLogic.Helpers
             return new JwtSecurityTokenHandler().WriteToken(accessToken);
         }
 
-        public string GenerateJwtTokenWithClaims(IEnumerable<Claim> claims)
+        private string GenerateJwtTokenWithClaims(IEnumerable<Claim> claims)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("JwtSettings")["Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
