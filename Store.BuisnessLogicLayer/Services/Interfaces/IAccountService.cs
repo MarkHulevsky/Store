@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Store.BuisnessLogic.Models.Account;
+﻿using Store.BuisnessLogic.Models.Account;
 using Store.BuisnessLogic.Models.Base;
 using Store.BuisnessLogic.Models.Users;
 using System.Collections.Generic;

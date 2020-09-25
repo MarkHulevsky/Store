@@ -34,10 +34,11 @@ namespace Store.BuisnessLogic.Services
         private readonly SignInManager<User> _signInManager;
         private readonly Mapper<User, UserModel> _userModelMapper;
         private readonly Mapper<RegisterModel, User> _userMapper;
+        private readonly IJwtProvider _jwtProvider;
 
         public AccountService(IEmailProvider emailProvider,
             UserManager<User> userManager, SignInManager<User> signInManager, IUrlHelper urlHelper,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor, IJwtProvider jwtProvider)
         {
             _emailProvider = emailProvider;
             _userManager = userManager;
@@ -46,6 +47,7 @@ namespace Store.BuisnessLogic.Services
             _httpContextAccessor = httpContextAccessor;
             _userModelMapper = new Mapper<User, UserModel>();
             _userMapper = new Mapper<RegisterModel, User>();
+            _jwtProvider = jwtProvider;
         }
 
         public async Task<BaseModel> ResetPasswordAsync(string email)
@@ -178,6 +180,7 @@ namespace Store.BuisnessLogic.Services
             }
             userModel = _userModelMapper.Map(user);
             userModel.Roles = await GetRolesAsync(userModel.Email);
+            _jwtProvider.SetToken(userModel);
             return userModel;
         }
 

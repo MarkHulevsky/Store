@@ -5,14 +5,12 @@ using Microsoft.IdentityModel.Tokens;
 using Store.BuisnessLogic.Helpers.Interfaces;
 using Store.BuisnessLogic.Models.Token;
 using Store.BuisnessLogic.Models.Users;
-using Store.BuisnessLogic.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Store.BuisnessLogic.Helpers
 {
@@ -21,13 +19,11 @@ namespace Store.BuisnessLogic.Helpers
         private const string ACCESS_TOKEN_NAME = "accessToken";
         private const string REFRESH_TOKEN_NAME = "refreshToken";
 
-        private readonly IAccountService _accountService;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public JwtProvider(IAccountService accountService, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public JwtProvider(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
-            _accountService = accountService;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -38,11 +34,11 @@ namespace Store.BuisnessLogic.Helpers
             _httpContextAccessor.HttpContext.Response.Cookies.Append(REFRESH_TOKEN_NAME, jwtToken.RefreshToken);
         }
 
-        public async Task SetTokenAsync(UserModel userModel)
+        public void SetToken(UserModel userModel)
         {
             var jwtTokenModel = new JwtTokenModel
             {
-                AccessToken = await GetTokenAsync(userModel),
+                AccessToken = GetTokenAsync(userModel),
                 RefreshToken = GenerateRefreshToken()
             };
             SetCookieTokenResponse(jwtTokenModel);
@@ -97,16 +93,14 @@ namespace Store.BuisnessLogic.Helpers
             return principal;
         }
 
-        private async Task<string> GetTokenAsync(UserModel userModel)
+        private string GetTokenAsync(UserModel userModel)
         {
-            var user = await _accountService.FindByEmailAsync(userModel.Email);
-
             var accessClaims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, userModel.Id.ToString()),
                 new Claim(ClaimTypes.Role, userModel.Roles[0]),
-                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Name, userModel.Email),
             };
 
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(

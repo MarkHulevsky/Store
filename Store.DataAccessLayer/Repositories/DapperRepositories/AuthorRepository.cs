@@ -8,7 +8,6 @@ using Store.DataAccess.Repositories.Base;
 using Store.DataAccess.Repositories.Interfaces;
 using System.Linq;
 using System.Threading.Tasks;
-using static Shared.Enums.Enums;
 
 namespace Store.DataAccess.Repositories.DapperRepositories
 {

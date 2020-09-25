@@ -68,11 +68,6 @@ namespace Store.Presentation.Controllers
         public async Task<IActionResult> SignIn([FromBody] LoginModel loginModel)
         {
             var userModel = await _accountService.LoginAsync(loginModel);
-            if (userModel.Errors.Count != 0)
-            {
-                return Ok(userModel);
-            }
-            await _jwtProvider.SetTokenAsync(userModel);
             return Ok(userModel);
         }
 
