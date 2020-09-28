@@ -14,11 +14,9 @@ namespace Store.Presentation.Controllers
     public class OrderController : Controller
     {
         private readonly IOrderService _orderService;
-        private readonly IUserService _userService;
-        public OrderController(IOrderService orderService, IUserService userService)
+        public OrderController(IOrderService orderService)
         {
             _orderService = orderService;
-            _userService = userService;
         }
 
         [HttpGet]
