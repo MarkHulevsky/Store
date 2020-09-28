@@ -76,28 +76,6 @@ namespace Store.BuisnessLogic.Services
             return new BaseModel();
         }
 
-        public async Task<List<string>> GetRolesAsync(string email)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
-            {
-                return null;
-            }
-            var roles = await _userManager.GetRolesAsync(user);
-            return roles.ToList();
-        }
-
-        public async Task<UserModel> FindByEmailAsync(string email)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
-            {
-                return null;
-            }
-            var userModel = _userModelMapper.Map(user);
-            return userModel;
-        }
-
         public async Task<UserModel> RegisterAsync(RegisterModel registerModel)
         {
             var user = _userMapper.Map(registerModel);
@@ -114,17 +92,6 @@ namespace Store.BuisnessLogic.Services
             await _userManager.AddToRoleAsync(user, USER_ROLE_NAME);
             await SendConfirmUrlAsync(registerModel.Email);
             return userModel;
-        }
-
-        private async Task SendConfirmUrlAsync(string email)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var url = _urlHelper.Action("ConfirmEmail", "Account",
-                new { email, token }, _httpContextAccessor.HttpContext.Request.Scheme);
-            var subject = CONFIRM_EMAIL_SUBJECT;
-            var body = $"{CONFIRM_EMAIL_BODY} <a href='{url}'>link</a>.";
-            await _emailProvider.SendAsync(email, subject, body);
         }
 
         public async Task<BaseModel> ConfirmEmail(string email, string token)
@@ -187,6 +154,28 @@ namespace Store.BuisnessLogic.Services
         public async Task LogoutAsync()
         {
             await _signInManager.SignOutAsync();
+        }
+
+        private async Task<List<string>> GetRolesAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return null;
+            }
+            var roles = await _userManager.GetRolesAsync(user);
+            return roles.ToList();
+        }
+
+        private async Task SendConfirmUrlAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var url = _urlHelper.Action("ConfirmEmail", "Account",
+                new { email, token }, _httpContextAccessor.HttpContext.Request.Scheme);
+            var subject = CONFIRM_EMAIL_SUBJECT;
+            var body = $"{CONFIRM_EMAIL_BODY} <a href='{url}'>link</a>.";
+            await _emailProvider.SendAsync(email, subject, body);
         }
     }
 }
