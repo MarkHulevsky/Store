@@ -23,17 +23,19 @@ namespace Store.BuisnessLogic.Services
         private readonly IPaymentRepository _paymentRepository;
         private readonly IOrderItemRepository _orderItemRepository;
         private readonly IOrderRepository _orderRepository;
+        private readonly IUserService _userService;
         private readonly Mapper<Order, OrderModel> _orderModelMapper;
 
         private const string CHARGE_SUCCEEDED = "succeeded";
         private const string CHARGE_IS_NOT_SUCCEEDED_ERROR = "Charge isn't succeeded";
 
         public OrderService(IPaymentRepository paymentRepository,
-            IOrderItemRepository orderItemRepository, IOrderRepository orderRepository)
+            IOrderItemRepository orderItemRepository, IOrderRepository orderRepository, IUserService userService)
         {
             _paymentRepository = paymentRepository;
             _orderItemRepository = orderItemRepository;
             _orderRepository = orderRepository;
+            _userService = userService;
             _orderModelMapper = new Mapper<Order, OrderModel>();
         }
 
@@ -86,18 +88,20 @@ namespace Store.BuisnessLogic.Services
             return orderResponseModel;
         }
 
-        public async Task<List<OrderModel>> GetUserOrdersAsync(Guid userId)
+        public async Task<List<OrderModel>> GetUserOrdersAsync()
         {
-            var orders = await _orderRepository.GetUserOrdersAsync(userId);
+            var user = await _userService.GetCurrentAsync();
+            var orders = await _orderRepository.GetUserOrdersAsync(user.Id);
             var orderModels = OrderModelListMapper.Map(orders);
             return orderModels;
         }
 
-        public async Task<OrderModel> CreateAsync(CartModel cartModel, Guid userId)
+        public async Task<OrderModel> CreateAsync(CartModel cartModel)
         {
+            var user = await _userService.GetCurrentAsync();
             var order = new Order
             {
-                UserId = userId
+                UserId = user.Id
             };
             order = await _orderRepository.CreateAsync(order);
             var orderModel = _orderModelMapper.Map(order);

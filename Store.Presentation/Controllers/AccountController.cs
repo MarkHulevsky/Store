@@ -3,9 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Store.BuisnessLogic.Helpers.Interfaces;
 using Store.BuisnessLogic.Models.Account;
 using Store.BuisnessLogic.Models.Token;
-using Store.BuisnessLogic.Models.Users;
 using Store.BuisnessLogic.Services.Interfaces;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Store.Presentation.Controllers
@@ -42,16 +40,6 @@ namespace Store.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> SignUp([FromBody] RegisterModel registerModel)
         {
-            var userModel = new UserModel();
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values.SelectMany(v => v.Errors);
-                foreach (var error in errors)
-                {
-                    userModel.Errors.Add(error.ErrorMessage);
-                }
-                return Ok(userModel);
-            }
             var result = await _accountService.RegisterAsync(registerModel);
             return Ok(result);
         }
