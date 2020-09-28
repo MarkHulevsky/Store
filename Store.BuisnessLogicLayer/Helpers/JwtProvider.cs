@@ -38,7 +38,7 @@ namespace Store.BuisnessLogic.Helpers
         {
             var jwtTokenModel = new JwtTokenModel
             {
-                AccessToken = GetTokenAsync(userModel),
+                AccessToken = GetToken(userModel),
                 RefreshToken = GenerateRefreshToken()
             };
             SetCookieTokenResponse(jwtTokenModel);
@@ -93,7 +93,7 @@ namespace Store.BuisnessLogic.Helpers
             return principal;
         }
 
-        private string GetTokenAsync(UserModel userModel)
+        private string GetToken(UserModel userModel)
         {
             var accessClaims = new List<Claim>
             {
