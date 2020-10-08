@@ -26,8 +26,8 @@ namespace Store.Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordModel forgotPasswordModel)
         {
-            var baseModel = await _accountService.ResetPasswordAsync(forgotPasswordModel.Email);
-            return Ok(baseModel);
+            var result = await _accountService.ResetPasswordAsync(forgotPasswordModel.Email);
+            return Ok(result);
         }
 
         [HttpPost]

@@ -50,20 +50,20 @@ namespace Store.BuisnessLogic.Services
             _jwtProvider = jwtProvider;
         }
 
-        public async Task<BaseModel> ResetPasswordAsync(string email)
+        public async Task<List<string>> ResetPasswordAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
             var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
-            var baseModel = new BaseModel();
+            var errors = new List<string>();
             if (user == null)
             {
-                baseModel.Errors.Add(USER_NOT_FOUND_ERROR);
-                return baseModel;
+                errors.Add(USER_NOT_FOUND_ERROR);
+                return errors;
             }
             if (!isEmailConfirmed)
             {
-                baseModel.Errors.Add(EMAIL_IS_NOT_CONFIRMED_ERROR);
-                return baseModel;
+                errors.Add(EMAIL_IS_NOT_CONFIRMED_ERROR);
+                return errors;
             }
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var newPassword = PasswordGenerator.GeneratePassword();
@@ -72,53 +72,53 @@ namespace Store.BuisnessLogic.Services
             {
                 foreach (var error in result.Errors)
                 {
-                    baseModel.Errors.Add(error.Description);
+                    errors.Add(error.Description);
                 }
-                return baseModel;
+                return errors;
             }
             var subject = RESET_PASSWORD_SUBJECT;
             var body = $"{RESET_PASSWORD_BODY} {newPassword}";
             await _emailProvider.SendAsync(email, subject, body);
-            return baseModel;
+            return errors;
         }
 
-        public async Task<BaseModel> RegisterAsync(RegisterModel registerModel)
+        public async Task<List<string>> RegisterAsync(RegisterModel registerModel)
         {
             var user = _userMapper.Map(registerModel);
             user.UserName = registerModel.Email;
             var result = await _userManager.CreateAsync(user, user.Password);
-            var baseModel = new BaseModel();
+            var errors = new List<string>();
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
                 {
-                    baseModel.Errors.Add(error.Description);
+                    errors.Add(error.Description);
                 }
             }
             await _userManager.AddToRoleAsync(user, USER_ROLE_NAME);
             await SendConfirmUrlAsync(registerModel.Email);
-            return baseModel;
+            return errors;
         }
 
-        public async Task<BaseModel> ConfirmEmail(string email, string token)
+        public async Task<List<string>> ConfirmEmail(string email, string token)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            var baseModel = new BaseModel();
+            var errors = new List<string>();
             if (user == null)
             {
-                baseModel.Errors.Add(USER_NOT_FOUND_ERROR);
-                return baseModel;
+                errors.Add(USER_NOT_FOUND_ERROR);
+                return errors;
             }
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
                 {
-                    baseModel.Errors.Add(error.Description);
+                    errors.Add(error.Description);
                 }
-                return baseModel;
+                return errors;
             }
-            return baseModel;
+            return errors;
         }
 
         public async Task<BaseModel> LoginAsync(LoginModel loginModel)
