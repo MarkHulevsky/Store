@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 
 namespace Store.BuisnessLogic.Helpers
@@ -7,23 +8,19 @@ namespace Store.BuisnessLogic.Helpers
     {
         public TDestination Map(TDestination destination, TSource source)
         {
-            var _destination = typeof(TDestination);
+            var typeOfDestination = typeof(TDestination);
             var sourcePropsInfo = source.GetType().GetProperties();
-            var destinationPropsInfo = _destination.GetProperties();
+            var destinationPropsInfo = typeOfDestination.GetProperties();
 
             foreach (var srcPropInfo in sourcePropsInfo)
             {
-                var destInfo = destinationPropsInfo.FirstOrDefault(dip => dip.Name == srcPropInfo.Name);
-                if (destInfo != null && destInfo.CanWrite)
+                var destPropertyInfo = destinationPropsInfo.FirstOrDefault(dip => dip.Name == srcPropInfo.Name);
+                if (destPropertyInfo == null || !destPropertyInfo.CanWrite || destPropertyInfo.PropertyType != srcPropInfo.PropertyType)
                 {
-                    try
-                    {
-                        destInfo.SetValue(destination, srcPropInfo.GetValue(source));
-                    }
-                    catch { }
+                    continue;
                 }
+                destPropertyInfo.SetValue(destination, srcPropInfo.GetValue(source));
             }
-
             return destination;
         }
 
@@ -34,22 +31,18 @@ namespace Store.BuisnessLogic.Helpers
                 return Activator.CreateInstance<TDestination>();
             }
             var destination = Activator.CreateInstance<TDestination>();
-            var _destination = typeof(TDestination);
+            var typeOfDestination = typeof(TDestination);
             var sourcePropsInfo = source.GetType().GetProperties();
-            var destinationPropsInfo = _destination.GetProperties();
+            var destinationPropsInfo = typeOfDestination.GetProperties();
 
             foreach (var srcPropInfo in sourcePropsInfo)
             {
-                try
+                var destPropertyInfo = destinationPropsInfo.FirstOrDefault(dip => dip.Name == srcPropInfo.Name);
+                if (destPropertyInfo == null || !destPropertyInfo.CanWrite || destPropertyInfo.PropertyType != srcPropInfo.PropertyType)
                 {
-                    var destInfo = destinationPropsInfo.FirstOrDefault(dip => dip.Name == srcPropInfo.Name);
-                    if (!(destInfo != null && destInfo.CanWrite))
-                    {
-                        continue;
-                    }
-                    destInfo.SetValue(destination, srcPropInfo.GetValue(source));
+                    continue;
                 }
-                catch { }
+                destPropertyInfo.SetValue(destination, srcPropInfo.GetValue(source));
             }
 
             return destination;

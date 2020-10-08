@@ -14,6 +14,7 @@ using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static Shared.Enums.Enums;
 using Order = Store.DataAccess.Entities.Order;
 
 namespace Store.BuisnessLogic.Services
@@ -76,7 +77,10 @@ namespace Store.BuisnessLogic.Services
                 TransactionId = charge.BalanceTransactionId
             };
             payment = await _paymentRepository.CreateAsync(payment);
-            await _orderRepository.AddToPaymentAsync(payment.Id, paymentModel.OrderId);
+            var order = await _orderRepository.GetAsync(paymentModel.OrderId);
+            order.PaymentId = payment.Id;
+            order.Status = OrderStatus.Paid;
+            await _orderRepository.UpdateAsync(order);
             return new BaseModel();
         }
 

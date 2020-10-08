@@ -18,6 +18,7 @@ namespace Store.BuisnessLogic.Helpers
     {
         private const string ACCESS_TOKEN_NAME = "accessToken";
         private const string REFRESH_TOKEN_NAME = "refreshToken";
+        private const int DEFALULT_RANDOM_NUMBER_BYTES_COUNT = 32;
 
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -56,13 +57,13 @@ namespace Store.BuisnessLogic.Helpers
             return jwtToken;
         }
 
-        private string GenerateRefreshToken()
+        private string GenerateRefreshToken(int bytesCount = DEFALULT_RANDOM_NUMBER_BYTES_COUNT)
         {
             string refreshToken = string.Empty;
-            var randomNumber = new byte[32];
-            using (var rng = RandomNumberGenerator.Create())
+            var randomNumber = new byte[bytesCount];
+            using (var randomNumberGenerator = RandomNumberGenerator.Create())
             {
-                rng.GetBytes(randomNumber);
+                randomNumberGenerator.GetBytes(randomNumber);
                 refreshToken = Convert.ToBase64String(randomNumber);
             }
             return refreshToken;

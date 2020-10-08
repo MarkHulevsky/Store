@@ -19,18 +19,6 @@ namespace Store.DataAccess.Repositories.EFRepositories
         {
         }
 
-        public async Task AddToPaymentAsync(Guid paymentId, Guid orderId)
-        {
-            var order = await DbSet.FirstOrDefaultAsync(o => o.Id == orderId);
-            if (order == null)
-            {
-                return;
-            }
-            order.PaymentId = paymentId;
-            order.Status = OrderStatus.Paid;
-            await UpdateAsync(order);
-        }
-
         public override async Task<Order> CreateAsync(Order order)
         {
             var entity = await DbSet.FirstOrDefaultAsync(entity => entity.Id == order.Id);
@@ -50,7 +38,7 @@ namespace Store.DataAccess.Repositories.EFRepositories
                 .Include(order => order.OrderItems)
                 .ThenInclude(orderItem => orderItem.PrintingEdition)
                 .Where(o => !o.IsRemoved);
-
+            var totalCount = await query.CountAsync();
             var subquery = new List<Order>().AsQueryable();
             foreach (var status in orderRequestDataModel.OrderStatuses)
             {
@@ -62,7 +50,6 @@ namespace Store.DataAccess.Repositories.EFRepositories
                 .Skip(orderRequestDataModel.Paging.CurrentPage * orderRequestDataModel.Paging.ItemsCount)
                 .Take(orderRequestDataModel.Paging.ItemsCount);
             var orders = query.ToList();
-            var totalCount = await DbSet.Where(o => !o.IsRemoved).CountAsync();
             var result = new OrderResponseDataModel
             {
                 Orders = orders,

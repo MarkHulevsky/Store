@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Dapper.Contrib.Extensions;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Store.DataAccess.Entities;
 using Store.DataAccess.Models.Constants;
@@ -20,20 +21,28 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public async Task AddRangeAsync(List<AuthorInPrintingEdition> authorInPrintingEditions)
         {
-            await _dbContext.InsertAsync(authorInPrintingEditions);
+            using (var dbContext = new SqlConnection(connectionString))
+            {
+                await dbContext.OpenAsync();
+                await dbContext.InsertAsync(authorInPrintingEditions);
+            }
         }
 
         public override async Task<AuthorInPrintingEdition> CreateAsync(AuthorInPrintingEdition authorInPrintingEdition)
         {
             var query = $"SELECT * FROM {tableName} " +
                 $"WHERE AuthorId = '{authorInPrintingEdition.AuthorId}' AND PrintingEditionId = '{authorInPrintingEdition.PrintingEditionId}'";
-            var entity = await _dbContext.QueryFirstOrDefaultAsync<AuthorInPrintingEdition>(query);
-            if (entity != null)
+            using (var dbContext = new SqlConnection(connectionString))
             {
+                await dbContext.OpenAsync();
+                var entity = await dbContext.QueryFirstOrDefaultAsync<AuthorInPrintingEdition>(query);
+                if (entity != null)
+                {
+                    return authorInPrintingEdition;
+                }
+                await dbContext.InsertAsync(authorInPrintingEdition);
                 return authorInPrintingEdition;
             }
-            await _dbContext.InsertAsync(authorInPrintingEdition);
-            return authorInPrintingEdition;
         }
     }
 }

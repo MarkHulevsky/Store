@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Store.DataAccess.Entities;
 using Store.DataAccess.Filters;
@@ -62,7 +63,10 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 	                        	 FROM AuthorInPrintingEditions
 	                        	 LEFT JOIN Authors ON AuthorInPrintingEditions.AuthorId = Authors.Id
 	                        ) AS AuthorInPrintingEditions ON PrintingEditions.Id = AuthorInPrintingEditions.PrintingEditionId");
-            var printingEditions = await _dbContext.QueryAsync<PrintingEdition, Author, PrintingEdition>(
+            using (var dbContext = new SqlConnection(connectionString))
+            {
+                await dbContext.OpenAsync();
+                var printingEditions = await dbContext.QueryAsync<PrintingEdition, Author, PrintingEdition>(
                 query.ToString(), (printingEdition, author) =>
                 {
                     if (author != null)
@@ -71,23 +75,24 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                     }
                     return printingEdition;
                 });
-            printingEditions = printingEditions
-                .GroupBy(printingEdition => printingEdition.Id)
-                .Select(group =>
+                printingEditions = printingEditions
+                    .GroupBy(printingEdition => printingEdition.Id)
+                    .Select(group =>
+                    {
+                        var result = group.FirstOrDefault();
+                        result.Authors = group.Select(printingEdition => printingEdition.Authors.SingleOrDefault()).ToList();
+                        return result;
+                    });
+                query.Clear();
+                query.Append($"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0");
+                var totalCount = await dbContext.QueryFirstOrDefaultAsync<int>(query.ToString());
+                var result = new PrintingEditionResponseDataModel
                 {
-                    var result = group.FirstOrDefault();
-                    result.Authors = group.Select(printingEdition => printingEdition.Authors.SingleOrDefault()).ToList();
-                    return result;
-                });
-            query.Clear();
-            query.Append($"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0");
-            var totalCount = await _dbContext.QueryFirstOrDefaultAsync<int>(query.ToString());
-            var result = new PrintingEditionResponseDataModel
-            {
-                PrintingEditions = printingEditions,
-                TotalCount = totalCount
-            };
-            return result;
+                    PrintingEditions = printingEditions,
+                    TotalCount = totalCount
+                };
+                return result;
+            }
         }
     }
 }

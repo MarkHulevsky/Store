@@ -7,6 +7,10 @@ namespace Store.DataAccess.Filters
     public class OrderRequestDataModel : BaseRequetDataModel
     {
         public string SortPropertyName { get; set; }
-        public List<OrderStatus> OrderStatuses { get; set; } = new List<OrderStatus>();
+        public List<OrderStatus> OrderStatuses { get; set; }
+        public OrderRequestDataModel()
+        {
+            OrderStatuses = new List<OrderStatus>();
+        }
     }
 }

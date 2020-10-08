@@ -1,4 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Store.DataAccess.Entities;
 using Store.DataAccess.Repositories.Base;
@@ -16,7 +17,11 @@ namespace Store.DataAccess.Repositories.DapperRepositories
 
         public async Task AddRangeAsync(List<OrderItem> orderItems)
         {
-            await _dbContext.InsertAsync(orderItems);
+            using (var dbContext = new SqlConnection(connectionString))
+            {
+                await dbContext.OpenAsync();
+                await dbContext.InsertAsync(orderItems);
+            }
         }
 
     }

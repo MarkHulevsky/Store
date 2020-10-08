@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Store.DataAccess.Entities;
 using Store.DataAccess.Filters;
@@ -30,18 +31,21 @@ namespace Store.DataAccess.Repositories.DapperRepositories
             query.Append($"ORDER BY {userRequestDataModel.SortPropertyName} {userRequestDataModel.SortType.ToString().ToUpper()} ");
             query.Append($@"OFFSET {userRequestDataModel.Paging.CurrentPage * userRequestDataModel.Paging.ItemsCount} ROWS 
                             FETCH NEXT {userRequestDataModel.Paging.ItemsCount} ROWS ONLY");
-            var users = await _dbContext.QueryAsync<User>(query.ToString());
-
-            query.Clear();
-            query.Append($"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0");
-            var count = await _dbContext.QueryFirstOrDefaultAsync<int>(query.ToString());
-            var result = new UserResponseDataModel
+            using (var dbContext = new SqlConnection(connectionString))
             {
-                Users = users.ToList(),
-                TotalCount = count
-            };
+                await dbContext.OpenAsync();
+                var users = await dbContext.QueryAsync<User>(query.ToString());
+                query.Clear();
+                query.Append($"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0");
+                var count = await dbContext.QueryFirstOrDefaultAsync<int>(query.ToString());
+                var result = new UserResponseDataModel
+                {
+                    Users = users.ToList(),
+                    TotalCount = count
+                };
 
-            return result;
+                return result;
+            }
         }
     }
 }

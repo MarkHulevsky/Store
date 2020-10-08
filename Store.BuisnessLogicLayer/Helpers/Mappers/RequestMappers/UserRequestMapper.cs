@@ -19,10 +19,6 @@ namespace Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers
                 SortType = filterModel.SortType,
                 Paging = _pagingMapper.Map(filterModel.Paging)
             };
-            foreach (var status in filterModel.Statuses)
-            {
-                filter.Statuses.Add(status);
-            }
             return filter;
         }
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Store.DataAccess.Models.Constants;
+using System;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -6,7 +7,6 @@ namespace Store.DataAccess.Filters
 {
     static class OrderByExtention
     {
-        private const string DESCENDING_SORT_TYPE = "Desc";
         public static IQueryable<TSource> OrderBy<TSource>(this IQueryable<TSource> query, string key, string sortType)
         {
             if (string.IsNullOrWhiteSpace(key))
@@ -16,7 +16,7 @@ namespace Store.DataAccess.Filters
 
             var lambda = (dynamic)CreateExpression(typeof(TSource), key);
 
-            if (sortType == DESCENDING_SORT_TYPE)
+            if (sortType == Constants.DESCENDING_SORT_TYPE)
             {
                 return Queryable.OrderByDescending(query, lambda);
             }

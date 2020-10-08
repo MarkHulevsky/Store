@@ -18,13 +18,10 @@ namespace Store.DataAccess.Entities
         public virtual List<Order> Order { get; set; }
         [NotMapped]
         public string Password { get; set; }
-        [NotMapped]
-        public ICollection<string> Errors { get; set; }
         public User()
         {
             IsActive = true;
             Order = new List<Order>();
-            Errors = new List<string>();
         }
     }
 }

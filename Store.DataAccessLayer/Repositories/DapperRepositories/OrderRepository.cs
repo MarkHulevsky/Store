@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using Dapper.Contrib.Extensions;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Store.DataAccess.Entities;
 using Store.DataAccess.Filters;
@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Shared.Enums.Enums;
 
 namespace Store.DataAccess.Repositories.DapperRepositories
 {
@@ -21,19 +20,6 @@ namespace Store.DataAccess.Repositories.DapperRepositories
         public OrderRepository(IConfiguration configuration) : base(configuration)
         {
             tableName = ORDERS_TABLE_NAME;
-        }
-
-        public async Task AddToPaymentAsync(Guid paymentId, Guid orderId)
-        {
-            var order = await _dbContext.GetAsync<Order>(orderId);
-            var payment = await _dbContext.GetAsync<Payment>(paymentId);
-            if (order == null || payment == null)
-            {
-                return;
-            }
-            order.PaymentId = paymentId;
-            order.Status = OrderStatus.Paid;
-            await _dbContext.UpdateAsync(order);
         }
 
         public async Task<OrderResponseDataModel> FilterAsync(OrderRequestDataModel orderRequestDataModel)
@@ -48,8 +34,10 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                         LEFT JOIN {Constants.ORDER_ITEMS_TABLE_NAME} ON {Constants.ORDER_ITEMS_TABLE_NAME}.OrderId = {tableName}.Id
                         LEFT JOIN {Constants.PRINTING_EDITIONS_TABLE_NAME} ON {Constants.ORDER_ITEMS_TABLE_NAME}.PrintingEditionId 
                             = {Constants.PRINTING_EDITIONS_TABLE_NAME}.Id";
-
-            var orders = await _dbContext.QueryAsync<Order, User, OrderItem, PrintingEdition, Order>(
+            using (var dbContext = new SqlConnection(connectionString))
+            {
+                await dbContext.OpenAsync();
+                var orders = await dbContext.QueryAsync<Order, User, OrderItem, PrintingEdition, Order>(
                 query, (order, user, orderItem, printingEdition) =>
                 {
                     order.User = user;
@@ -61,30 +49,31 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                     return order;
                 });
 
-            var querybaleOrders = orders
-                .GroupBy(order => order.Id)
-                .Select(group =>
-                {
-                    var result = group.FirstOrDefault();
-                    result.OrderItems = group.Select(order => order.OrderItems.SingleOrDefault()).ToList();
-                    return result;
-                });
+                var querybaleOrders = orders
+                    .GroupBy(order => order.Id)
+                    .Select(group =>
+                    {
+                        var result = group.FirstOrDefault();
+                        result.OrderItems = group.Select(order => order.OrderItems.SingleOrDefault()).ToList();
+                        return result;
+                    });
 
-            var subquery = new List<Order>().AsQueryable();
-            foreach (var status in orderRequestDataModel.OrderStatuses)
-            {
-                subquery = subquery.Concat(querybaleOrders.Where(o => o.Status == status));
+                var subquery = new List<Order>().AsQueryable();
+                foreach (var status in orderRequestDataModel.OrderStatuses)
+                {
+                    subquery = subquery.Concat(querybaleOrders.Where(o => o.Status == status));
+                }
+                querybaleOrders = subquery;
+                orders = querybaleOrders.ToList();
+                query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";
+                var totalCount = await dbContext.QueryFirstOrDefaultAsync<int>(query);
+                var result = new OrderResponseDataModel
+                {
+                    Orders = orders,
+                    TotalCount = totalCount
+                };
+                return result;
             }
-            querybaleOrders = subquery;
-            orders = querybaleOrders.ToList();
-            query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";
-            var totalCount = await _dbContext.QueryFirstOrDefaultAsync<int>(query);
-            var result = new OrderResponseDataModel
-            {
-                Orders = orders,
-                TotalCount = totalCount
-            };
-            return result;
         }
 
         public async Task<List<Order>> GetUserOrdersAsync(Guid userId)
@@ -95,7 +84,10 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                 $"ON {Constants.PRINTING_EDITIONS_TABLE_NAME}.Id = {Constants.ORDER_ITEMS_TABLE_NAME}.PrintingEditionId " +
                 $"WHERE UserId = '{userId}'";
             var orderDictionary = new Dictionary<Guid, Order>();
-            var orders = await _dbContext.QueryAsync<Order, OrderItem, PrintingEdition, Order>(
+            using (var dbContext = new SqlConnection(connectionString))
+            {
+                await dbContext.OpenAsync();
+                var orders = await dbContext.QueryAsync<Order, OrderItem, PrintingEdition, Order>(
                 query, (order, orderItem, printingEdition) =>
                 {
                     var orderEntry = new Order();
@@ -109,8 +101,9 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                     orderEntry.OrderItems.Add(orderItem);
                     return orderEntry;
                 });
-            orders = orders.Distinct();
-            return orders.ToList();
+                orders = orders.Distinct();
+                return orders.ToList();
+            }
         }
     }
 }

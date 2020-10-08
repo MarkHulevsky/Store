@@ -13,59 +13,66 @@ namespace Store.DataAccess.Repositories.Base
 {
     public class BaseDapperRepository<T> : IRepository<T> where T : class, IBaseEntity
     {
-        protected readonly SqlConnection _dbContext;
         protected readonly IConfiguration _configuration;
-        private readonly string _connectionString;
+        protected readonly string connectionString;
         protected string tableName;
 
         public BaseDapperRepository(IConfiguration configuration)
         {
             _configuration = configuration;
-            _connectionString = _configuration.GetConnectionString("DefaultConnection");
-            _dbContext = new SqlConnection(_connectionString);
-            _dbContext.Open();
+            connectionString = _configuration.GetConnectionString("DefaultConnection");
         }
 
         public virtual async Task<T> CreateAsync(T model)
         {
-            await _dbContext.InsertAsync(model);
-            return model;
+            using (var dbContext = new SqlConnection(connectionString))
+            {
+                await dbContext.InsertAsync(model);
+                return model;
+            }
         }
 
         public virtual async Task<T> UpdateAsync(T model)
         {
-            if (await _dbContext.UpdateAsync(model))
+            using (var dbContext = new SqlConnection(connectionString))
             {
-                return model;
+                if (await dbContext.UpdateAsync(model))
+                {
+                    return model;
+                }
+                return null;
             }
-            return null;
         }
 
         public async Task<List<T>> GetAllAsync()
         {
             var query = $"SELECT * FROM {tableName} WHERE IsRemoved != 1";
-            var result = await _dbContext.QueryAsync<T>(query);
-            return result.ToList();
+            using (var dbContext = new SqlConnection(connectionString))
+            {
+                var result = await dbContext.QueryAsync<T>(query);
+                return result.ToList();
+            }
+
         }
 
         public virtual async Task<T> GetAsync(Guid id)
         {
-            var entity = await _dbContext.GetAsync<T>(id);
-            return entity;
+            using (var dbContext = new SqlConnection(connectionString))
+            {
+                var entity = await dbContext.GetAsync<T>(id);
+                return entity;
+            }
         }
 
         public async Task<T> RemoveAsync(Guid id)
         {
-            var entity = await _dbContext.GetAsync<T>(id);
-            entity.IsRemoved = true;
-            await _dbContext.UpdateAsync(entity);
-            return entity;
+            using (var dbContext = new SqlConnection(connectionString))
+            {
+                var entity = await dbContext.GetAsync<T>(id);
+                entity.IsRemoved = true;
+                await dbContext.UpdateAsync(entity);
+                return entity;
+            }
         }
-
-        ~BaseDapperRepository()
-        {
-            _dbContext.Close();
-        }
-
     }
 }

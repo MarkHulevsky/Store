@@ -18,14 +18,15 @@ namespace Store.DataAccess.Repositories.EFRepositories
 
         public async Task<AuthorResponseDataModel> FilterAsync(AuthorRequestDataModel authorRequestDataModel)
         {
-            var authors = await DbSet.Where(a => !a.IsRemoved)
+            var queryableAuthors = DbSet.Where(a => !a.IsRemoved)
                 .Include(author => author.AuthorInPrintingEditions)
                 .ThenInclude(authorInPrintingEdition => authorInPrintingEdition.PrintingEdition)
-                .OrderBy(authorRequestDataModel.SortPropertyName, authorRequestDataModel.SortType.ToString())
+                .OrderBy(authorRequestDataModel.SortPropertyName, authorRequestDataModel.SortType.ToString());
+            var totalCount = await queryableAuthors.CountAsync();
+            var authors = await queryableAuthors
                 .Skip(authorRequestDataModel.Paging.ItemsCount * authorRequestDataModel.Paging.CurrentPage)
                 .Take(authorRequestDataModel.Paging.ItemsCount)
                 .ToListAsync();
-
             foreach (var author in authors)
             {
                 var printingEditions = author.AuthorInPrintingEditions
@@ -33,13 +34,11 @@ namespace Store.DataAccess.Repositories.EFRepositories
                     .ToList();
                 author.PrintingEditions = printingEditions;
             }
-            var totalCount = await DbSet.Where(a => !a.IsRemoved).CountAsync();
             var result = new AuthorResponseDataModel
             {
                 Authors = authors,
                 TotalCount = totalCount
             };
-
             return result;
         }
 

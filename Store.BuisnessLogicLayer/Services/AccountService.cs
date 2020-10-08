@@ -54,16 +54,22 @@ namespace Store.BuisnessLogic.Services
         {
             var user = await _userManager.FindByEmailAsync(email);
             var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
-            if (user == null || !isEmailConfirmed)
+            var baseModel = new BaseModel();
+            if (user == null)
             {
-                return null;
+                baseModel.Errors.Add(USER_NOT_FOUND_ERROR);
+                return baseModel;
+            }
+            if (!isEmailConfirmed)
+            {
+                baseModel.Errors.Add(EMAIL_IS_NOT_CONFIRMED_ERROR);
+                return baseModel;
             }
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var newPassword = PasswordGenerator.GeneratePassword();
             var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
             if (!result.Succeeded)
             {
-                var baseModel = new BaseModel();
                 foreach (var error in result.Errors)
                 {
                     baseModel.Errors.Add(error.Description);
@@ -73,31 +79,31 @@ namespace Store.BuisnessLogic.Services
             var subject = RESET_PASSWORD_SUBJECT;
             var body = $"{RESET_PASSWORD_BODY} {newPassword}";
             await _emailProvider.SendAsync(email, subject, body);
-            return new BaseModel();
+            return baseModel;
         }
 
-        public async Task<UserModel> RegisterAsync(RegisterModel registerModel)
+        public async Task<BaseModel> RegisterAsync(RegisterModel registerModel)
         {
             var user = _userMapper.Map(registerModel);
             user.UserName = registerModel.Email;
             var result = await _userManager.CreateAsync(user, user.Password);
-            var userModel = new UserModel();
+            var baseModel = new BaseModel();
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
                 {
-                    userModel.Errors.Add(error.Description);
+                    baseModel.Errors.Add(error.Description);
                 }
             }
             await _userManager.AddToRoleAsync(user, USER_ROLE_NAME);
             await SendConfirmUrlAsync(registerModel.Email);
-            return userModel;
+            return baseModel;
         }
 
         public async Task<BaseModel> ConfirmEmail(string email, string token)
         {
-            var baseModel = new BaseModel();
             var user = await _userManager.FindByEmailAsync(email);
+            var baseModel = new BaseModel();
             if (user == null)
             {
                 baseModel.Errors.Add(USER_NOT_FOUND_ERROR);
@@ -115,10 +121,10 @@ namespace Store.BuisnessLogic.Services
             return baseModel;
         }
 
-        public async Task<UserModel> LoginAsync(LoginModel loginModel)
+        public async Task<BaseModel> LoginAsync(LoginModel loginModel)
         {
-            var userModel = new UserModel();
             var user = await _userManager.FindByEmailAsync(loginModel.Email);
+            var userModel = new UserModel();
             if (user == null)
             {
                 userModel.Errors.Add(USER_NOT_FOUND_ERROR);
@@ -144,6 +150,7 @@ namespace Store.BuisnessLogic.Services
             if (!result.Succeeded)
             {
                 userModel.Errors.Add(INCORRECT_LOGIN_DATA_ERROR);
+                return userModel;
             }
             userModel = _userModelMapper.Map(user);
             userModel.Roles = await GetRolesAsync(userModel.Email);

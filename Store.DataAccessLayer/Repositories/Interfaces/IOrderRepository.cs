@@ -9,7 +9,6 @@ namespace Store.DataAccess.Repositories.Interfaces
 {
     public interface IOrderRepository : IRepository<Order>
     {
-        Task AddToPaymentAsync(Guid paymentId, Guid orderId);
         Task<List<Order>> GetUserOrdersAsync(Guid userId);
         Task<OrderResponseDataModel> FilterAsync(OrderRequestDataModel orderRequestDataModel);
     }
