@@ -40,29 +40,31 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                                 AND PrintingEditions.Price > {printingEditionRequestDataModel.MinPrice}) ");
 
             }
-            if (printingEditionRequestDataModel.Types.Count != 0)
+            if (printingEditionRequestDataModel.Types.Any())
             {
                 query.Append("AND (");
             }
             foreach (var type in printingEditionRequestDataModel.Types)
             {
-                query.Append($@"PrintingEditions.Type = {(int)type} OR ");
+                query.Append($"PrintingEditions.Type = {(int)type} OR ");
             }
-            if (printingEditionRequestDataModel.Types.Count != 0)
+            if (printingEditionRequestDataModel.Types.Any())
             {
-                query.Remove(query.Length - 3, 3);
+                var index = query.ToString().LastIndexOf("OR");
+                var removeLength = query.Length - index;
+                query.Remove(index, removeLength);
                 query.Append(")");
             }
-            query.Append($@"ORDER BY Price {printingEditionRequestDataModel.SortType.ToString().ToUpper()}
-	                        OFFSET {printingEditionRequestDataModel.Paging.ItemsCount * printingEditionRequestDataModel.Paging.CurrentPage} ROWS
-                            FETCH NEXT {printingEditionRequestDataModel.Paging.ItemsCount} ROWS ONLY
-	                        ) AS PrintingEditions
+            query.Append($@") AS PrintingEditions
 	                        LEFT JOIN (
 	                        	 SELECT AuthorInPrintingEditions.AuthorId, AuthorInPrintingEditions.PrintingEditionId,
 	                        	 Authors.Id, Authors.Name, Authors.IsRemoved
 	                        	 FROM AuthorInPrintingEditions
 	                        	 LEFT JOIN Authors ON AuthorInPrintingEditions.AuthorId = Authors.Id
-	                        ) AS AuthorInPrintingEditions ON PrintingEditions.Id = AuthorInPrintingEditions.PrintingEditionId");
+	                        ) AS AuthorInPrintingEditions ON PrintingEditions.Id = AuthorInPrintingEditions.PrintingEditionId ");
+            query.Append($@"ORDER BY Price {printingEditionRequestDataModel.SortType.ToString().ToUpper()}
+	                        OFFSET {printingEditionRequestDataModel.Paging.ItemsCount * printingEditionRequestDataModel.Paging.CurrentPage} ROWS
+                            FETCH NEXT {printingEditionRequestDataModel.Paging.ItemsCount} ROWS ONLY");
             using (var dbContext = new SqlConnection(connectionString))
             {
                 await dbContext.OpenAsync();
@@ -84,7 +86,8 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                         return result;
                     });
                 query.Clear();
-                query.Append($"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0");
+                query.Append(@$"SELECT COUNT(*) FROM {tableName} WHERE {tableName}.Title LIKE '%{printingEditionRequestDataModel.SearchString}%'
+                                AND {tableName}.IsRemoved = 0");
                 var totalCount = await dbContext.QueryFirstOrDefaultAsync<int>(query.ToString());
                 var result = new PrintingEditionResponseDataModel
                 {

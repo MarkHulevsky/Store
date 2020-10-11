@@ -27,7 +27,6 @@ namespace Store.DataAccess.Repositories.Base
 
         public virtual async Task<T> CreateAsync(T model)
         {
-            model.CreationDate = DateTime.UtcNow;
             var entityEntry = await DbSet.AddAsync(model);
             model = entityEntry.Entity;
             await _dbContext.SaveChangesAsync();
@@ -37,6 +36,10 @@ namespace Store.DataAccess.Repositories.Base
         public virtual async Task<T> RemoveAsync(Guid id)
         {
             var entity = await DbSet.FirstOrDefaultAsync(entity => entity.Id == id);
+            if (entity == null)
+            {
+                return entity;
+            }
             entity.IsRemoved = true;
             entity = DbSet.Update(entity).Entity;
             await _dbContext.SaveChangesAsync();
@@ -45,7 +48,7 @@ namespace Store.DataAccess.Repositories.Base
 
         public virtual async Task<T> GetAsync(Guid id)
         {
-            return await DbSet.FirstOrDefaultAsync(entity => entity.Id == id && entity.IsRemoved == false);
+            return await DbSet.FirstOrDefaultAsync(entity => entity.Id == id && !entity.IsRemoved);
         }
 
         public virtual async Task<List<T>> GetAllAsync()
@@ -56,6 +59,10 @@ namespace Store.DataAccess.Repositories.Base
         public virtual async Task<T> UpdateAsync(T model)
         {
             var entity = await DbSet.FirstOrDefaultAsync(ent => ent.Id == model.Id);
+            if (entity == null)
+            {
+                return entity;
+            }
             entity = _dbContext.Set<T>().Update(model).Entity;
             await _dbContext.SaveChangesAsync();
             return entity;

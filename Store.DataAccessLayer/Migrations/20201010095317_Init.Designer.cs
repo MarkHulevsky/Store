@@ -10,14 +10,14 @@ using Store.DataAccess.AppContext;
 namespace Store.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20200910125114_Init")]
+    [Migration("20201010095317_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.3")
+                .HasAnnotation("ProductVersion", "3.1.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 

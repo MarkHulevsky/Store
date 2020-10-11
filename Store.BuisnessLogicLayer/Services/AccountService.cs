@@ -141,7 +141,7 @@ namespace Store.BuisnessLogic.Services
             {
                 userModel.Errors.Add(USER_IS_REMOVED_ERROR);
             }
-            if (userModel.Errors.Count != 0)
+            if (userModel.Errors.Any())
             {
                 return userModel;
             }
@@ -177,6 +177,10 @@ namespace Store.BuisnessLogic.Services
         private async Task SendConfirmUrlAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return;
+            }
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var url = _urlHelper.Action("ConfirmEmail", "Account",
                 new { email, token }, _httpContextAccessor.HttpContext.Request.Scheme);

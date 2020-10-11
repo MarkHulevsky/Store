@@ -55,7 +55,7 @@ namespace Store.DataAccess.Migrations
                 name: "Payments",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false, defaultValue: "(newid())"),
+                    Id = table.Column<Guid>(nullable: false),
                     IsRemoved = table.Column<bool>(nullable: false),
                     CreationDate = table.Column<DateTime>(nullable: false),
                     TransactionId = table.Column<string>(nullable: true)
@@ -69,7 +69,7 @@ namespace Store.DataAccess.Migrations
                 name: "PrintingEditions",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false, defaultValue: "(newid())"),
+                    Id = table.Column<Guid>(nullable: false),
                     IsRemoved = table.Column<bool>(nullable: false),
                     CreationDate = table.Column<DateTime>(nullable: false),
                     Title = table.Column<string>(nullable: true),
@@ -193,7 +193,7 @@ namespace Store.DataAccess.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false, defaultValue: "(newid())"),
+                    Id = table.Column<Guid>(nullable: false),
                     IsRemoved = table.Column<bool>(nullable: false),
                     CreationDate = table.Column<DateTime>(nullable: false),
                     Description = table.Column<string>(nullable: true),
@@ -216,7 +216,7 @@ namespace Store.DataAccess.Migrations
                 name: "Authors",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false, defaultValue: "(newid())"),
+                    Id = table.Column<Guid>(nullable: false),
                     IsRemoved = table.Column<bool>(nullable: false),
                     CreationDate = table.Column<DateTime>(nullable: false),
                     Name = table.Column<string>(nullable: true),
@@ -237,7 +237,7 @@ namespace Store.DataAccess.Migrations
                 name: "OrderItems",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false, defaultValue: "(newid())"),
+                    Id = table.Column<Guid>(nullable: false),
                     IsRemoved = table.Column<bool>(nullable: false),
                     CreationDate = table.Column<DateTime>(nullable: false),
                     Amount = table.Column<int>(nullable: false),
@@ -266,7 +266,7 @@ namespace Store.DataAccess.Migrations
                 name: "AuthorInPrintingEditions",
                 columns: table => new
                 {
-                    AuthorId = table.Column<Guid>(nullable: false, defaultValue: "(newid())"),
+                    AuthorId = table.Column<Guid>(nullable: false),
                     PrintingEditionId = table.Column<Guid>(nullable: false),
                     Id = table.Column<Guid>(nullable: false),
                     IsRemoved = table.Column<bool>(nullable: false),

@@ -65,8 +65,7 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                 }
                 querybaleOrders = subquery;
                 orders = querybaleOrders.ToList();
-                query = $"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0";
-                var totalCount = await dbContext.QueryFirstOrDefaultAsync<int>(query);
+                var totalCount = orders.Count();
                 var result = new OrderResponseDataModel
                 {
                     Orders = orders,
@@ -97,8 +96,11 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                         orderEntry.OrderItems = new List<OrderItem>();
                         orderDictionary.Add(orderEntry.Id, orderEntry);
                     }
-                    orderItem.PrintingEdition = printingEdition;
-                    orderEntry.OrderItems.Add(orderItem);
+                    if (orderItem != null)
+                    {
+                        orderItem.PrintingEdition = printingEdition;
+                        orderEntry.OrderItems.Add(orderItem);
+                    }
                     return orderEntry;
                 });
                 orders = orders.Distinct();

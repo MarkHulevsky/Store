@@ -107,6 +107,7 @@ namespace Store.BuisnessLogic.Services
             {
                 UserId = user.Id
             };
+            order.Status = OrderStatus.Unpaid;
             order = await _orderRepository.CreateAsync(order);
             var orderModel = _orderModelMapper.Map(order);
             var orderItems = OrderItemListMapper.Map(cartModel.Order.OrderItems, order.Id);

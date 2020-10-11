@@ -20,6 +20,7 @@ namespace Store.DataAccess.Entities
         public string Password { get; set; }
         public User()
         {
+            CreationDate = DateTime.Now;
             IsActive = true;
             Order = new List<Order>();
         }

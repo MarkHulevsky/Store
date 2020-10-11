@@ -36,7 +36,8 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                 await dbContext.OpenAsync();
                 var users = await dbContext.QueryAsync<User>(query.ToString());
                 query.Clear();
-                query.Append($"SELECT COUNT(*) FROM {tableName} WHERE IsRemoved = 0");
+                query.Append(@$"SELECT COUNT(*) FROM {tableName} WHERE ({tableName}.FirstName LIKE '%{userRequestDataModel.SearchString}%'
+                            OR {tableName}.LastName LIKE '%{userRequestDataModel.SearchString}%')");
                 var count = await dbContext.QueryFirstOrDefaultAsync<int>(query.ToString());
                 var result = new UserResponseDataModel
                 {

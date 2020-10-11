@@ -52,7 +52,7 @@ namespace Store.BuisnessLogic.Services
 
         public async Task<PrintingEditionModel> GetByIdAsync(string id)
         {
-            var printingEditionId = Guid.Parse(id);
+            Guid.TryParse(id, out var printingEditionId);
             var printingEdition = await _printingEditionRepository.GetAsync(printingEditionId);
             var printingEditionModel = _printingEditionModelMapper.Map(printingEdition);
             return printingEditionModel;
@@ -72,7 +72,7 @@ namespace Store.BuisnessLogic.Services
 
         public async Task RemoveAsync(string printingEdiotionId)
         {
-            var id = Guid.Parse(printingEdiotionId);
+            var result = Guid.TryParse(printingEdiotionId, out var id);
             await _printingEditionRepository.RemoveAsync(id);
         }
 

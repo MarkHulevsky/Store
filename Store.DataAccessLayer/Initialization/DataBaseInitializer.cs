@@ -76,7 +76,6 @@ namespace Store.DataAccess.Initialization
             }
             var book = new PrintingEdition
             {
-                CreationDate = DateTime.Now,
                 Currency = CurrencyType.USD,
                 IsRemoved = false,
                 Title = "Book Title",
@@ -86,7 +85,6 @@ namespace Store.DataAccess.Initialization
             };
             var magazine = new PrintingEdition
             {
-                CreationDate = DateTime.Now,
                 Currency = CurrencyType.USD,
                 IsRemoved = false,
                 Title = "Magazine Title",
@@ -96,7 +94,6 @@ namespace Store.DataAccess.Initialization
             };
             var newspaper = new PrintingEdition
             {
-                CreationDate = DateTime.Now,
                 Currency = CurrencyType.USD,
                 IsRemoved = false,
                 Title = "Newspaper Title",
