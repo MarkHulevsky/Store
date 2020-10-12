@@ -13,6 +13,10 @@ namespace Store.BuisnessLogic.Helpers.Mappers.ListMappers
         public static List<TDestination> Map(List<TSource> source)
         {
             var destiantion = Activator.CreateInstance<List<TDestination>>();
+            if (source == null)
+            {
+                return destiantion;
+            }
             foreach (var sourceItem in source)
             {
                 var destinationItem = _mapper.Map(sourceItem);

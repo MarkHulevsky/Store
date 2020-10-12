@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Shared.Enums.Enums;
 
 namespace Store.DataAccess.Repositories.EFRepositories
 {
@@ -26,7 +25,6 @@ namespace Store.DataAccess.Repositories.EFRepositories
             {
                 return entity;
             }
-            order.Status = OrderStatus.Unpaid;
             var result = await DbSet.AddAsync(order);
             await SaveChangesAsync();
             return order;
@@ -60,7 +58,8 @@ namespace Store.DataAccess.Repositories.EFRepositories
 
         public async Task<List<Order>> GetUserOrdersAsync(Guid userId)
         {
-            var orders = await DbSet.Include(order => order.OrderItems)
+            var orders = await DbSet
+                .Include(order => order.OrderItems)
                 .ThenInclude(orderItem => orderItem.PrintingEdition)
                 .Where(order => order.UserId == userId)
                 .ToListAsync();

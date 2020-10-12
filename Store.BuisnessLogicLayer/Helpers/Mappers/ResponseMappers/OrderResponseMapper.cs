@@ -26,6 +26,11 @@ namespace Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers
 
         public static OrderResponseModel Map(OrderResponseDataModel responseFilter)
         {
+            if (responseFilter is null)
+            {
+                return new OrderResponseModel();
+            }
+
             var responseFilterModel = new OrderResponseModel
             {
                 TotalCount = responseFilter.TotalCount

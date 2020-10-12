@@ -12,6 +12,11 @@ namespace Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers
         }
         public static PrintingEditionsRequestDataModel Map(PrintingEditionsRequestModel filterModel)
         {
+            if (filterModel is null)
+            {
+                return new PrintingEditionsRequestDataModel();
+            }
+
             var filter = new PrintingEditionsRequestDataModel
             {
                 MaxPrice = filterModel.MaxPrice,

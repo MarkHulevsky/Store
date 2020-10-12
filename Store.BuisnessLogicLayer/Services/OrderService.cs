@@ -2,7 +2,6 @@
 using Store.BuisnessLogic.Helpers.Mappers.ListMappers;
 using Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers;
 using Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers;
-using Store.BuisnessLogic.Models.Base;
 using Store.BuisnessLogic.Models.Filters;
 using Store.BuisnessLogic.Models.Filters.ResponseFilters;
 using Store.BuisnessLogic.Models.Orders;
@@ -40,37 +39,27 @@ namespace Store.BuisnessLogic.Services
             _orderModelMapper = new Mapper<Order, OrderModel>();
         }
 
-        public async Task<BaseModel> PayOrderAsync(PaymentModel paymentModel)
+        public async Task<List<string>> PayOrderAsync(PaymentModel paymentModel)
         {
             var customerService = new CustomerService();
             var chargeService = new ChargeService();
-
             var customerOptions = new CustomerCreateOptions
             {
                 Email = paymentModel.UserEmail,
                 Source = paymentModel.TokenId
             };
-
             var customer = await customerService.CreateAsync(customerOptions);
-
             var chargeOptions = new ChargeCreateOptions
             {
                 Amount = paymentModel.Amount,
                 Currency = paymentModel.CurrencyString,
                 Customer = customer.Id
             };
-
             var charge = await chargeService.CreateAsync(chargeOptions);
-
+            var errors = new List<string>();
             if (charge.Status != CHARGE_SUCCEEDED)
             {
-                return new BaseModel
-                {
-                    Errors = new List<string>
-                    {
-                        CHARGE_IS_NOT_SUCCEEDED_ERROR
-                    }
-                };
+                errors.Add(CHARGE_IS_NOT_SUCCEEDED_ERROR);
             }
             var payment = new Payment()
             {
@@ -81,7 +70,7 @@ namespace Store.BuisnessLogic.Services
             order.PaymentId = payment.Id;
             order.Status = OrderStatus.Paid;
             await _orderRepository.UpdateAsync(order);
-            return new BaseModel();
+            return errors;
         }
 
         public async Task<OrderResponseModel> FilterAsync(OrderRequestModel orderRequestModel)

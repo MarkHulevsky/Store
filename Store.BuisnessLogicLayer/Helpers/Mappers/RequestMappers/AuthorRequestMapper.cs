@@ -12,6 +12,10 @@ namespace Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers
         }
         public static AuthorRequestDataModel Map(AuthorRequestModel filterModel)
         {
+            if (filterModel is null)
+            {
+                return new AuthorRequestDataModel();
+            }
             var filter = new AuthorRequestDataModel
             {
                 Paging = _pagingMapper.Map(filterModel.Paging),

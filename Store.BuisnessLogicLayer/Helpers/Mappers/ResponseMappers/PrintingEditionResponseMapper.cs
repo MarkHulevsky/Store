@@ -20,6 +20,11 @@ namespace Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers
 
         public static PrintingEditionResponseModel Map(PrintingEditionResponseDataModel responseDataModel)
         {
+            if (responseDataModel is null)
+            {
+                return new PrintingEditionResponseModel();
+            }
+
             var responseFilterModel = new PrintingEditionResponseModel
             {
                 TotalCount = responseDataModel.TotalCount

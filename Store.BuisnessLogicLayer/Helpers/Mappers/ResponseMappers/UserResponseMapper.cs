@@ -14,6 +14,11 @@ namespace Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers
         }
         public static UserResponseModel Map(UserResponseDataModel responseFilter)
         {
+            if (responseFilter is null)
+            {
+                return new UserResponseModel();
+            }
+
             var responseFilterModel = new UserResponseModel
             {
                 TotalCount = responseFilter.TotalCount

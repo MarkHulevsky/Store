@@ -12,6 +12,6 @@ namespace Store.BuisnessLogic.Services.Interfaces
         Task<UserModel> GetCurrentAsync();
         Task<List<string>> EditAsync(EditProfileModel editProfileModel);
         Task ChangeStatusAsync(UserModel userModel);
-        Task RemoveAsync(string userId);
+        Task<List<string>> RemoveAsync(string userId);
     }
 }

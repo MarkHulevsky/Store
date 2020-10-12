@@ -18,11 +18,13 @@ namespace Store.BuisnessLogic.Services
     {
         private readonly IAuthorRepository _authorRepository;
         private readonly Mapper<AuthorModel, Author> _authorMapper;
+        private readonly Mapper<Author, AuthorModel> _authorModelMapper;
 
         public AuthorService(IAuthorRepository authorRepository)
         {
             _authorRepository = authorRepository;
             _authorMapper = new Mapper<AuthorModel, Author>();
+            _authorModelMapper = new Mapper<Author, AuthorModel>();
         }
 
         public async Task<List<AuthorModel>> GetAll()
@@ -32,15 +34,18 @@ namespace Store.BuisnessLogic.Services
             return authorModels;
         }
 
-        public async Task CreateAsync(AuthorModel authorModel)
+        public async Task<AuthorModel> CreateAsync(AuthorModel authorModel)
         {
             var author = await _authorRepository.FindAuthorByNameAsync(authorModel.Name);
             if (author != null)
             {
-                return;
+                authorModel = _authorModelMapper.Map(author);
+                return authorModel;
             }
             author = _authorMapper.Map(authorModel);
-            await _authorRepository.CreateAsync(author);
+            author = await _authorRepository.CreateAsync(author);
+            authorModel = _authorModelMapper.Map(author);
+            return authorModel;
         }
 
         public async Task RemoveAsync(string authorId)

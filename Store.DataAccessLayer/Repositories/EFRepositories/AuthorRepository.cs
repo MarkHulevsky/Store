@@ -45,6 +45,10 @@ namespace Store.DataAccess.Repositories.EFRepositories
         public override async Task<Author> UpdateAsync(Author author)
         {
             var entity = await DbSet.FirstOrDefaultAsync(a => a.Id == author.Id);
+            if (entity == null)
+            {
+                return entity;
+            }
             entity.Name = author.Name;
             entity = DbSet.Update(entity).Entity;
             await SaveChangesAsync();

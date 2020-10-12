@@ -12,6 +12,11 @@ namespace Store.BuisnessLogic.Helpers.Mappers.RequestFilterMappers
         }
         public static OrderRequestDataModel Map(OrderRequestModel filterModel)
         {
+            if (filterModel is null)
+            {
+                return new OrderRequestDataModel();
+            }
+
             var filter = new OrderRequestDataModel
             {
                 SortPropertyName = filterModel.SortPropertyName,

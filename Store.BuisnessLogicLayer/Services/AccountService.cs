@@ -53,13 +53,13 @@ namespace Store.BuisnessLogic.Services
         public async Task<List<string>> ResetPasswordAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
             var errors = new List<string>();
             if (user == null)
             {
                 errors.Add(USER_NOT_FOUND_ERROR);
                 return errors;
             }
+            var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
             if (!isEmailConfirmed)
             {
                 errors.Add(EMAIL_IS_NOT_CONFIRMED_ERROR);
@@ -94,6 +94,7 @@ namespace Store.BuisnessLogic.Services
                 {
                     errors.Add(error.Description);
                 }
+                return errors;
             }
             await _userManager.AddToRoleAsync(user, USER_ROLE_NAME);
             await SendConfirmUrlAsync(registerModel.Email);
@@ -146,8 +147,7 @@ namespace Store.BuisnessLogic.Services
             {
                 return userModel;
             }
-            user.Password = loginModel.Password;
-            var result = await _signInManager.PasswordSignInAsync(user, user.Password, false, false);
+            var result = await _signInManager.PasswordSignInAsync(user, loginModel.Password, false, false);
             if (!result.Succeeded)
             {
                 userModel.Errors.Add(INCORRECT_LOGIN_DATA_ERROR);

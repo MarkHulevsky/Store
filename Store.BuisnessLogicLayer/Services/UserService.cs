@@ -89,15 +89,25 @@ namespace Store.BuisnessLogic.Services
             return errors;
         }
 
-        public async Task RemoveAsync(string userId)
+        public async Task<List<string>> RemoveAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
+            var errors = new List<string>();
             if (user == null)
             {
-                return;
+                errors.Add(NO_SUCH_USER_ERROR);
+                return errors;
             }
             user.IsRemoved = true;
-            await _userManager.UpdateAsync(user);
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    errors.Add(error.Description);
+                }
+            }
+            return errors;
         }
     }
 }

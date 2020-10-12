@@ -9,7 +9,7 @@ namespace Store.BuisnessLogic.Services.Interfaces
     public interface IAuthorService
     {
         Task<List<AuthorModel>> GetAll();
-        Task CreateAsync(AuthorModel authorModel);
+        Task<AuthorModel> CreateAsync(AuthorModel authorModel);
         Task RemoveAsync(string id);
         Task EditAsync(AuthorModel authorModel);
         Task<AuthorResponseModel> FilterAsync(AuthorRequestModel authorRequestModel);

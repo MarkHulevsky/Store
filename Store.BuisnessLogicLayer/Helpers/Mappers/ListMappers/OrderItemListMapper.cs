@@ -15,6 +15,10 @@ namespace Store.BuisnessLogic.Helpers.Mappers.ListMappers
         public static List<OrderItem> Map(List<OrderItemModel> orderItemModels, Guid orderId)
         {
             var orderItems = new List<OrderItem>();
+            if (orderItemModels is null)
+            {
+                return orderItems;
+            }
             foreach (var orderItemModel in orderItemModels)
             {
                 var orderItem = _orderItemMapper.Map(orderItemModel);

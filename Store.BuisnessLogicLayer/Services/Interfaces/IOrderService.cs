@@ -1,5 +1,4 @@
-﻿using Store.BuisnessLogic.Models.Base;
-using Store.BuisnessLogic.Models.Filters;
+﻿using Store.BuisnessLogic.Models.Filters;
 using Store.BuisnessLogic.Models.Filters.ResponseFilters;
 using Store.BuisnessLogic.Models.Orders;
 using Store.BuisnessLogic.Models.Payments;
@@ -10,7 +9,7 @@ namespace Store.BuisnessLogic.Services.Interfaces
 {
     public interface IOrderService
     {
-        Task<BaseModel> PayOrderAsync(PaymentModel paymentModel);
+        Task<List<string>> PayOrderAsync(PaymentModel paymentModel);
         Task<List<OrderModel>> GetUserOrdersAsync();
         Task<OrderModel> CreateAsync(CartModel cartModel);
         Task RemoveAsync(string id);

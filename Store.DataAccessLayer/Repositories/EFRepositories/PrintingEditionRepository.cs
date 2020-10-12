@@ -61,6 +61,10 @@ namespace Store.DataAccess.Repositories.EFRepositories
         public override async Task<PrintingEdition> UpdateAsync(PrintingEdition model)
         {
             var entity = await DbSet.FirstOrDefaultAsync(pe => pe.Id == model.Id);
+            if (entity == null)
+            {
+                return entity;
+            }
             entity.Title = model.Title;
             entity.Price = model.Price;
             entity.Type = model.Type;

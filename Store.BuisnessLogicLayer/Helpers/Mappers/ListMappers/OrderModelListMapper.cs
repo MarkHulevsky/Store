@@ -19,6 +19,10 @@ namespace Store.BuisnessLogic.Helpers.Mappers.ListMappers
         public static List<OrderModel> Map(List<Order> orders)
         {
             var orderModels = new List<OrderModel>();
+            if (orders is null)
+            {
+                return orderModels;
+            }
             foreach (var order in orders)
             {
                 var orderItemModels = new List<OrderItemModel>();

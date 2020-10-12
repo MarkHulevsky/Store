@@ -18,6 +18,11 @@ namespace Store.BuisnessLogic.Helpers.Mappers.ResponseFilterMappers
         }
         public static AuthorResponseModel Map(AuthorResponseDataModel responseFilter)
         {
+            if (responseFilter is null)
+            {
+                return new AuthorResponseModel();
+            }
+
             var responseFilterModel = new AuthorResponseModel
             {
                 TotalCount = responseFilter.TotalCount

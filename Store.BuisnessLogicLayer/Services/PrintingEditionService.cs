@@ -14,6 +14,7 @@ using Store.DataAccess.Entities;
 using Store.DataAccess.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Store.BuisnessLogic.Services
@@ -62,7 +63,7 @@ namespace Store.BuisnessLogic.Services
         {
             var printingEdition = _printingEditionMapper.Map(printingEditionModel);
             printingEdition = await _printingEditionRepository.CreateAsync(printingEdition);
-            if (printingEditionModel?.Authors.Count != 0)
+            if (printingEditionModel.Authors.Any())
             {
                 await AddToAuthorsAsync(printingEdition.Id, printingEditionModel.Authors);
             }
@@ -73,6 +74,10 @@ namespace Store.BuisnessLogic.Services
         public async Task RemoveAsync(string printingEdiotionId)
         {
             var result = Guid.TryParse(printingEdiotionId, out var id);
+            if (!result)
+            {
+                return;
+            }
             await _printingEditionRepository.RemoveAsync(id);
         }
 

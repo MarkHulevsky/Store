@@ -33,9 +33,10 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task Add([FromBody] AuthorModel authorModel)
+        public async Task<IActionResult> Add([FromBody] AuthorModel authorModel)
         {
-            await _authorService.CreateAsync(authorModel);
+            var createdAuthor = await _authorService.CreateAsync(authorModel);
+            return Ok(createdAuthor);
         }
 
         [HttpPut]
