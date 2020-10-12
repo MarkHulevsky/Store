@@ -82,28 +82,28 @@ namespace Store.DataAccess.Repositories.DapperRepositories
                 $"LEFT JOIN {Constants.PRINTING_EDITIONS_TABLE_NAME} " +
                 $"ON {Constants.PRINTING_EDITIONS_TABLE_NAME}.Id = {Constants.ORDER_ITEMS_TABLE_NAME}.PrintingEditionId " +
                 $"WHERE UserId = '{userId}'";
-            var orderDictionary = new Dictionary<Guid, Order>();
             using (var dbContext = new SqlConnection(connectionString))
             {
                 await dbContext.OpenAsync();
                 var orders = await dbContext.QueryAsync<Order, OrderItem, PrintingEdition, Order>(
                 query, (order, orderItem, printingEdition) =>
                 {
-                    var orderEntry = new Order();
-                    if (!orderDictionary.TryGetValue(order.Id, out orderEntry))
-                    {
-                        orderEntry = order;
-                        orderEntry.OrderItems = new List<OrderItem>();
-                        orderDictionary.Add(orderEntry.Id, orderEntry);
-                    }
                     if (orderItem != null)
                     {
                         orderItem.PrintingEdition = printingEdition;
-                        orderEntry.OrderItems.Add(orderItem);
                     }
-                    return orderEntry;
+                    order.OrderItems.Add(orderItem);
+                    return order;
                 });
-                orders = orders.Distinct();
+                var querybaleOrders = orders
+                    .GroupBy(order => order.Id)
+                    .Select(group =>
+                    {
+                        var result = group.FirstOrDefault();
+                        result.OrderItems = group.Select(order => order.OrderItems.SingleOrDefault()).ToList();
+                        return result;
+                    });
+                orders = querybaleOrders.ToList();
                 return orders.ToList();
             }
         }

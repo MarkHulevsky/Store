@@ -128,6 +128,7 @@ namespace Store.BuisnessLogic.Services
             if (user == null)
             {
                 userModel.Errors.Add(USER_NOT_FOUND_ERROR);
+                return userModel;
             }
             if (!user.IsActive)
             {

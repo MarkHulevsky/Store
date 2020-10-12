@@ -29,7 +29,7 @@ namespace Store.DataAccess.Repositories.Base
         {
             var entityEntry = await DbSet.AddAsync(model);
             model = entityEntry.Entity;
-            await _dbContext.SaveChangesAsync();
+            await SaveChangesAsync();
             return model;
         }
 
@@ -42,18 +42,20 @@ namespace Store.DataAccess.Repositories.Base
             }
             entity.IsRemoved = true;
             entity = DbSet.Update(entity).Entity;
-            await _dbContext.SaveChangesAsync();
+            await SaveChangesAsync();
             return entity;
         }
 
         public virtual async Task<T> GetAsync(Guid id)
         {
-            return await DbSet.FirstOrDefaultAsync(entity => entity.Id == id && !entity.IsRemoved);
+            var result = await DbSet.FirstOrDefaultAsync(entity => entity.Id == id && !entity.IsRemoved);
+            return result;
         }
 
         public virtual async Task<List<T>> GetAllAsync()
         {
-            return await DbSet.Where(ent => !ent.IsRemoved).ToListAsync();
+            var result = await DbSet.Where(ent => !ent.IsRemoved).ToListAsync();
+            return result;
         }
 
         public virtual async Task<T> UpdateAsync(T model)
@@ -64,7 +66,7 @@ namespace Store.DataAccess.Repositories.Base
                 return entity;
             }
             entity = _dbContext.Set<T>().Update(model).Entity;
-            await _dbContext.SaveChangesAsync();
+            await SaveChangesAsync();
             return entity;
         }
 

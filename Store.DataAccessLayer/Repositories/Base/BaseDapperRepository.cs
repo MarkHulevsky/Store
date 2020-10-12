@@ -34,13 +34,14 @@ namespace Store.DataAccess.Repositories.Base
 
         public virtual async Task<T> UpdateAsync(T model)
         {
+            if (model == null)
+            {
+                return model;
+            }
             using (var dbContext = new SqlConnection(connectionString))
             {
-                if (await dbContext.UpdateAsync(model))
-                {
-                    return model;
-                }
-                return null;
+                await dbContext.UpdateAsync(model);
+                return model;
             }
         }
 
@@ -69,6 +70,10 @@ namespace Store.DataAccess.Repositories.Base
             using (var dbContext = new SqlConnection(connectionString))
             {
                 var entity = await dbContext.GetAsync<T>(id);
+                if (entity == null)
+                {
+                    return entity;
+                }
                 entity.IsRemoved = true;
                 await dbContext.UpdateAsync(entity);
                 return entity;
