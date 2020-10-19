@@ -83,7 +83,7 @@ namespace Store.BuisnessLogic.Helpers
 
             var tokenHandler = new JwtSecurityTokenHandler();
             IdentityModelEventSource.ShowPII = true;
-            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
             var jwtSecurityToken = securityToken as JwtSecurityToken;
             if (jwtSecurityToken == null ||
                 !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))

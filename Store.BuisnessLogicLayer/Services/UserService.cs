@@ -70,7 +70,7 @@ namespace Store.BuisnessLogic.Services
                 errors.Add(NO_SUCH_USER_ERROR);
                 return errors;
             }
-            if (editProfileModel.Password != string.Empty && editProfileModel.Password != null)
+            if (!string.IsNullOrWhiteSpace(editProfileModel.Password))
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 await _userManager.ResetPasswordAsync(user, token, editProfileModel.Password);

@@ -53,7 +53,11 @@ namespace Store.BuisnessLogic.Services
 
         public async Task<PrintingEditionModel> GetByIdAsync(string id)
         {
-            Guid.TryParse(id, out var printingEditionId);
+            var result = Guid.TryParse(id, out var printingEditionId);
+            if (!result)
+            {
+                return new PrintingEditionModel();
+            }
             var printingEdition = await _printingEditionRepository.GetAsync(printingEditionId);
             var printingEditionModel = _printingEditionModelMapper.Map(printingEdition);
             return printingEditionModel;

@@ -29,11 +29,12 @@ namespace Store.BuisnessLogic.Helpers.Mappers.ListMappers
                 foreach (var orderItem in order.OrderItems)
                 {
                     var orderItemModel = _orderItemModelMapper.Map(orderItem);
-                    if (orderItem != null)
+                    if (orderItem == null)
                     {
-                        orderItemModel.PrintingEdition = _printingEditionModelMapper.Map(orderItem.PrintingEdition);
-                        orderItemModels.Add(orderItemModel);
+                        continue;
                     }
+                    orderItemModel.PrintingEdition = _printingEditionModelMapper.Map(orderItem.PrintingEdition);
+                    orderItemModels.Add(orderItemModel);
                 }
                 var orderModel = _orderModelMapper.Map(order);
                 orderModel.Status = order.Status;

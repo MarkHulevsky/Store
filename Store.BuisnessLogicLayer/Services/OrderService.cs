@@ -60,6 +60,7 @@ namespace Store.BuisnessLogic.Services
             if (charge.Status != CHARGE_SUCCEEDED)
             {
                 errors.Add(CHARGE_IS_NOT_SUCCEEDED_ERROR);
+                return errors;
             }
             var payment = new Payment()
             {
@@ -106,7 +107,11 @@ namespace Store.BuisnessLogic.Services
 
         public async Task RemoveAsync(string orderId)
         {
-            var id = Guid.Parse(orderId);
+            var result = Guid.TryParse(orderId, out var id);
+            if (!result)
+            {
+                return;
+            }
             await _orderRepository.RemoveAsync(id);
         }
     }
