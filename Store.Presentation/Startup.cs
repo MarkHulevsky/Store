@@ -1,3 +1,5 @@
+using GraphQL.Server;
+using GraphQL.Server.Ui.Playground;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,8 +21,9 @@ using Store.BuisnessLogic.Services.Interfaces;
 using Store.DataAccess.AppContext;
 using Store.DataAccess.Entities;
 using Store.DataAccess.Initialization;
-using Store.DataAccess.Repositories.DapperRepositories;
+using Store.DataAccess.Repositories.EFRepositories;
 using Store.DataAccess.Repositories.Interfaces;
+using Store.Presentation.GraphQL.Schemas;
 using Store.Presentation.Middlewares;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -65,6 +68,12 @@ namespace Store.Presentation
             services.AddScoped<IPrintingEditionService, PrintingEditionService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IHttpProvider, HttpProvider>();
+
+            services.AddScoped<AppSchema>();
+
+            services.AddGraphQL()
+                .AddSystemTextJson()
+                .AddGraphTypes(typeof(AppSchema), ServiceLifetime.Scoped);
 
             services.AddDbContext<ApplicationContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -112,7 +121,6 @@ namespace Store.Presentation
                 options.Password.RequiredUniqueChars = 0;
                 options.User.RequireUniqueEmail = true;
             });
-
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
@@ -137,6 +145,9 @@ namespace Store.Presentation
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseGraphQL<AppSchema>();
+            app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());
 
             var swaggerSection = Configuration.GetSection("SwaggerSettings");
             app.UseSwagger(option =>

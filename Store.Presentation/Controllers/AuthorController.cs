@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 namespace Store.Presentation.Controllers
 {
     [Route("api/[controller]/[action]")]
-    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AuthorController : Controller
     {
         private readonly IAuthorService _authorService;
@@ -21,7 +20,7 @@ namespace Store.Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var authors = await _authorService.GetAll();
+            var authors = await _authorService.GetAllAsync();
             return Ok(authors);
         }
 

@@ -6,8 +6,8 @@ namespace Store.BuisnessLogic.Models.Filters
     public class PrintingEditionsRequestModel : BaseRequestModel
     {
         public IEnumerable<PrintingEditionType> Types { get; set; }
-        public float MinPrice { get; set; }
-        public float MaxPrice { get; set; }
+        public double MinPrice { get; set; }
+        public double MaxPrice { get; set; }
         public string SearchString { get; set; }
         public PrintingEditionsRequestModel()
         {

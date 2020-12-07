@@ -7,8 +7,8 @@ namespace Store.DataAccess.Filters
     public class PrintingEditionsRequestDataModel : BaseRequetDataModel
     {
         public List<PrintingEditionType> Types { get; set; }
-        public float MinPrice { get; set; }
-        public float MaxPrice { get; set; }
+        public double MinPrice { get; set; }
+        public double MaxPrice { get; set; }
         public string SearchString { get; set; }
         public PrintingEditionsRequestDataModel()
         {

@@ -27,7 +27,7 @@ namespace Store.BuisnessLogic.Services
             _authorModelMapper = new Mapper<Author, AuthorModel>();
         }
 
-        public async Task<List<AuthorModel>> GetAll()
+        public async Task<List<AuthorModel>> GetAllAsync()
         {
             var authors = await _authorRepository.GetAllAsync();
             var authorModels = ListMapper<AuthorModel, Author>.Map(authors);
