@@ -4,9 +4,9 @@ using Store.Presentation.GraphQL.Models.PrintingEdition;
 
 namespace Store.Presentation.GraphQL.Models.Orders
 {
-    public class OrderItemType : ObjectGraphType<OrderItemModel>
+    public class OrderItemGraphType : ObjectGraphType<OrderItemModel>
     {
-        public OrderItemType()
+        public OrderItemGraphType()
         {
             Field(x => x.Id);
             Field<ListGraphType<StringGraphType>>(nameof(OrderItemModel.Errors));
@@ -15,7 +15,7 @@ namespace Store.Presentation.GraphQL.Models.Orders
             Field(x => x.Count);
             Field(x => x.OrderId);
             Field(x => x.PrintingEditionId);
-            Field<PrintingEditionType>(nameof(OrderItemModel.PrintingEdition));
+            Field<PrintingEditionGraphType>(nameof(OrderItemModel.PrintingEdition));
         }
     }
 }

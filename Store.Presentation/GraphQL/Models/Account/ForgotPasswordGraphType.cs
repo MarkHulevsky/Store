@@ -3,9 +3,9 @@ using Store.BuisnessLogic.Models.Account;
 
 namespace Store.Presentation.GraphQL.Models.Account
 {
-    public class ForgotPasswordType : ObjectGraphType<ForgotPasswordModel>
+    public class ForgotPasswordGraphType : ObjectGraphType<ForgotPasswordModel>
     {
-        public ForgotPasswordType()
+        public ForgotPasswordGraphType()
         {
             Field(x => x.Email);
         }

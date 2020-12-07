@@ -1,8 +1,9 @@
 ﻿using GraphQL.Types;
 using Store.BuisnessLogic.Models.Filters;
+using Store.Presentation.GraphQL.Models.Filters;
 using System.Linq;
 
-namespace Store.Presentation.GraphQL.Models.Filters.RequestModels
+namespace Store.Presentation.GraphQL.InputTypes.RequestModels
 {
     class PrintingEditionRequestGraphType : InputObjectGraphType<PrintingEditionsRequestModel>
     {

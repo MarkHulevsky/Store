@@ -4,12 +4,12 @@ using Store.Presentation.GraphQL.Models.PrintingEdition;
 
 namespace Store.Presentation.GraphQL.Models.Filters.ResponseModels
 {
-    public class PrintingEditionResponseType : ObjectGraphType<PrintingEditionResponseModel>
+    public class PrintingEditionResponseGraphType : ObjectGraphType<PrintingEditionResponseModel>
     {
-        public PrintingEditionResponseType()
+        public PrintingEditionResponseGraphType()
         {
             Field(x => x.TotalCount);
-            Field<ListGraphType<PrintingEditionType>>(nameof(PrintingEditionResponseModel.PrintingEditions));
+            Field<ListGraphType<PrintingEditionGraphType>>(nameof(PrintingEditionResponseModel.PrintingEditions));
         }
     }
 }

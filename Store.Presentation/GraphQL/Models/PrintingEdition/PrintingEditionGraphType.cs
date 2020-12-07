@@ -5,9 +5,9 @@ using Store.Presentation.GraphQL.Models.Base;
 
 namespace Store.Presentation.GraphQL.Models.PrintingEdition
 {
-    public class PrintingEditionType : ObjectGraphType<PrintingEditionModel>
+    public class PrintingEditionGraphType : ObjectGraphType<PrintingEditionModel>
     {
-        public PrintingEditionType()
+        public PrintingEditionGraphType()
         {
             Field(x => x.Id);
             Field(x => x.CreationDate);
@@ -17,7 +17,7 @@ namespace Store.Presentation.GraphQL.Models.PrintingEdition
             Field(x => x.Description);
             Field<IntGraphType>(nameof(PrintingEditionModel.Type), resolve: context => (int)context.Source.Type);
             Field<IntGraphType>(nameof(PrintingEditionModel.Currency), resolve: context => (int)context.Source.Currency);
-            Field<ListGraphType<AuthorType>>(nameof(PrintingEditionModel.Authors));
+            Field<ListGraphType<AuthorGraphType>>(nameof(PrintingEditionModel.Authors));
             Interface<BaseInterfaceGraphType>();
             IsTypeOf = obj => obj is PrintingEditionModel;
         }

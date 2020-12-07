@@ -3,9 +3,9 @@ using Store.BuisnessLogic.Models.Payments;
 
 namespace Store.Presentation.GraphQL.Models.Payments
 {
-    public class PaymentType : ObjectGraphType<PaymentModel>
+    public class PaymentGraphType : ObjectGraphType<PaymentModel>
     {
-        public PaymentType()
+        public PaymentGraphType()
         {
             Field(x => x.Id);
             Field(x => x.Errors);

@@ -2,8 +2,8 @@
 using GraphQL.Types;
 using Store.BuisnessLogic.Models.Filters;
 using Store.BuisnessLogic.Services.Interfaces;
+using Store.Presentation.GraphQL.InputTypes.RequestModels;
 using Store.Presentation.GraphQL.Models.Author;
-using Store.Presentation.GraphQL.Models.Filters.RequestModels;
 using Store.Presentation.GraphQL.Models.Filters.ResponseModels;
 
 namespace Store.Presentation.GraphQL.Queries
@@ -15,10 +15,10 @@ namespace Store.Presentation.GraphQL.Queries
         {
             _authorService = authorService;
 
-            FieldAsync<ListGraphType<AuthorType>>("allAuthors",
+            FieldAsync<ListGraphType<AuthorGraphType>>("allAuthors",
                 resolve: async (context) => await _authorService.GetAllAsync());
 
-            FieldAsync<AuthorResponseType>("authors",
+            FieldAsync<AuthorResponseGraphType>("authors",
                 arguments: new QueryArguments(new QueryArgument<AuthorRequestGraphType> 
                 {
                     Name = "filter"
@@ -30,17 +30,7 @@ namespace Store.Presentation.GraphQL.Queries
                     return result;
                 });
 
-            FieldAsync<StringGraphType>("removeAuthor",
-                arguments: new QueryArguments(new QueryArgument<StringGraphType>
-                {
-                    Name = "id"
-                }),
-                resolve: async (context) =>
-                {
-                    var id = context.GetArgument<string>("id");
-                    await _authorService.RemoveAsync(id);
-                    return id;
-                });
+            
         }
     }
 }

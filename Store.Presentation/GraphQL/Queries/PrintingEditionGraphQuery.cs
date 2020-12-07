@@ -2,7 +2,7 @@
 using GraphQL.Types;
 using Store.BuisnessLogic.Models.Filters;
 using Store.BuisnessLogic.Services.Interfaces;
-using Store.Presentation.GraphQL.Models.Filters.RequestModels;
+using Store.Presentation.GraphQL.InputTypes.RequestModels;
 using Store.Presentation.GraphQL.Models.Filters.ResponseModels;
 using Store.Presentation.GraphQL.Models.PrintingEdition;
 
@@ -15,7 +15,7 @@ namespace Store.Presentation.GraphQL.Queries
         {
             _printingEditionService = printingEditionService;
 
-            FieldAsync<PrintingEditionType>(name: "printingEdition",
+            FieldAsync<PrintingEditionGraphType>(name: "printingEdition",
                 arguments: new QueryArguments(new QueryArgument<StringGraphType> { Name = "id" }),
                 resolve: async (context) =>
                 {
@@ -24,7 +24,7 @@ namespace Store.Presentation.GraphQL.Queries
                 });
 
 
-            FieldAsync<PrintingEditionResponseType>("printingEditions",
+            FieldAsync<PrintingEditionResponseGraphType>("printingEditions",
                 arguments: new QueryArguments(new QueryArgument<PrintingEditionRequestGraphType> { Name = "filter" }),
                 resolve: async (context) =>
                 {

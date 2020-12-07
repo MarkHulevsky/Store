@@ -10,8 +10,8 @@ namespace Store.BuisnessLogic.Services.Interfaces
     {
         Task<List<AuthorModel>> GetAllAsync();
         Task<AuthorModel> CreateAsync(AuthorModel authorModel);
-        Task RemoveAsync(string id);
-        Task EditAsync(AuthorModel authorModel);
+        Task<AuthorModel> RemoveAsync(string id);
+        Task<AuthorModel> EditAsync(AuthorModel authorModel);
         Task<AuthorResponseModel> FilterAsync(AuthorRequestModel authorRequestModel);
     }
 }

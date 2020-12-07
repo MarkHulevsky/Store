@@ -3,9 +3,9 @@ using Store.BuisnessLogic.Models.Users;
 
 namespace Store.Presentation.GraphQL.Models.User
 {
-    public class EditProfileType : ObjectGraphType<EditProfileModel>
+    public class EditProfileGraphType : ObjectGraphType<EditProfileModel>
     {
-        public EditProfileType()
+        public EditProfileGraphType()
         {
             Field(x => x.Id);
             Field(x => x.Email);

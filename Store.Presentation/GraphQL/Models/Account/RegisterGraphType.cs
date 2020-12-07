@@ -3,9 +3,9 @@ using Store.BuisnessLogic.Models.Account;
 
 namespace Store.Presentation.GraphQL.Models.Account
 {
-    public class RegisterType : ObjectGraphType<RegisterModel>
+    public class RegisterGraphType : ObjectGraphType<RegisterModel>
     {
-        public RegisterType()
+        public RegisterGraphType()
         {
             Field(x => x.Email);
             Field(x => x.FirstName);

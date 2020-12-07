@@ -4,12 +4,12 @@ using Store.Presentation.GraphQL.Models.User;
 
 namespace Store.Presentation.GraphQL.Models.Filters.ResponseModels
 {
-    public class UserResponseType : ObjectGraphType<UserResponseModel>
+    public class UserResponseGraphType : ObjectGraphType<UserResponseModel>
     {
-        public UserResponseType()
+        public UserResponseGraphType()
         {
             Field(x => x.TotalCount);
-            Field<ListGraphType<UserType>>(nameof(UserResponseModel.Users));
+            Field<ListGraphType<UserGraphType>>(nameof(UserResponseModel.Users));
         }
     }
 }

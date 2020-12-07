@@ -3,9 +3,9 @@ using Store.BuisnessLogic.Models.Account;
 
 namespace Store.Presentation.GraphQL.Models.Account
 {
-    public class LoginType : ObjectGraphType<LoginModel>
+    public class LoginGraphType : ObjectGraphType<LoginModel>
     {
-        public LoginType()
+        public LoginGraphType()
         {
             Field(x => x.Email);
             Field(x => x.Password);

@@ -57,6 +57,22 @@ namespace Store.BuisnessLogic.Helpers
             return jwtToken;
         }
 
+        public bool IsTokenValid(string token)
+        {
+            var key = Encoding.UTF8.GetBytes(_configuration.GetSection("JwtSettings").GetValue<string>("Key"));
+            var tokenHandler = new JwtSecurityTokenHandler();
+            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
+            }, out SecurityToken validatedToken);
+
+            return validatedToken.ValidTo < DateTime.Now;
+        }
+
         private string GenerateRefreshToken(int bytesCount = DEFALULT_RANDOM_NUMBER_BYTES_COUNT)
         {
             string refreshToken = string.Empty;

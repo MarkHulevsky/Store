@@ -69,11 +69,12 @@ namespace Store.Presentation
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IHttpProvider, HttpProvider>();
 
-            services.AddScoped<AppSchema>();
+            services.AddScoped<AuthorGraphSchema>();
+            services.AddScoped<PrintingEditionGraphSchema>();
 
             services.AddGraphQL()
                 .AddSystemTextJson()
-                .AddGraphTypes(typeof(AppSchema), ServiceLifetime.Scoped);
+                .AddGraphTypes(typeof(AuthorGraphSchema), ServiceLifetime.Scoped);
 
             services.AddDbContext<ApplicationContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -146,8 +147,20 @@ namespace Store.Presentation
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseGraphQL<AppSchema>();
-            app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());
+            app.UseGraphQL<AuthorGraphSchema>("/api/author/graphql");
+            app.UseGraphQL<PrintingEditionGraphSchema>("/api/printingEdition/graphql");
+
+            app.UseGraphQLPlayground(new GraphQLPlaygroundOptions
+            {
+                GraphQLEndPoint = "/api/author/graphql",
+                Path = "/api/author/playground"
+            });
+
+            app.UseGraphQLPlayground(new GraphQLPlaygroundOptions
+            {
+                GraphQLEndPoint = "/api/printingEdition/graphql",
+                Path = "/api/printingEdition/playground"
+            });
 
             var swaggerSection = Configuration.GetSection("SwaggerSettings");
             app.UseSwagger(option =>

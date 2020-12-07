@@ -48,25 +48,28 @@ namespace Store.BuisnessLogic.Services
             return authorModel;
         }
 
-        public async Task RemoveAsync(string authorId)
+        public async Task<AuthorModel> RemoveAsync(string authorId)
         {
             var result = Guid.TryParse(authorId, out var id);
             if (!result)
             {
-                return;
+                return null;
             }
-            await _authorRepository.RemoveAsync(id);
+            var author = await _authorRepository.RemoveAsync(id);
+            var authorModel = _authorModelMapper.Map(author);
+            return authorModel;
         }
 
-        public async Task EditAsync(AuthorModel authorModel)
+        public async Task<AuthorModel> EditAsync(AuthorModel authorModel)
         {
             var author = await _authorRepository.GetAsync(authorModel.Id);
             if (author == null)
             {
-                return;
+                return null;
             }
             author.Name = authorModel.Name;
             await _authorRepository.UpdateAsync(author);
+            return authorModel;
         }
 
         public async Task<AuthorResponseModel> FilterAsync(AuthorRequestModel authorRequestModel)

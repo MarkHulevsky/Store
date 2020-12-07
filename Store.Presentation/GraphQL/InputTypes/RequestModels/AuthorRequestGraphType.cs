@@ -1,7 +1,8 @@
 ﻿using GraphQL.Types;
 using Store.BuisnessLogic.Models.Filters;
+using Store.Presentation.GraphQL.Models.Filters;
 
-namespace Store.Presentation.GraphQL.Models.Filters.RequestModels
+namespace Store.Presentation.GraphQL.InputTypes.RequestModels
 {
     class AuthorRequestGraphType : InputObjectGraphType<AuthorRequestModel>
     {

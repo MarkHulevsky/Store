@@ -4,12 +4,12 @@ using Store.Presentation.GraphQL.Models.Author;
 
 namespace Store.Presentation.GraphQL.Models.Filters.ResponseModels
 {
-    public class AuthorResponseType : ObjectGraphType<AuthorResponseModel>
+    public class AuthorResponseGraphType : ObjectGraphType<AuthorResponseModel>
     {
-        public AuthorResponseType()
+        public AuthorResponseGraphType()
         {
             Field<IntGraphType>(nameof(AuthorResponseModel.TotalCount));
-            Field<ListGraphType<AuthorType>>(nameof(AuthorResponseModel.Authors));
+            Field<ListGraphType<AuthorGraphType>>(nameof(AuthorResponseModel.Authors));
         }
     }
 }

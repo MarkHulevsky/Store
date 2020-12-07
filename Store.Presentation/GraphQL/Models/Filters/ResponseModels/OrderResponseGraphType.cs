@@ -4,12 +4,12 @@ using Store.Presentation.GraphQL.Models.Orders;
 
 namespace Store.Presentation.GraphQL.Models.Filters.ResponseModels
 {
-    public class OrderResponseType : ObjectGraphType<OrderResponseModel>
+    public class OrderResponseGraphType : ObjectGraphType<OrderResponseModel>
     {
-        public OrderResponseType()
+        public OrderResponseGraphType()
         {
             Field(x => x.TotalCount);
-            Field<ListGraphType<OrderType>>(nameof(OrderResponseModel.Orders));
+            Field<ListGraphType<OrderGraphType>>(nameof(OrderResponseModel.Orders));
         }
     }
 }
