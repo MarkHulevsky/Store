@@ -105,14 +105,15 @@ namespace Store.BuisnessLogic.Services
             return orderModel;
         }
 
-        public async Task RemoveAsync(string orderId)
+        public async Task<string> RemoveAsync(string orderId)
         {
             var result = Guid.TryParse(orderId, out var id);
             if (!result)
             {
-                return;
+                return string.Empty;
             }
             await _orderRepository.RemoveAsync(id);
+            return orderId;
         }
     }
 }

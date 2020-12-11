@@ -15,10 +15,10 @@ namespace Store.Presentation.GraphQL.Queries
         {
             _authorService = authorService;
 
-            FieldAsync<ListGraphType<AuthorGraphType>>("allAuthors",
+            FieldAsync<ListGraphType<AuthorGraphType>>("getAll",
                 resolve: async (context) => await _authorService.GetAllAsync());
 
-            FieldAsync<AuthorResponseGraphType>("authors",
+            FieldAsync<AuthorResponseGraphType>("filter",
                 arguments: new QueryArguments(new QueryArgument<AuthorRequestGraphType> 
                 {
                     Name = "filter"

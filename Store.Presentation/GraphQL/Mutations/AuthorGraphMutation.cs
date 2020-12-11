@@ -1,7 +1,5 @@
 ﻿using GraphQL;
 using GraphQL.Types;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Store.BuisnessLogic.Models.Authors;
 using Store.BuisnessLogic.Services.Interfaces;
 using Store.Presentation.GraphQL.InputTypes;
@@ -9,7 +7,6 @@ using Store.Presentation.GraphQL.Models.Author;
 
 namespace Store.Presentation.GraphQL.Mutations
 {
-    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AuthorGraphMutation: ObjectGraphType
     {
         private readonly IAuthorService _authorService;
@@ -17,7 +14,7 @@ namespace Store.Presentation.GraphQL.Mutations
         {
             _authorService = authorService;
 
-            FieldAsync<StringGraphType>("removeAuthor",
+            FieldAsync<StringGraphType>("remove",
                 arguments: new QueryArguments(new QueryArgument<StringGraphType>
                 {
                     Name = "id"
@@ -29,7 +26,7 @@ namespace Store.Presentation.GraphQL.Mutations
                     return id;
                 });
 
-            FieldAsync<AuthorGraphType>("editAuthor",
+            FieldAsync<AuthorGraphType>("edit",
                 arguments: new QueryArguments(new QueryArgument<AuthorInputGraphType>
                 {
                     Name = "author"
@@ -40,7 +37,7 @@ namespace Store.Presentation.GraphQL.Mutations
                     return await _authorService.EditAsync(author);
                 });
 
-            FieldAsync<AuthorGraphType>("addAuthor",
+            FieldAsync<AuthorGraphType>("add",
                 arguments: new QueryArguments(new QueryArgument<AuthorInputGraphType>
                 {
                     Name = "author"

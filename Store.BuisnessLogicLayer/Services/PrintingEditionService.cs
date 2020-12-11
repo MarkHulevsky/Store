@@ -75,24 +75,38 @@ namespace Store.BuisnessLogic.Services
             return printingEditionModel;
         }
 
-        public async Task RemoveAsync(string printingEdiotionId)
+        public async Task<string> RemoveAsync(string printingEdiotionId)
         {
-            var result = Guid.TryParse(printingEdiotionId, out var id);
-            if (!result)
+            var parseResult = Guid.TryParse(printingEdiotionId, out var id);
+            if (!parseResult)
             {
-                return;
+                return string.Empty;
             }
-            await _printingEditionRepository.RemoveAsync(id);
+            var printingEdition = await _printingEditionRepository.RemoveAsync(id);
+            
+            if (printingEdition is null)
+            {
+                return string.Empty;
+            }
+
+            return printingEdition.Id.ToString();
         }
 
-        public async Task EditAsync(PrintingEditionModel printingEditionModel)
+        public async Task<PrintingEditionModel> EditAsync(PrintingEditionModel printingEditionModel)
         {
             var printingEdition = _printingEditionMapper.Map(printingEditionModel);
-            await _printingEditionRepository.UpdateAsync(printingEdition);
+            var result = await _printingEditionRepository.UpdateAsync(printingEdition);
+            if (result is null)
+            {
+                return null;
+            }
+
             if (printingEditionModel.Authors != null)
             {
                 await AddToAuthorsAsync(printingEdition.Id, printingEditionModel.Authors);
             }
+
+            return printingEditionModel;
         }
 
         public async Task<PrintingEditionResponseModel> FilterAsync(PrintingEditionsRequestModel printingEditionRequestModel)

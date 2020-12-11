@@ -1,11 +1,11 @@
 ﻿using GraphQL.Types;
 using Store.BuisnessLogic.Models.Users;
 
-namespace Store.Presentation.GraphQL.Models.User
+namespace Store.Presentation.GraphQL.InputTypes
 {
-    public class EditProfileGraphType : ObjectGraphType<EditProfileModel>
+    public class EditProfileInputGraphType:  InputObjectGraphType<EditProfileModel>
     {
-        public EditProfileGraphType()
+        public EditProfileInputGraphType()
         {
             Field(x => x.Id);
             Field(x => x.Email);

@@ -149,6 +149,8 @@ namespace Store.Presentation
 
             app.UseGraphQL<AuthorGraphSchema>("/api/author/graphql");
             app.UseGraphQL<PrintingEditionGraphSchema>("/api/printingEdition/graphql");
+            app.UseGraphQL<UserGraphSchema>("/api/user/graphql");
+            app.UseGraphQL<OrderGraphSchema>("/api/order/graphql");
 
             app.UseGraphQLPlayground(new GraphQLPlaygroundOptions
             {
@@ -160,6 +162,18 @@ namespace Store.Presentation
             {
                 GraphQLEndPoint = "/api/printingEdition/graphql",
                 Path = "/api/printingEdition/playground"
+            });
+
+            app.UseGraphQLPlayground(new GraphQLPlaygroundOptions
+            {
+                GraphQLEndPoint = "/api/user/graphql",
+                Path = "/api/user/playground"
+            });
+
+            app.UseGraphQLPlayground(new GraphQLPlaygroundOptions
+            {
+                GraphQLEndPoint = "/api/order/graphql",
+                Path = "/api/order/playground"
             });
 
             var swaggerSection = Configuration.GetSection("SwaggerSettings");

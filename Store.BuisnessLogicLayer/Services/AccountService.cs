@@ -122,7 +122,7 @@ namespace Store.BuisnessLogic.Services
             return errors;
         }
 
-        public async Task<BaseModel> LoginAsync(LoginModel loginModel)
+        public async Task<UserModel> LoginAsync(LoginModel loginModel)
         {
             var user = await _userManager.FindByEmailAsync(loginModel.Email);
             var userModel = new UserModel();

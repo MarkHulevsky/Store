@@ -13,6 +13,7 @@ namespace Store.Presentation.GraphQL.InputTypes.RequestModels
             Field(nameof(PrintingEditionsRequestModel.MinPrice), expression: x => x.MinPrice);
             Field(x => x.SearchString);
             Field<PagingGraphType>(nameof(PrintingEditionsRequestModel.Paging));
+            Field<IntGraphType>(nameof(PrintingEditionsRequestModel.SortType), resolve: context => (int)context.Source.SortType);
             Field<ListGraphType<IntGraphType>>(nameof(PrintingEditionsRequestModel.Types), resolve: context => context.Source.Types.Cast<int>().ToList());
         }
     }

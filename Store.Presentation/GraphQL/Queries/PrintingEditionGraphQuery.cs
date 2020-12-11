@@ -15,7 +15,7 @@ namespace Store.Presentation.GraphQL.Queries
         {
             _printingEditionService = printingEditionService;
 
-            FieldAsync<PrintingEditionGraphType>(name: "printingEdition",
+            FieldAsync<PrintingEditionGraphType>(name: "get",
                 arguments: new QueryArguments(new QueryArgument<StringGraphType> { Name = "id" }),
                 resolve: async (context) =>
                 {
@@ -24,13 +24,25 @@ namespace Store.Presentation.GraphQL.Queries
                 });
 
 
-            FieldAsync<PrintingEditionResponseGraphType>("printingEditions",
+            FieldAsync<PrintingEditionResponseGraphType>("filter",
                 arguments: new QueryArguments(new QueryArgument<PrintingEditionRequestGraphType> { Name = "filter" }),
                 resolve: async (context) =>
                 {
                     var filter = context.GetArgument<PrintingEditionsRequestModel>("filter");
                     var result = await _printingEditionService.FilterAsync(filter);
                     return result;
+                });
+
+            FieldAsync<DecimalGraphType>("convertCurrency",
+                arguments: new QueryArguments(
+                    new QueryArgument<StringGraphType> { Name = "currentCurrency" },
+                    new QueryArgument<StringGraphType> { Name = "newCurrency" }
+                    ),
+                resolve: async (context) =>
+                {
+                    var currentCurrency = context.GetArgument<string>("currentCurrency");
+                    var newCurrency = context.GetArgument<string>("newCurrency");
+                    return await _printingEditionService.GetConvertRateAsync(currentCurrency, newCurrency);
                 });
         }
     }
