@@ -147,6 +147,8 @@ namespace Store.Presentation
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors();
+
             app.UseGraphQL<AuthorGraphSchema>("/api/author/graphql");
             app.UseGraphQL<PrintingEditionGraphSchema>("/api/printingEdition/graphql");
             app.UseGraphQL<UserGraphSchema>("/api/user/graphql");
@@ -186,7 +188,6 @@ namespace Store.Presentation
                 option.SwaggerEndpoint(swaggerSection["UIEndpoint"], swaggerSection["Description"]);
             });
 
-            app.UseCors();
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();

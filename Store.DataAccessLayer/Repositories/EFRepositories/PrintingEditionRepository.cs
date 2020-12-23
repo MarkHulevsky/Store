@@ -5,7 +5,6 @@ using Store.DataAccess.Filters;
 using Store.DataAccess.Filters.ResponseFulters;
 using Store.DataAccess.Repositories.Base;
 using Store.DataAccess.Repositories.Interfaces;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,14 +22,10 @@ namespace Store.DataAccess.Repositories.EFRepositories
             var query = DbSet
                 .Include(printingEdition => printingEdition.AuthorInPrintingEditions)
                 .ThenInclude(authorInPrintingEdition => authorInPrintingEdition.Author)
-                .Where(pe => !pe.IsRemoved && EF.Functions.Like(pe.Title, $"%{printingEditionRequestDataModel.SearchString}%"));
+                .Where(pe => !pe.IsRemoved && EF.Functions.Like(pe.Title, $"%{printingEditionRequestDataModel.SearchString}%"))
+                .Where(printingEdition => printingEditionRequestDataModel.Types.Contains(printingEdition.Type));
+
             var totalCount = await query.CountAsync();
-            var subquery = new List<PrintingEdition>().AsQueryable();
-            foreach (var type in printingEditionRequestDataModel.Types)
-            {
-                subquery = subquery.Concat(query.Where(pe => pe.Type == type));
-            }
-            query = subquery;
 
             if (printingEditionRequestDataModel.MaxPrice > printingEditionRequestDataModel.MinPrice
                     && printingEditionRequestDataModel.MaxPrice != printingEditionRequestDataModel.MinPrice)
@@ -38,10 +33,12 @@ namespace Store.DataAccess.Repositories.EFRepositories
                 query = query.Where(pe => pe.Price <= printingEditionRequestDataModel.MaxPrice
                     && pe.Price >= printingEditionRequestDataModel.MinPrice);
             }
+
             query = query
                 .OrderBy("Price", $"{printingEditionRequestDataModel.SortType}")
                 .Skip(printingEditionRequestDataModel.Paging.CurrentPage * printingEditionRequestDataModel.Paging.ItemsCount)
                 .Take(printingEditionRequestDataModel.Paging.ItemsCount);
+
             foreach (var printingEdition in query)
             {
                 var authors = printingEdition.AuthorInPrintingEditions
@@ -49,7 +46,9 @@ namespace Store.DataAccess.Repositories.EFRepositories
                     .ToList();
                 printingEdition.Authors = authors;
             }
+
             var printingEditions = query.ToList();
+            
             var result = new PrintingEditionResponseDataModel
             {
                 PrintingEditions = printingEditions,
