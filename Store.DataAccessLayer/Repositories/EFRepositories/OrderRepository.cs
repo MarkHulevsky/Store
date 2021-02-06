@@ -35,14 +35,8 @@ namespace Store.DataAccess.Repositories.EFRepositories
             var query = DbSet.Include(order => order.User)
                 .Include(order => order.OrderItems)
                 .ThenInclude(orderItem => orderItem.PrintingEdition)
-                .Where(o => !o.IsRemoved);
+                .Where(o => !o.IsRemoved && orderRequestDataModel.OrderStatuses.Contains(o.Status));
             var totalCount = await query.CountAsync();
-            var subquery = new List<Order>().AsQueryable();
-            foreach (var status in orderRequestDataModel.OrderStatuses)
-            {
-                subquery = subquery.Concat(query.Where(o => o.Status == status));
-            }
-            query = subquery;
             query = query
                 .OrderBy(orderRequestDataModel.SortPropertyName, $"{orderRequestDataModel.SortType}")
                 .Skip(orderRequestDataModel.Paging.CurrentPage * orderRequestDataModel.Paging.ItemsCount)
