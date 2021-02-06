@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Store.BuisnessLogic.Helpers;
 using Store.BuisnessLogic.Helpers.Interfaces;
 using Store.BuisnessLogic.Models.Account;
-using Store.BuisnessLogic.Models.Base;
 using Store.BuisnessLogic.Models.Users;
 using Store.BuisnessLogic.Services.Interfaces;
 using Store.DataAccess.Entities;
