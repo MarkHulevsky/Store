@@ -43,34 +43,45 @@ namespace Store.BuisnessLogic.Services
         {
             var customerService = new CustomerService();
             var chargeService = new ChargeService();
+
             var customerOptions = new CustomerCreateOptions
             {
                 Email = paymentModel.UserEmail,
                 Source = paymentModel.TokenId
             };
+            
             var customer = await customerService.CreateAsync(customerOptions);
+            
             var chargeOptions = new ChargeCreateOptions
             {
                 Amount = paymentModel.Amount,
                 Currency = paymentModel.CurrencyString,
                 Customer = customer.Id
             };
+            
             var charge = await chargeService.CreateAsync(chargeOptions);
             var errors = new List<string>();
+            
             if (charge.Status != CHARGE_SUCCEEDED)
             {
                 errors.Add(CHARGE_IS_NOT_SUCCEEDED_ERROR);
                 return errors;
             }
+            
             var payment = new Payment()
             {
                 TransactionId = charge.BalanceTransactionId
             };
+            
             payment = await _paymentRepository.CreateAsync(payment);
+            
             var order = await _orderRepository.GetAsync(paymentModel.OrderId);
+            
             order.PaymentId = payment.Id;
             order.Status = OrderStatus.Paid;
+            
             await _orderRepository.UpdateAsync(order);
+            
             return errors;
         }
 
@@ -93,25 +104,30 @@ namespace Store.BuisnessLogic.Services
         public async Task<OrderModel> CreateAsync(CartModel cartModel)
         {
             var user = await _userService.GetCurrentAsync();
+            
             var order = new Order
             {
                 UserId = user.Id
             };
+            
             order.Status = OrderStatus.Unpaid;
             order = await _orderRepository.CreateAsync(order);
+            
             var orderModel = _orderModelMapper.Map(order);
             var orderItems = OrderItemListMapper.Map(cartModel.Order.OrderItems, order.Id);
+            
             await _orderItemRepository.AddRangeAsync(orderItems);
+            
             return orderModel;
         }
 
         public async Task<string> RemoveAsync(string orderId)
         {
-            var result = Guid.TryParse(orderId, out var id);
-            if (!result)
+            if (!Guid.TryParse(orderId, out var id))
             {
                 return string.Empty;
             }
+            
             await _orderRepository.RemoveAsync(id);
             return orderId;
         }

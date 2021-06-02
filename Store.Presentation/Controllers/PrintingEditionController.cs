@@ -32,7 +32,7 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetFiltred([FromBody] PrintingEditionsRequestModel printingEditionRequestModel)
+        public async Task<IActionResult> GetFiltered([FromBody] PrintingEditionsRequestModel printingEditionRequestModel)
         {
             var printingEditionResponseModel = await _printingEditionService.FilterAsync(printingEditionRequestModel);
             return Ok(printingEditionResponseModel);

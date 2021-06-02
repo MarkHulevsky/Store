@@ -53,7 +53,7 @@ namespace Store.BuisnessLogic.Services
         public async Task ChangeStatusAsync(UserModel userModel)
         {
             var user = await _userManager.FindByEmailAsync(userModel.Email);
-            if (user == null)
+            if (user is null)
             {
                 return;
             }
@@ -65,20 +65,25 @@ namespace Store.BuisnessLogic.Services
         {
             var user = await _userManager.FindByIdAsync(editProfileModel.Id.ToString());
             var errors = new List<string>();
-            if (user == null)
+
+            if (user is null)
             {
                 errors.Add(NO_SUCH_USER_ERROR);
                 return errors;
             }
+            
             if (!string.IsNullOrWhiteSpace(editProfileModel.Password))
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 await _userManager.ResetPasswordAsync(user, token, editProfileModel.Password);
             }
+            
             user.FirstName = editProfileModel.FirstName;
             user.LastName = editProfileModel.LastName;
             user.Email = editProfileModel.Email;
+            
             var updateResult = await _userManager.UpdateAsync(user);
+            
             if (!updateResult.Succeeded)
             {
                 foreach (var error in updateResult.Errors)
@@ -86,6 +91,7 @@ namespace Store.BuisnessLogic.Services
                     errors.Add(error.Description);
                 }
             }
+            
             return errors;
         }
 
@@ -93,13 +99,16 @@ namespace Store.BuisnessLogic.Services
         {
             var user = await _userManager.FindByIdAsync(userId);
             var errors = new List<string>();
-            if (user == null)
+
+            if (user is null)
             {
                 errors.Add(NO_SUCH_USER_ERROR);
                 return errors;
             }
+            
             user.IsRemoved = true;
             var result = await _userManager.UpdateAsync(user);
+            
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -107,6 +116,7 @@ namespace Store.BuisnessLogic.Services
                     errors.Add(error.Description);
                 }
             }
+            
             return errors;
         }
     }

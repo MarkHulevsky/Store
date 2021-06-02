@@ -23,7 +23,9 @@ namespace Store.BuisnessLogic.Helpers
             var senderPassword = emailSettingsSection["SenderPassword"];
 
             var fromAddress = new MailAddress(senderEmail, senderName);
+
             var toAddress = new MailAddress(email);
+
             var mailMessage = new MailMessage(fromAddress, toAddress)
             {
                 Subject = subject,
