@@ -28,7 +28,7 @@ namespace Store.Presentation.Controllers
 
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
-        public async Task<IActionResult> GetFiltred([FromBody] UserRequestModel userRequestModel)
+        public async Task<IActionResult> GetFiltered([FromBody] UserRequestModel userRequestModel)
         {
             var usersResponse = await _userService.FilterAsync(userRequestModel);
             return Ok(usersResponse);

@@ -37,7 +37,7 @@ namespace Store.BuisnessLogic.Services
         public async Task<AuthorModel> CreateAsync(AuthorModel authorModel)
         {
             var author = await _authorRepository.FindAuthorByNameAsync(authorModel.Name);
-            if (author != null)
+            if (!(author is null))
             {
                 authorModel = _authorModelMapper.Map(author);
                 return authorModel;
@@ -63,7 +63,7 @@ namespace Store.BuisnessLogic.Services
         public async Task<AuthorModel> EditAsync(AuthorModel authorModel)
         {
             var author = await _authorRepository.GetAsync(authorModel.Id);
-            if (author == null)
+            if (author is null)
             {
                 return null;
             }

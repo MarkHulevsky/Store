@@ -121,15 +121,16 @@ namespace Store.BuisnessLogic.Services
         {
             var authors = ListMapper<Author, AuthorModel>.Map(authorModels);
             var authorInPrintingEditions = new List<AuthorInPrintingEdition>();
-            foreach (var author in authors)
-            {
-                var authorInPrintingEdition = new AuthorInPrintingEdition
-                {
-                    AuthorId = author.Id,
-                    PrintingEditionId = printingEditionId,
-                };
-                authorInPrintingEditions.Add(authorInPrintingEdition);
-            }
+
+            authorInPrintingEditions.AddRange
+                (
+                    authors.Select(author => new AuthorInPrintingEdition
+                    {
+                        AuthorId = author.Id,
+                        PrintingEditionId = printingEditionId
+                    })
+                );
+
             await _authorInPrintingEditionRepository.AddRangeAsync(authorInPrintingEditions);
         }
     }

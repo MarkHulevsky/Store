@@ -53,12 +53,15 @@ namespace Store.BuisnessLogic.Services
         {
             var user = await _userManager.FindByEmailAsync(email);
             var errors = new List<string>();
-            if (user == null)
+
+            if (user is null)
             {
                 errors.Add(USER_NOT_FOUND_ERROR);
                 return errors;
             }
+            
             var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
+            
             if (!isEmailConfirmed)
             {
                 errors.Add(EMAIL_IS_NOT_CONFIRMED_ERROR);
@@ -67,6 +70,7 @@ namespace Store.BuisnessLogic.Services
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var newPassword = PasswordGenerator.GeneratePassword();
             var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+            
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -75,18 +79,24 @@ namespace Store.BuisnessLogic.Services
                 }
                 return errors;
             }
+            
             var subject = RESET_PASSWORD_SUBJECT;
             var body = $"{RESET_PASSWORD_BODY} {newPassword}";
             await _emailProvider.SendAsync(email, subject, body);
+            
             return errors;
         }
 
         public async Task<List<string>> RegisterAsync(RegisterModel registerModel)
         {
             var user = _userMapper.Map(registerModel);
+            
             user.UserName = registerModel.Email;
+
             var result = await _userManager.CreateAsync(user, user.Password);
+            
             var errors = new List<string>();
+            
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -95,8 +105,11 @@ namespace Store.BuisnessLogic.Services
                 }
                 return errors;
             }
+            
             await _userManager.AddToRoleAsync(user, USER_ROLE_NAME);
+
             await SendConfirmUrlAsync(registerModel.Email);
+            
             return errors;
         }
 
@@ -104,12 +117,15 @@ namespace Store.BuisnessLogic.Services
         {
             var user = await _userManager.FindByEmailAsync(email);
             var errors = new List<string>();
-            if (user == null)
+
+            if (user is null)
             {
                 errors.Add(USER_NOT_FOUND_ERROR);
                 return errors;
             }
+            
             var result = await _userManager.ConfirmEmailAsync(user, token);
+            
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -118,6 +134,7 @@ namespace Store.BuisnessLogic.Services
                 }
                 return errors;
             }
+            
             return errors;
         }
 
@@ -125,36 +142,46 @@ namespace Store.BuisnessLogic.Services
         {
             var user = await _userManager.FindByEmailAsync(loginModel.Email);
             var userModel = new UserModel();
-            if (user == null)
+
+            if (user is null)
             {
                 userModel.Errors.Add(USER_NOT_FOUND_ERROR);
                 return userModel;
             }
+
             if (!user.IsActive)
             {
                 userModel.Errors.Add(USER_IS_BLOCKED_ERROR);
             }
+            
             if (!user.EmailConfirmed)
             {
                 userModel.Errors.Add(EMAIL_IS_NOT_CONFIRMED_ERROR);
             }
+            
             if (user.IsRemoved)
             {
                 userModel.Errors.Add(USER_IS_REMOVED_ERROR);
             }
+            
             if (userModel.Errors.Any())
             {
                 return userModel;
             }
+            
             var result = await _signInManager.PasswordSignInAsync(user, loginModel.Password, false, false);
+            
             if (!result.Succeeded)
             {
                 userModel.Errors.Add(INCORRECT_LOGIN_DATA_ERROR);
                 return userModel;
             }
+            
             userModel = _userModelMapper.Map(user);
             userModel.Roles = await GetRolesAsync(userModel.Email);
+
             _jwtProvider.SetToken(userModel);
+            
             return userModel;
         }
 
@@ -166,10 +193,12 @@ namespace Store.BuisnessLogic.Services
         private async Task<List<string>> GetRolesAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+            
+            if (user is null)
             {
                 return null;
             }
+
             var roles = await _userManager.GetRolesAsync(user);
             return roles.ToList();
         }
@@ -177,15 +206,21 @@ namespace Store.BuisnessLogic.Services
         private async Task SendConfirmUrlAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+
+            if (user is null)
             {
                 return;
             }
+
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            
             var url = _urlHelper.Action("ConfirmEmail", "Account",
                 new { email, token }, _httpContextAccessor.HttpContext.Request.Scheme);
+            
             var subject = CONFIRM_EMAIL_SUBJECT;
+            
             var body = $"{CONFIRM_EMAIL_BODY} <a href='{url}'>link</a>.";
+            
             await _emailProvider.SendAsync(email, subject, body);
         }
     }

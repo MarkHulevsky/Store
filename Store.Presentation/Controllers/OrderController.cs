@@ -27,7 +27,7 @@ namespace Store.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetFiltred([FromBody] OrderRequestModel orderRequestModel)
+        public async Task<IActionResult> GetFiltered([FromBody] OrderRequestModel orderRequestModel)
         {
             var ordersResponse = await _orderService.FilterAsync(orderRequestModel);
             return Ok(ordersResponse);

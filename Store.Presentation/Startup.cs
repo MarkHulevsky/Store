@@ -50,6 +50,7 @@ namespace Store.Presentation
                 var factory = serviceProvider.GetRequiredService<IUrlHelperFactory>();
                 return factory.GetUrlHelper(actionContext);
             });
+
             services.AddHttpContextAccessor();
             services.AddSingleton<ILogger, Logger>();
             services.AddScoped<IUserRepository, UserRepository>();
@@ -86,6 +87,7 @@ namespace Store.Presentation
             StripeConfiguration.ApiKey = Configuration.GetSection("Stripe")["SecretKey"];
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
             services
                 .AddAuthentication(options =>
                 {
@@ -106,8 +108,7 @@ namespace Store.Presentation
                         ValidAudience = Configuration.GetSection("JwtSettings")["Audience"],
                         ValidateLifetime = true,
 
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(
-                            Configuration.GetSection("JwtSettings")["Key"])),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("JwtSettings")["Key"])),
                         ValidateIssuerSigningKey = true,
                     };
                 });
@@ -122,6 +123,7 @@ namespace Store.Presentation
                 options.Password.RequiredUniqueChars = 0;
                 options.User.RequireUniqueEmail = true;
             });
+
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
@@ -183,6 +185,7 @@ namespace Store.Presentation
             {
                 option.RouteTemplate = swaggerSection["JsonRoute"];
             });
+
             app.UseSwaggerUI(option =>
             {
                 option.SwaggerEndpoint(swaggerSection["UIEndpoint"], swaggerSection["Description"]);
